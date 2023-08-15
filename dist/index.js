@@ -18807,7 +18807,7 @@ const releaseLabels = {
     done: "release: done",
 };
 const getReleaseCommitMessage = (nextVersion) => {
-    return `chore(main): Release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
+    return `chore(main): release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
 };
 const getReleasePullRequestTitle = (nextVersion) => {
     return `Release ${RELEASE_TAG_PREFFIX}${nextVersion}`;
