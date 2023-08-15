@@ -1,15 +1,16 @@
-## :ballot_box_with_check: Checklist
+### Checklist
 
 Pull Request requirements:
 
 <!-- ✍️ Be sure to check all items from the following list and verify CI checks
 before marking this PR as ready. -->
 
-- [ ] Code: Update tests
-- [ ] Code: Update documentation ([`README`](README.md), ...)
-- [ ] PR: Add labels (`type: fix`, `type: feature`, `breaking`, `changelog-ignore`)
-- [ ] PR: Add notes
+- [ ] Code: Update tests _if needed_
+- [ ] Code: Update documentation ([`README`](README.md), ...) _if needed_
+- [ ] PR: Add assignees
+- [ ] PR: Add labels (`type: fix`, `type: feature`, `breaking`, `changelog-ignore`) _if needed_
+- [ ] PR: Add issue _if needed_
 
-## :page_with_curl: Notes
+### Notes
 
-<!-- ✍️ Give any information relevant to this PR, links, screenshots... -->
+<!-- ✍️ Any helpful detail, screenshots, links... -->
