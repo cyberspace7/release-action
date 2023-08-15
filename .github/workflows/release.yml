@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      release-as:
+        type: string
+        description: Force the release version
+      pre-release:
+        type: choice
+        default: ""
+        description: Pre-release
+        options:
+          - ""
+          - alpha
+          - beta
+          - rc
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Execute action
+        id: action
+        uses: cyberspace7/release-action@main
+        with:
+          release-as: ${{ inputs.release-as }}
+          pre-release: ${{ inputs.pre-release }}

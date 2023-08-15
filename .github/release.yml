@@ -1,0 +1,19 @@
+changelog:
+  exclude:
+    labels:
+      - "changelog-ignore"
+      - "release: ready"
+      - "release: done"
+  categories:
+    - title: ":warning: Breaking Changes"
+      labels:
+        - "breaking"
+    - title: ":sparkles: New Features"
+      labels:
+        - "type: feature"
+    - title: ":beetle: Bug Fixes"
+      labels:
+        - "type: fix"
+    - title: ":page_with_curl: Other Changes"
+      labels:
+        - "*"
