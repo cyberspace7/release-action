@@ -1,0 +1,43 @@
+name: Bug Report
+description: File a bug report
+labels: ["bug-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out this bug report, your help is much appreciated!
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: false
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual behavior
+      description: A clear and concise description of what actually happen.
+    validations:
+      required: false
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Explain each step required to reproduce the issue.
+    validations:
+      required: false
+  - type: textarea
+    id: details
+    attributes:
+      label: Notes
+      description: "Any other details that might be helpful: environement, version, screenshots, links..."
+    validations:
+      required: false

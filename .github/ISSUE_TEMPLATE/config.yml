@@ -1,0 +1,7 @@
+contact_links:
+  - name: "💡 Feature Request"
+    url: https://github.com/cyberspace7/release-action/discussions/categories/ideas
+    about: Submit a feature request or any idea to improve the project
+  - name: "💬 Question"
+    url: https://github.com/cyberspace7/release-action/discussions/categories/q-a
+    about: Ask any question related to the project
