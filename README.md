@@ -56,7 +56,7 @@ in the [discussions](https://github.com/cyberspace7/release-action/discussions/c
 If you find a bug concerning this project, please fill a [bug report](https://github.com/cyberspace7/release-action/issues/new?assignees=&labels=bug-report&projects=&template=bug-report.yml).
 If it concerns a security vulnerability, please email us at `contact@a60.dev`.
 
-For contributing, read [this page](.github/CONTRIBUTING.md).
+For contributing, please check the [guidelines](.github/CONTRIBUTING.md).
 
 ## Licensing
 
