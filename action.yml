@@ -1,0 +1,22 @@
+name: "Release"
+author: "Benjamin Guibert <contact@bguibert.com>"
+description: "Bump version, prepare release PR, release and publish."
+inputs:
+  release-as:
+    description: Force the release version.
+    required: false
+  pre-release:
+    description: Pre-release
+    required: false
+outputs:
+  current-version:
+    description: Version of the current code
+  next-version:
+    description: Version of the next release
+  release-pr:
+    description: Number of the opened release pull request
+  is-released:
+    description: Current version has been released
+runs:
+  using: "node16"
+  main: "dist/index.js"

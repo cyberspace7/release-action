@@ -1,0 +1,70 @@
+name: Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request_target:
+    branches:
+      - main
+
+permissions:
+  statuses: read
+  contents: read
+
+jobs:
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+      - name: Setup project
+        uses: ./.github/actions/setup
+      - name: Run prettier
+        run: pnpm prettier --check "**/*.{ts,tsx,md}"
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+      - name: Setup project
+        uses: ./.github/actions/setup
+      - name: Run lint
+        run: pnpm lint
+
+  typecheck:
+    name: Types
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+      - name: Setup project
+        uses: ./.github/actions/setup
+      - name: Run type check
+        run: pnpm typecheck
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+      - name: Setup project
+        uses: ./.github/actions/setup
+      - name: Run test
+        run: pnpm test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+      - name: Setup project
+        uses: ./.github/actions/setup
+      - name: Build
+        run: pnpm build
+      - name: Check if there is any diff
+        run: git diff --exit-code
