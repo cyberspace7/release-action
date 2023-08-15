@@ -36,7 +36,7 @@ export const releaseLabels = {
 } as const;
 
 const getReleaseCommitMessage = (nextVersion: SemVer) => {
-  return `chore(main): Release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
+  return `chore(main): release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
 };
 
 const getReleasePullRequestTitle = (nextVersion: SemVer) => {

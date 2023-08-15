@@ -150,7 +150,7 @@ describe("main()", () => {
       repo: "repository",
       branch: "releases/next",
       path: "package.json",
-      message: "chore(main): Release v1.3.0",
+      message: "chore(main): release v1.3.0",
       sha: "packageSha",
       content:
         "ewogICJuYW1lIjogIkBvd25lci9hcHBsaWNhdGlvbiIsCiAgInZlcnNpb24iOiAiMS4zLjAiLAogICJkZXBlbmRlbmNpZXMiOiB7fQp9Cg==",
