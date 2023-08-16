@@ -38,7 +38,7 @@ sequenceDiagram
   Note over M: Release v0.1.0
 ```
 
-Below is the prepare process when there are new changes:
+Below is the prepare process when new changes are detected:
 
 ```mermaid
 flowchart LR
@@ -111,11 +111,14 @@ jobs:
         uses: actions/checkout@v3
       - name: Execute action
         id: action
-        uses: cyberspace7/release-action@main
+        uses: cyberspace7/release-action@v0.1.0
         with:
           release-as: ${{ inputs.release-as }}
           pre-release: ${{ inputs.pre-release }}
 ```
+
+> :warning: Use a manual version (`v0.1.0` in the example) until a `v1` become available.
+> Remember that this version `id not production ready`.
 
 > :bulb: **Tip:** Use the `is-released` output (see [outputs](#outputs)) to execute
 > another job to deploy the fresh release (i.e. create a package, deploy a Docker container,
