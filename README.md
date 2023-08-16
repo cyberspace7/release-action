@@ -29,10 +29,10 @@ sequenceDiagram
   participant R as Release PR
 
   D -->> M: Merge PR #35;1 (fix)
-  M ->> R: Open PR #35;2
+  M -->> R: Open PR #35;2 (automatic)
   Note over M,R: Release v0.0.1
-  D -->> M: Merge PR #35;3 (feature)
-  M ->> R: Update PR #35;2
+  D ->> M: Merge PR #35;3 (feature)
+  M -->> R: Update PR #35;2 (automatic)
   Note over M,R: Release v0.1.0
   R ->> M: Merge
   Note over M: Release v0.1.0
