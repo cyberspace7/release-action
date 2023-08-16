@@ -52,7 +52,7 @@ flowchart LR
   B --> C
 ```
 
-## Why it should be used
+### Why it should be used
 
 It should be used if:
 
@@ -60,7 +60,7 @@ It should be used if:
 - Labels are used in PRs to classify the type (patch, minor, major);
 - Release commit is just about updating the `package.json` file.
 
-## Why it should not be used
+### Why it should not be used
 
 It should not be used if:
 
