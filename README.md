@@ -127,9 +127,9 @@ jobs:
 When opening a PR on the `main` branch, use one (or more) of these labels in order to bump
 the version to the right level:
 
-- `type: fix`: Bump the path part of the version.
-- `type: feature`: Bump the minor part of the version.
-- `breaking`: Bump the major part of the version, or minor if current version is under `1.0`.
+- `type: fix`: Bump the **patch** part of the version.
+- `type: feature`: Bump the **minor** part of the version.
+- `breaking`: Bump the **major** part of the version, or minor if current version is under `1.0`.
 - `changelog-ignore`: Dont bump whatever other labels are. It should be excluded from
   the release notes generation (see bellow).
 
