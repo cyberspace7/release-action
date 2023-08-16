@@ -136,7 +136,7 @@ the version to the right level:
 You want to be able to personalize those labels? Upvote or comment
 [this issue](https://github.com/cyberspace7/release-action/issues/5).
 
-That's it, when merged, you should find an open release PR. You just have to merge to merge it when you wish to release, voilà !
+That's it, when merged, you should find an open release PR. You just have to merge it when you wish to release, voilà !
 
 Changes are found comparing GitHub
 [generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes),
