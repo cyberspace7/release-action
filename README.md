@@ -13,12 +13,24 @@ If you have any question, remark, suggestion, ... They are most welcome in the
 
 ## Description
 
-Release Action is a simple automation of the release of Node.js projects on GitHub based on pull requests and labels. You can easily integrate it in your workflow as it only makes a
-GitHub release only when a specific PR is merged. It works in two phases:
+It can be quite a hassle to find a proper release process that meet simple but
+specific and multiple demands, such as:
 
-1. **Prepare**: Gets all merged PRs since last release and determine the next version based
-   on labels (major, minor, patch) unless overriden (see [inputs](#inputs)) and create
-   (or update) a pull request including the updated `package.json` file;
+- To bump automatically the version based on changes type (patch, minor, major);
+- To modify only `package.json`;
+- To be able to ignore a specific change;
+- To handle releases through a release PR;
+- To create a GitHub release;
+- To be able to override the version;
+- To release as pre-release (both the version number **and** the GitHub release);
+- Etc...
+
+Some tools get close but not enough. That's exactly why Release Action exists: it is a simple automation tool for releasing Node.js projects on GitHub based on pull requests and labels. You can easily integrate it into your workflow as it only creates a
+GitHub release when a specific PR is merged. It works in two phases:
+
+1. **Prepare**: Gets all merged PRs since last release, determines the next version based
+   on labels (major, minor, patch) unless overriden (see [inputs](#inputs)) and creates
+   (or updates) a pull request including the updated `package.json` file;
 2. **Release** (actually runs first): Once the release PR merged, a release is made on GitHub, that's it!
 
 ```mermaid
@@ -52,21 +64,21 @@ flowchart LR
   B --> C
 ```
 
-### Why it should be used
+### When it should be used
 
 It should be used if:
 
 - Commits are systematically pushed to the main branch **through pull requests**;
 - Labels are used in PRs to classify the type (patch, minor, major);
-- Release commit is just about updating the `package.json` file.
+- The release commit is just about updating the `package.json` file.
 
-### Why it should not be used
+### When it should not be used
 
 It should not be used if:
 
 - Commits are **pushed directly** to the main branch;
-- Release commit must include more than updating the `package.json` file,
-  such as a changelog (changelog is generated in the PR body and GitHub release).
+- The release commit must include more than updating the `package.json` file,
+  such as a changelog (the changelog is generated in the PR body and GitHub release).
 
 ## Usage
 
@@ -117,8 +129,8 @@ jobs:
           pre-release: ${{ inputs.pre-release }}
 ```
 
-> :warning: Use a manual version (`v0.1.0` in the example) until a `v1` become available.
-> Remember that this version `id not production ready`.
+> :warning: Use a manual version (`v0.1.0` in the example) until a `v1` becomes available.
+> Remember that this version **is not production ready**.
 
 > :bulb: **Tip:** Use the `is-released` output (see [outputs](#outputs)) to execute
 > another job to deploy the fresh release (i.e. create a package, deploy a Docker container,
