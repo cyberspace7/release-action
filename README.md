@@ -25,7 +25,9 @@ specific and multiple demands, such as:
 - To release as pre-release (both the version number **and** the GitHub release);
 - Etc...
 
-Some tools get close but not enough. That's exactly why Release Action exists: it is a simple automation tool for releasing Node.js projects on GitHub based on pull requests and labels. You can easily integrate it into your workflow as it only creates a
+Some tools get close but not enough. That's exactly why Release Action exists: it is a simple
+automation tool for releasing Node.js projects on GitHub based on pull requests and labels.
+You can easily integrate it into your workflow as it only creates a
 GitHub release when a specific PR is merged. It works in two phases:
 
 1. **Prepare**: Gets all merged PRs since last release, determines the next version based
@@ -68,7 +70,7 @@ flowchart LR
 
 It should be used if:
 
-- Commits are systematically pushed to the main branch **through pull requests**;
+- Commits are systematically pushed to the main/production branch **through pull requests**;
 - Labels are used in PRs to classify the type (patch, minor, major);
 - The release commit is just about updating the `package.json` file.
 
@@ -76,13 +78,13 @@ It should be used if:
 
 It should not be used if:
 
-- Commits are **pushed directly** to the main branch;
+- Commits are **pushed directly** to the main/production branch;
 - The release commit must include more than updating the `package.json` file,
   such as a changelog (the changelog is generated in the PR body and GitHub release).
 
 ## Usage
 
-Release Action is designed to be ran every time there is a change on the `main` branch.
+Release Action is designed to be ran every time there is a change on the main/production branch.
 Here is a recommended workflow setting:
 
 ```yaml
