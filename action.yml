@@ -3,10 +3,10 @@ author: "Benjamin Guibert <contact@bguibert.com>"
 description: "Bump version, prepare release PR, release and publish."
 inputs:
   release-as:
-    description: Force the release version.
+    description: Force a specific version
     required: false
   pre-release:
-    description: Pre-release
+    description: Name of the pre-release version
     required: false
 outputs:
   current-version:
