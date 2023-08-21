@@ -17,7 +17,7 @@ It can be quite a hassle to find a proper release process that meet simple but
 specific and multiple demands, such as:
 
 - To bump automatically the version based on changes type (patch, minor, major);
-- To modify only `package.json`;
+- To only modify `package.json`;
 - To be able to ignore a specific change;
 - To handle releases through a release PR;
 - To create a GitHub release;
