@@ -39,7 +39,7 @@ const tryPrepare = async (
   releaseNotes: string | undefined,
   isManualVersion: boolean,
 ) => {
-  if (!nextVersion || !releaseNotes) {
+  if (!nextVersion || (!releaseNotes && !isManualVersion)) {
     core.notice("No changes since last release.", {
       title: "No Changes",
     });
@@ -67,7 +67,12 @@ const tryPrepare = async (
   }
 
   const prNumber = await core.group("Prepare", () =>
-    prepare(nextVersion, releaseNotes, releasePullRequest, isManualVersion),
+    prepare(
+      nextVersion,
+      releaseNotes || "",
+      releasePullRequest,
+      isManualVersion,
+    ),
   );
   core.setOutput("release-pr", prNumber);
 };

@@ -266,6 +266,7 @@ describe("main()", () => {
       },
     });
     getInput.mockReturnValueOnce("3.4.5-beta.6");
+    generateReleaseNotes.mockResolvedValueOnce({ data: { body: "" } });
 
     await main();
 
