@@ -19286,7 +19286,7 @@ const tryRelease = async (name, currentVersion, releasePullRequest) => {
     return false;
 };
 const tryPrepare = async (nextVersion, releasePullRequest, releaseNotes, isManualVersion) => {
-    if (!nextVersion || !releaseNotes) {
+    if (!nextVersion || (!releaseNotes && !isManualVersion)) {
         core.notice("No changes since last release.", {
             title: "No Changes",
         });
@@ -19306,7 +19306,7 @@ const tryPrepare = async (nextVersion, releasePullRequest, releaseNotes, isManua
         core.setOutput("release-pr", releasePullRequest?.number);
         return;
     }
-    const prNumber = await core.group("Prepare", () => prepare(nextVersion, releaseNotes, releasePullRequest, isManualVersion));
+    const prNumber = await core.group("Prepare", () => prepare(nextVersion, releaseNotes || "", releasePullRequest, isManualVersion));
     core.setOutput("release-pr", prNumber);
 };
 const main = async () => {
