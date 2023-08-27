@@ -1,55 +1,138 @@
-import { getPreRelease, getReleaseAs } from "../../src/libs/inputs";
+import { parseInputs } from "../../src/libs/inputs";
+import { mockDefaultInputs } from "../../tests/helpers";
 import { core } from "../../tests/mocks";
 
-const { getInput } = core;
+export const mockInputs = ({
+  preRelease,
+  releaseAs,
+  releaseLabels,
+}: {
+  preRelease?: string;
+  releaseAs?: string;
+  releaseLabels?: {
+    ignore?: string;
+    patch?: string;
+    minor?: string;
+    major?: string;
+    ready?: string;
+    done?: string;
+  };
+}) => {
+  const { ignore, patch, minor, major, ready, done } = releaseLabels || {};
+  core.getInput
+    .mockReturnValueOnce(preRelease ?? "")
+    .mockReturnValueOnce(releaseAs ?? "")
+    .mockReturnValueOnce(ignore ?? "")
+    .mockReturnValueOnce(patch ?? "")
+    .mockReturnValueOnce(minor ?? "")
+    .mockReturnValueOnce(major ?? "")
+    .mockReturnValueOnce(ready ?? "")
+    .mockReturnValueOnce(done ?? "");
+};
 
-describe("getPreRelease()", () => {
-  it("should return value when `alpha-01`", () => {
-    getInput.mockReturnValueOnce("alpha-01");
-
-    const result = getPreRelease();
-
-    expect(result).toEqual("alpha-01");
+describe("parseInputs()", () => {
+  beforeEach(() => {
+    mockDefaultInputs();
   });
 
-  it("should return `undefined` when empty", () => {
-    getInput.mockReturnValueOnce("");
+  describe("when `preRelease`", () => {
+    it("should return value when `alpha-01`", () => {
+      mockInputs({ preRelease: "alpha-01" });
 
-    const result = getPreRelease();
+      const result = parseInputs();
 
-    expect(result).toEqual(undefined);
+      expect(result.preRelease).toEqual("alpha-01");
+    });
+
+    it("should return `undefined` when empty", () => {
+      mockInputs({ preRelease: "" });
+
+      const result = parseInputs();
+
+      expect(result.preRelease).toEqual(undefined);
+    });
+
+    test.each(["te.st", "te_st", "te st", "test!"])(
+      "should throw when `%s`",
+      (value) => {
+        mockInputs({ preRelease: value });
+
+        expect(parseInputs).toThrow();
+      },
+    );
   });
 
-  test.each(["te.st", "te_st", "te st", "test!"])(
-    "should throw when `%s`",
-    (value) => {
-      getInput.mockReturnValueOnce(value);
+  describe("when `releaseAs`", () => {
+    it("should return value when `1.2.3-alpha.4`", () => {
+      mockInputs({ releaseAs: "1.2.3-alpha.4" });
 
-      expect(getPreRelease).toThrow();
-    },
-  );
-});
+      const result = parseInputs();
 
-describe("getReleaseAs()", () => {
-  it("should return value when `1.2.3-alpha.4`", () => {
-    getInput.mockReturnValueOnce("1.2.3-alpha.4");
+      expect(result.releaseAs?.version).toEqual("1.2.3-alpha.4");
+    });
 
-    const result = getReleaseAs();
+    it("should return `undefined` when empty", () => {
+      mockInputs({ releaseAs: "" });
 
-    expect(result?.version).toEqual("1.2.3-alpha.4");
+      const result = parseInputs();
+
+      expect(result.releaseAs).toEqual(undefined);
+    });
+
+    it("should throw when `test`", () => {
+      mockInputs({ releaseAs: "test" });
+
+      expect(parseInputs).toThrow();
+    });
   });
 
-  it("should return `undefined` when empty", () => {
-    getInput.mockReturnValueOnce("");
+  describe("when `releaseLabels`", () => {
+    it("should return default values when empty", () => {
+      mockInputs({
+        releaseLabels: {
+          ignore: "",
+          patch: "",
+          minor: "",
+          major: "",
+          ready: "",
+          done: "",
+        },
+      });
 
-    const result = getReleaseAs();
+      const result = parseInputs();
 
-    expect(result).toEqual(undefined);
-  });
+      expect(result.releaseLabels).toEqual({
+        ignore: "changelog-ignore",
+        patch: "type: fix",
+        minor: "type: feature",
+        major: "breaking",
+        ready: "release: ready",
+        done: "release: done",
+      });
+    });
 
-  it("should throw when `test`", () => {
-    getInput.mockReturnValueOnce("test");
+    it("should return values when defined", () => {
+      mockInputs({
+        releaseLabels: {
+          ignore: "ignore-label",
+          patch: "patch-label",
+          minor: "minor-label",
+          major: "major-label",
+          ready: "ready-label",
+          done: "done-label",
+        },
+      });
 
-    expect(getReleaseAs).toThrow();
+      const result = parseInputs();
+
+      expect(result.releaseLabels).toEqual({
+        ignore: "ignore-label",
+        patch: "patch-label",
+        minor: "minor-label",
+        major: "major-label",
+        ready: "ready-label",
+        done: "done-label",
+      });
+    });
   });
 });

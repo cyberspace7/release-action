@@ -1,5 +1,8 @@
 import { SemVer } from "semver";
-import { PullRequest, releaseLabels } from "./repository";
+import { inputs } from "./inputs";
+import { PullRequest } from "./repository";
+
+const { releaseLabels } = inputs;
 
 export const createNewVersion = () => {
   return new SemVer("0.0.0");

@@ -17165,27 +17165,73 @@ const PRE_RELEASE_REGEX = /^[A-Za-z0-9-]+$/;
 const environmentValidator = z.object({
     GITHUB_TOKEN: z.string(),
 });
-const preReleaseValidator = z.string()
-    .regex(PRE_RELEASE_REGEX)
-    .or(z.literal(""))
-    .transform((value) => {
-    return value !== "" ? value : undefined;
+const inputsValidator = z.object({
+    preRelease: z.string()
+        .regex(PRE_RELEASE_REGEX)
+        .or(z.literal(""))
+        .transform((value) => {
+        return value !== "" ? value : undefined;
+    }),
+    releaseAs: z.string()
+        .or(z.literal(""))
+        .transform((value) => {
+        if (value && !semver_default().valid(value)) {
+            throw new Error(`Invalid version: "${value}".`);
+        }
+        return value ? semver_default().parse(value) ?? undefined : undefined;
+    }),
+    releaseLabels: z.object({
+        ignore: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "changelog-ignore";
+        }),
+        patch: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "type: fix";
+        }),
+        minor: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "type: feature";
+        }),
+        major: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "breaking";
+        }),
+        ready: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "release: ready";
+        }),
+        done: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "release: done";
+        }),
+    }),
 });
-const releaseAsValidator = z.string()
-    .or(z.literal(""))
-    .transform((value) => {
-    if (value && !semver_default().valid(value)) {
-        throw new Error(`Invalid version: "${value}".`);
-    }
-    return value ? semver_default().parse(value) ?? undefined : undefined;
-});
-const environment = environmentValidator.parse(process.env);
-const getPreRelease = () => {
-    return preReleaseValidator.parse((0,core.getInput)("pre-release"));
+const parseEnvironment = () => {
+    return environmentValidator.parse(process.env);
 };
-const getReleaseAs = () => {
-    return releaseAsValidator.parse((0,core.getInput)("release-as"));
+const parseInputs = () => {
+    return inputsValidator.parse({
+        preRelease: (0,core.getInput)("pre-release"),
+        releaseAs: (0,core.getInput)("release-as"),
+        releaseLabels: {
+            ignore: (0,core.getInput)("label-ignore"),
+            patch: (0,core.getInput)("label-patch"),
+            minor: (0,core.getInput)("label-minor"),
+            major: (0,core.getInput)("label-major"),
+            ready: (0,core.getInput)("label-ready"),
+            done: (0,core.getInput)("label-done"),
+        },
+    });
 };
+const environment = parseEnvironment();
+const inputs = parseInputs();
 
 ;// CONCATENATED MODULE: ./node_modules/.pnpm/diff@5.1.0/node_modules/diff/lib/index.mjs
 function Diff() {}
@@ -18798,14 +18844,6 @@ const DEFAULT_BRANCH_NAME = "main";
 const NEXT_RELEASE_BRANCH_NAME = "releases/next";
 const owner = github.context.repo.owner;
 const repo = github.context.repo.repo;
-const releaseLabels = {
-    ignore: "changelog-ignore",
-    patch: "type: fix",
-    minor: "type: feature",
-    major: "breaking",
-    ready: "release: ready",
-    done: "release: done",
-};
 const getReleaseCommitMessage = (nextVersion) => {
     return `chore(main): release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
 };
@@ -18854,7 +18892,7 @@ const getPullRequestsSinceLastRelease = () => {
             direction: "desc",
         }, ({ data: pullRequests }, done) => {
             const releasePrIndex = pullRequests.findIndex(({ labels }) => {
-                return labels.some(({ name }) => name === releaseLabels.done);
+                return labels.some(({ name }) => name === inputs.releaseLabels.done);
             });
             if (releasePrIndex > -1) {
                 done();
@@ -18906,8 +18944,8 @@ const getReleasePullRequest = (state) => {
         });
         const filteredPullRequests = state === "merged"
             ? pullRequests.filter(({ labels, merged_at }) => !!merged_at &&
-                labels.some(({ name }) => name === releaseLabels.ready))
-            : pullRequests.filter(({ labels }) => labels.some(({ name }) => name === releaseLabels.ready));
+                labels.some(({ name }) => name === inputs.releaseLabels.ready))
+            : pullRequests.filter(({ labels }) => labels.some(({ name }) => name === inputs.releaseLabels.ready));
         if (filteredPullRequests.length > 1) {
             core.warning(`More than one ${state} release pull request found. Using the last updated.`, {
                 title: "Multiple Release PR",
@@ -19015,16 +19053,16 @@ const createRelease = (appName, tag, preRelease) => {
 };
 const addLabelToReleasePullRequest = (number) => {
     return tryExecute(async () => {
-        core.debug(`Adding label "${releaseLabels.ready}" to release pull request #${number}...`);
+        core.debug(`Adding label "${inputs.releaseLabels.ready}" to release pull request #${number}...`);
         const { data: updatedPullRequest } = await octokit.rest.issues.addLabels({
             owner,
             repo,
             issue_number: number,
-            labels: [releaseLabels.ready],
+            labels: [inputs.releaseLabels.ready],
         });
-        core.info(`Label "${releaseLabels.ready}" added to release pull request #${number}.`);
+        core.info(`Label "${inputs.releaseLabels.ready}" added to release pull request #${number}.`);
         return updatedPullRequest;
-    }, `Error while adding label "${releaseLabels.ready}" to release pull request #${number}.`);
+    }, `Error while adding label "${inputs.releaseLabels.ready}" to release pull request #${number}.`);
 };
 const updateReleasePullRequest = (pullRequest, nextVersion, body) => {
     const { number } = pullRequest;
@@ -19049,7 +19087,7 @@ const completeReleasePullRequest = (pullRequest) => {
             owner,
             repo,
             issue_number: number,
-            labels: [releaseLabels.done],
+            labels: [inputs.releaseLabels.done],
         });
         core.info(`Release pull request #${number} updated.`);
         return updatedPullRequest;
@@ -19152,6 +19190,7 @@ const release = async (appName, currentVersion, releasePullRequest) => {
 ;// CONCATENATED MODULE: ./src/libs/version.ts
 
 
+const { releaseLabels } = inputs;
 const createNewVersion = () => {
     return new semver.SemVer("0.0.0");
 };
@@ -19236,13 +19275,11 @@ const setup = async () => {
     const openReleasePullRequest = await getReleasePullRequest("open");
     const pullRequests = await getPullRequestsSinceLastRelease();
     const bumpLevel = getVersionBumpLevel(pullRequests, currentVersion);
-    const releaseAs = getReleaseAs();
-    core.info(`Release as: ${releaseAs?.version || "none"}.`);
-    const preRelease = getPreRelease();
-    core.info(`Pre-release: ${preRelease || "none"}.`);
-    const nextVersion = !releaseAs
-        ? tryGetNextVersion(currentVersion, bumpLevel, preRelease)
-        : releaseAs;
+    core.info(`Release as: ${inputs.releaseAs?.version || "none"}.`);
+    core.info(`Pre-release: ${inputs.preRelease || "none"}.`);
+    const nextVersion = !inputs.releaseAs
+        ? tryGetNextVersion(currentVersion, bumpLevel, inputs.preRelease)
+        : inputs.releaseAs;
     const releaseNotes = nextVersion
         ? await generatePullRequestBody(nextVersion)
         : undefined;
@@ -19250,7 +19287,7 @@ const setup = async () => {
         name,
         currentVersion,
         nextVersion,
-        isManualVersion: (!!preRelease || !!releaseAs) &&
+        isManualVersion: (!!inputs.preRelease || !!inputs.releaseAs) &&
             github.context.eventName === "workflow_dispatch",
         mergedReleasePullRequest,
         openReleasePullRequest,

@@ -1,11 +1,7 @@
-import { releaseLabels } from "../src/libs/repository";
+import { inputs } from "../src/libs/inputs";
 import { main } from "../src/main";
-import {
-  core,
-  fileSystem,
-  mockPullRequestLists,
-  octokit,
-} from "../tests/mocks";
+import { mockPullRequestLists } from "../tests/helpers";
+import { core, fileSystem, octokit } from "../tests/mocks";
 
 const { readFileSync } = fileSystem;
 const { setFailed, setOutput, error, warning, notice } = core;
@@ -38,20 +34,20 @@ describe("main()", () => {
           state: "closed",
           merge_commit_sha: "sha",
           merged_at: "2020-01-01T00:00:00Z",
-          labels: [{ name: releaseLabels.done }],
+          labels: [{ name: inputs.releaseLabels.done }],
         },
         {
           number: 2,
           state: "closed",
           merge_commit_sha: "sha",
-          labels: [{ name: releaseLabels.ready }],
+          labels: [{ name: inputs.releaseLabels.ready }],
         },
         {
           number: 1,
           state: "closed",
           merged_at: "2020-01-01T00:00:00Z",
           merge_commit_sha: "sha",
-          labels: [{ name: releaseLabels.ready }],
+          labels: [{ name: inputs.releaseLabels.ready }],
         },
       ],
     });
@@ -119,7 +115,7 @@ describe("main()", () => {
           state: "closed",
           merged_at: "2020-01-01T00:00:00Z",
           merge_commit_sha: "sha",
-          labels: [{ name: releaseLabels.ready }],
+          labels: [{ name: inputs.releaseLabels.ready }],
         },
       ],
     });

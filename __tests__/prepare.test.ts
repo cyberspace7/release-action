@@ -1,14 +1,11 @@
-import { releaseLabels } from "../src/libs/repository";
+import { SemVer } from "semver";
+import { inputs } from "../src/libs/inputs";
 import { main } from "../src/main";
-import {
-  core,
-  fileSystem,
-  mockPullRequestLists,
-  octokit,
-} from "../tests/mocks";
+import { mockPullRequestLists } from "../tests/helpers";
+import { core, fileSystem, octokit } from "../tests/mocks";
 
 const { readFileSync } = fileSystem;
-const { setFailed, getInput, setOutput, error, warning, notice } = core;
+const { setFailed, setOutput, error, warning, notice } = core;
 const {
   rest: {
     repos: {
@@ -59,6 +56,16 @@ describe("main()", () => {
   ];
 
   beforeEach(() => {
+    inputs.preRelease = undefined;
+    inputs.releaseAs = undefined;
+    inputs.releaseLabels = {
+      ignore: "changelog-ignore",
+      patch: "type: fix",
+      minor: "type: feature",
+      major: "breaking",
+      ready: "release: ready",
+      done: "release: done",
+    };
     readFileSync.mockReturnValue(
       '{"name": "@owner/application", "version": "1.2.3-alpha.4", "dependencies": {}}',
     );
@@ -176,7 +183,7 @@ describe("main()", () => {
           state: "closed",
           merged_at: "2020-01-01T00:00:00Z",
           merge_commit_sha: "sha",
-          labels: [{ name: releaseLabels.ready }],
+          labels: [{ name: inputs.releaseLabels.ready }],
         },
       ],
     });
@@ -259,13 +266,13 @@ describe("main()", () => {
   });
 
   it("should request with `release-as`", async () => {
+    inputs.releaseAs = new SemVer("3.4.5-beta.6");
     mockPullRequestLists({ changes });
     pulls.create.mockResolvedValueOnce({
       data: {
         number: 1,
       },
     });
-    getInput.mockReturnValueOnce("3.4.5-beta.6");
     generateReleaseNotes.mockResolvedValueOnce({ data: { body: "" } });
 
     await main();
@@ -375,7 +382,7 @@ describe("main()", () => {
           title: "Release v1.3.0",
           state: "open",
           merge_commit_sha: "sha",
-          labels: [{ name: releaseLabels.done }],
+          labels: [{ name: inputs.releaseLabels.done }],
         },
         {
           number: 1,
@@ -383,7 +390,7 @@ describe("main()", () => {
           body: "Release notes\n\n- title (#4)\n- title (#5)\n\nThe end.",
           state: "open",
           merge_commit_sha: "sha",
-          labels: [{ name: releaseLabels.ready }],
+          labels: [{ name: inputs.releaseLabels.ready }],
         },
       ],
     };
@@ -616,7 +623,7 @@ describe("main()", () => {
     });
 
     it("should prepare when only change is pre-release", async () => {
-      getInput.mockReturnValueOnce("").mockReturnValueOnce("beta");
+      inputs.preRelease = "beta";
       mockPullRequestLists({
         openRelease,
         changes,

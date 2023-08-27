@@ -4,7 +4,7 @@ import { RequestError } from "@octokit/request-error";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { SemVer } from "semver";
 import { tryExecute } from "./common";
-import { environment } from "./inputs";
+import { environment, inputs } from "./inputs";
 import { PACKAGE_FILE_NAME } from "./nodePackage";
 import { getDiffMarkdown } from "./releaseNotes";
 
@@ -25,15 +25,6 @@ export const NEXT_RELEASE_BRANCH_NAME = "releases/next";
 
 const owner = context.repo.owner;
 const repo = context.repo.repo;
-
-export const releaseLabels = {
-  ignore: "changelog-ignore",
-  patch: "type: fix",
-  minor: "type: feature",
-  major: "breaking",
-  ready: "release: ready",
-  done: "release: done",
-} as const;
 
 const getReleaseCommitMessage = (nextVersion: SemVer) => {
   return `chore(main): release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
@@ -98,7 +89,7 @@ export const getPullRequestsSinceLastRelease = () => {
       },
       ({ data: pullRequests }, done) => {
         const releasePrIndex = pullRequests.findIndex(({ labels }) => {
-          return labels.some(({ name }) => name === releaseLabels.done);
+          return labels.some(({ name }) => name === inputs.releaseLabels.done);
         });
 
         if (releasePrIndex > -1) {
@@ -167,10 +158,10 @@ export const getReleasePullRequest = (state: "open" | "merged") => {
         ? pullRequests.filter(
             ({ labels, merged_at }) =>
               !!merged_at &&
-              labels.some(({ name }) => name === releaseLabels.ready),
+              labels.some(({ name }) => name === inputs.releaseLabels.ready),
           )
         : pullRequests.filter(({ labels }) =>
-            labels.some(({ name }) => name === releaseLabels.ready),
+            labels.some(({ name }) => name === inputs.releaseLabels.ready),
           );
     if (filteredPullRequests.length > 1) {
       core.warning(
@@ -316,20 +307,20 @@ export const createRelease = (
 export const addLabelToReleasePullRequest = (number: number) => {
   return tryExecute(async () => {
     core.debug(
-      `Adding label "${releaseLabels.ready}" to release pull request #${number}...`,
+      `Adding label "${inputs.releaseLabels.ready}" to release pull request #${number}...`,
     );
     const { data: updatedPullRequest } = await octokit.rest.issues.addLabels({
       owner,
       repo,
       issue_number: number,
-      labels: [releaseLabels.ready],
+      labels: [inputs.releaseLabels.ready],
     });
     core.info(
-      `Label "${releaseLabels.ready}" added to release pull request #${number}.`,
+      `Label "${inputs.releaseLabels.ready}" added to release pull request #${number}.`,
     );
 
     return updatedPullRequest;
-  }, `Error while adding label "${releaseLabels.ready}" to release pull request #${number}.`);
+  }, `Error while adding label "${inputs.releaseLabels.ready}" to release pull request #${number}.`);
 };
 
 export const updateReleasePullRequest = (
@@ -363,7 +354,7 @@ export const completeReleasePullRequest = (pullRequest: PullRequest) => {
       owner,
       repo,
       issue_number: number,
-      labels: [releaseLabels.done],
+      labels: [inputs.releaseLabels.done],
     });
     core.info(`Release pull request #${number} updated.`);
 
