@@ -13123,8 +13123,6 @@ __nccwpck_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(7733);
-// EXTERNAL MODULE: external "fs"
-var external_fs_ = __nccwpck_require__(7147);
 // EXTERNAL MODULE: ./node_modules/.pnpm/semver@7.5.4/node_modules/semver/index.js
 var semver = __nccwpck_require__(8884);
 var semver_default = /*#__PURE__*/__nccwpck_require__.n(semver);
@@ -17083,6 +17081,100 @@ var z = /*#__PURE__*/Object.freeze({
 
 
 
+;// CONCATENATED MODULE: ./src/libs/inputs.ts
+
+
+
+const PRE_RELEASE_REGEX = /^[A-Za-z0-9-]+$/;
+const environmentValidator = z.object({
+    GITHUB_TOKEN: z.string(),
+});
+const inputsValidator = z.object({
+    preRelease: z.string()
+        .regex(PRE_RELEASE_REGEX)
+        .or(z.literal(""))
+        .transform((value) => {
+        return value !== "" ? value : undefined;
+    }),
+    releaseAs: z.string()
+        .or(z.literal(""))
+        .transform((value) => {
+        if (value && !semver_default().valid(value)) {
+            throw new Error(`Invalid version: "${value}".`);
+        }
+        return value ? semver_default().parse(value) ?? undefined : undefined;
+    }),
+    releaseLabels: z.object({
+        ignore: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "changelog-ignore";
+        }),
+        patch: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "type: fix";
+        }),
+        minor: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "type: feature";
+        }),
+        major: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "breaking";
+        }),
+        ready: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "release: ready";
+        }),
+        done: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "release: done";
+        }),
+    }),
+    branches: z.object({
+        production: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "main";
+        }),
+        release: z.string()
+            .or(z.literal(""))
+            .transform((value) => {
+            return value?.length ? value : "releases/next";
+        }),
+    }),
+});
+const parseEnvironment = () => {
+    return environmentValidator.parse(process.env);
+};
+const parseInputs = () => {
+    return inputsValidator.parse({
+        preRelease: (0,core.getInput)("pre-release"),
+        releaseAs: (0,core.getInput)("release-as"),
+        releaseLabels: {
+            ignore: (0,core.getInput)("label-ignore"),
+            patch: (0,core.getInput)("label-patch"),
+            minor: (0,core.getInput)("label-minor"),
+            major: (0,core.getInput)("label-major"),
+            ready: (0,core.getInput)("label-ready"),
+            done: (0,core.getInput)("label-done"),
+        },
+        branches: {
+            production: (0,core.getInput)("branch-production"),
+            release: (0,core.getInput)("branch-release"),
+        },
+    });
+};
+const environment = parseEnvironment();
+const inputs = parseInputs();
+
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(7147);
 ;// CONCATENATED MODULE: ./src/libs/common.ts
 
 const tryExecute = (fn, errorMessage) => {
@@ -17157,82 +17249,6 @@ const createNewNodePackageEncodedContent = (version) => {
 
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+github@5.1.1/node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(3695);
-;// CONCATENATED MODULE: ./src/libs/inputs.ts
-
-
-
-const PRE_RELEASE_REGEX = /^[A-Za-z0-9-]+$/;
-const environmentValidator = z.object({
-    GITHUB_TOKEN: z.string(),
-});
-const inputsValidator = z.object({
-    preRelease: z.string()
-        .regex(PRE_RELEASE_REGEX)
-        .or(z.literal(""))
-        .transform((value) => {
-        return value !== "" ? value : undefined;
-    }),
-    releaseAs: z.string()
-        .or(z.literal(""))
-        .transform((value) => {
-        if (value && !semver_default().valid(value)) {
-            throw new Error(`Invalid version: "${value}".`);
-        }
-        return value ? semver_default().parse(value) ?? undefined : undefined;
-    }),
-    releaseLabels: z.object({
-        ignore: z.string()
-            .or(z.literal(""))
-            .transform((value) => {
-            return value?.length ? value : "changelog-ignore";
-        }),
-        patch: z.string()
-            .or(z.literal(""))
-            .transform((value) => {
-            return value?.length ? value : "type: fix";
-        }),
-        minor: z.string()
-            .or(z.literal(""))
-            .transform((value) => {
-            return value?.length ? value : "type: feature";
-        }),
-        major: z.string()
-            .or(z.literal(""))
-            .transform((value) => {
-            return value?.length ? value : "breaking";
-        }),
-        ready: z.string()
-            .or(z.literal(""))
-            .transform((value) => {
-            return value?.length ? value : "release: ready";
-        }),
-        done: z.string()
-            .or(z.literal(""))
-            .transform((value) => {
-            return value?.length ? value : "release: done";
-        }),
-    }),
-});
-const parseEnvironment = () => {
-    return environmentValidator.parse(process.env);
-};
-const parseInputs = () => {
-    return inputsValidator.parse({
-        preRelease: (0,core.getInput)("pre-release"),
-        releaseAs: (0,core.getInput)("release-as"),
-        releaseLabels: {
-            ignore: (0,core.getInput)("label-ignore"),
-            patch: (0,core.getInput)("label-patch"),
-            minor: (0,core.getInput)("label-minor"),
-            major: (0,core.getInput)("label-major"),
-            ready: (0,core.getInput)("label-ready"),
-            done: (0,core.getInput)("label-done"),
-        },
-    });
-};
-const environment = parseEnvironment();
-const inputs = parseInputs();
-
 ;// CONCATENATED MODULE: ./node_modules/.pnpm/diff@5.1.0/node_modules/diff/lib/index.mjs
 function Diff() {}
 Diff.prototype = {
@@ -18840,8 +18856,6 @@ const getDiffMarkdown = (oldContent, newContent) => {
 
 const octokit = (0,github.getOctokit)(environment.GITHUB_TOKEN);
 const RELEASE_TAG_PREFFIX = "v";
-const DEFAULT_BRANCH_NAME = "main";
-const NEXT_RELEASE_BRANCH_NAME = "releases/next";
 const owner = github.context.repo.owner;
 const repo = github.context.repo.repo;
 const getReleaseCommitMessage = (nextVersion) => {
@@ -18870,7 +18884,7 @@ const getNodePackageSha = () => {
             owner,
             repo,
             path: PACKAGE_FILE_NAME,
-            ref: `refs/heads/${NEXT_RELEASE_BRANCH_NAME}`,
+            ref: `refs/heads/${inputs.branches.release}`,
         });
         const sha = "sha" in contents ? contents.sha : undefined;
         if (!sha) {
@@ -18910,13 +18924,13 @@ const getPullRequestsSinceLastRelease = () => {
 const getReleaseBranch = () => {
     return tryExecute(async () => {
         try {
-            core.debug(`Getting branch "${NEXT_RELEASE_BRANCH_NAME}"...`);
+            core.debug(`Getting branch "${inputs.branches.release}"...`);
             const { data: branch } = await octokit.rest.repos.getBranch({
                 owner,
                 repo,
-                branch: NEXT_RELEASE_BRANCH_NAME,
+                branch: inputs.branches.release,
             });
-            core.info(`Branch "${NEXT_RELEASE_BRANCH_NAME}" found.`);
+            core.info(`Branch "${inputs.branches.release}" found.`);
             return branch;
         }
         catch (error) {
@@ -18924,10 +18938,10 @@ const getReleaseBranch = () => {
                 error.status !== 404) {
                 throw error;
             }
-            core.info(`Branch "${NEXT_RELEASE_BRANCH_NAME}" not found.`);
+            core.info(`Branch "${inputs.branches.release}" not found.`);
             return undefined;
         }
-    }, `Error while getting branch "${NEXT_RELEASE_BRANCH_NAME}".`);
+    }, `Error while getting branch "${inputs.branches.release}".`);
 };
 const getReleasePullRequest = (state) => {
     return tryExecute(async () => {
@@ -18936,8 +18950,8 @@ const getReleasePullRequest = (state) => {
             owner,
             repo,
             state: state === "open" ? "open" : "closed",
-            head: NEXT_RELEASE_BRANCH_NAME,
-            base: DEFAULT_BRANCH_NAME,
+            head: inputs.branches.release,
+            base: inputs.branches.production,
             sort: "updated",
             direction: "desc",
             per_page: 2,
@@ -18972,20 +18986,20 @@ const generateReleaseNotesForPullRequest = (nextVersion) => {
 };
 const createReleaseBranch = () => {
     return tryExecute(async () => {
-        core.debug(`Creating branch "${NEXT_RELEASE_BRANCH_NAME}"...`);
+        core.debug(`Creating branch "${inputs.branches.release}"...`);
         const { data: branch } = await octokit.rest.git.createRef({
             owner,
             repo,
-            ref: `refs/heads/${NEXT_RELEASE_BRANCH_NAME}`,
+            ref: `refs/heads/${inputs.branches.release}`,
             sha: github.context.sha,
         });
-        core.info(`Branch "${NEXT_RELEASE_BRANCH_NAME}" created.`);
+        core.info(`Branch "${inputs.branches.release}" created.`);
         return branch;
-    }, `Error while creating branch "${NEXT_RELEASE_BRANCH_NAME}".`);
+    }, `Error while creating branch "${inputs.branches.release}".`);
 };
 const commitFileToReleaseBranch = (sha, content, nextVersion) => {
     return tryExecute(async () => {
-        core.debug(`Commiting to branch "${NEXT_RELEASE_BRANCH_NAME}"...`);
+        core.debug(`Commiting to branch "${inputs.branches.release}"...`);
         const { data: commit } = await octokit.rest.repos.createOrUpdateFileContents({
             owner,
             repo,
@@ -18993,11 +19007,11 @@ const commitFileToReleaseBranch = (sha, content, nextVersion) => {
             message: getReleaseCommitMessage(nextVersion),
             content,
             sha,
-            branch: NEXT_RELEASE_BRANCH_NAME,
+            branch: inputs.branches.release,
         });
-        core.info(`Commit created to branch "${NEXT_RELEASE_BRANCH_NAME}".`);
+        core.info(`Commit created to branch "${inputs.branches.release}".`);
         return commit;
-    }, `Error while commiting to branch "${NEXT_RELEASE_BRANCH_NAME}".`);
+    }, `Error while commiting to branch "${inputs.branches.release}".`);
 };
 const createReleasePullRequest = (nextVersion, body) => {
     const title = getReleasePullRequestTitle(nextVersion);
@@ -19007,8 +19021,8 @@ const createReleasePullRequest = (nextVersion, body) => {
             owner,
             repo,
             title,
-            head: NEXT_RELEASE_BRANCH_NAME,
-            base: DEFAULT_BRANCH_NAME,
+            head: inputs.branches.release,
+            base: inputs.branches.production,
             body,
         });
         core.info(`Release pull request "${title}" created: #${pullRequest.number}.`);
@@ -19111,6 +19125,7 @@ const commentPullRequest = (number, body) => {
 
 
 
+
 const commitNodePackage = async (nextVersion) => {
     const sha = await getNodePackageSha();
     const content = createNewNodePackageEncodedContent(nextVersion);
@@ -19121,7 +19136,7 @@ const getOrCreateReleaseBranch = async () => {
         return;
     }
     await createReleaseBranch();
-    core.notice(`Next release branch "${NEXT_RELEASE_BRANCH_NAME}" has been created.`, {
+    core.notice(`Next release branch "${inputs.branches.release}" has been created.`, {
         title: "Branch Created",
     });
 };
