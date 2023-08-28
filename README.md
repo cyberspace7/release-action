@@ -44,12 +44,12 @@ sequenceDiagram
 
   D ->> M: Merge PR #35;1 (fix)
   M -->> R: Open PR #35;2 (automatic)
-  Note over M,R: Release v0.0.1
+  Note over M,R: Release v1.0.1
   D ->> M: Merge PR #35;3 (feature)
   M -->> R: Update PR #35;2 (automatic)
-  Note over M,R: Release v0.1.0
+  Note over M,R: Release v1.1.0
   R ->> M: Merge
-  Note over M: Release v0.1.0
+  Note over M: Release v1.1.0
 ```
 
 Below is the prepare process when new changes are detected:
@@ -138,17 +138,14 @@ jobs:
 > another job to deploy the fresh release (i.e. create a package, deploy a Docker container,
 > etc.).
 
-When opening a PR on the `main` branch, use one (or more) of these labels in order to bump
-the version to the right level:
+When opening a PR on the `main` branch, use one (or more) of the following labels in
+order to bump the version to the right level. They can be customised through [inputs](#inputs).
 
 - `type: fix`: Bump the **patch** part of the version.
 - `type: feature`: Bump the **minor** part of the version.
 - `breaking`: Bump the **major** part of the version, or minor if current version is under `1.0`.
 - `changelog-ignore`: Dont bump whatever other labels are. It should be excluded from
   the release notes generation (see bellow).
-
-You want to be able to personalize those labels? Upvote or comment
-[this issue](https://github.com/cyberspace7/release-action/issues/5).
 
 That's it, when merged, you should find an open release PR. You just have to merge it when you wish to release, voilà !
 
@@ -183,16 +180,25 @@ permissions:
 
 ### Inputs
 
-- `release-as` (`string`): Force a specific version.
-- `pre-release` (`string`): Name of the pre-release version (`alpha`, `beta`, `rc`...).
-  If not empty, will trigger a pre-release.
+| Name           | Description                                                                                                               | Default Value      |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `release-as`   | Force a specific version.                                                                                                 |                    |
+| `pre-release`  | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                     |                    |
+| `label-ignore` | Label for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage). | `changelog-ignore` |
+| `label-patch`  | Label for pull requests to bump a patch version.                                                                          | `type: fix`        |
+| `label-minor`  | Label for pull requests to bump a minor version.                                                                          | `type: feature`    |
+| `label-major`  | Label for pull requests to bump a major version.                                                                          | `breaking`         |
+| `label-ready`  | Label automatically used by Release Action for release PRs.                                                               | `release: ready`   |
+| `label-done`   | Label automatically used by Release Action for release PRs that have been processed (current version released).           | `release: done`    |
 
 ### Outputs
 
-- `current-version` (`string`): Version of the current code.
-- `next-version` (`string`): Verion of the next release.
-- `release-pr` (`number`): Number of the opened release pull request.
-- `is-released` (`boolean`): Current version has been released.
+| Name              | Type      | Description                                |
+| ----------------- | --------- | ------------------------------------------ |
+| `current-version` | `string`  | Version of the current code.               |
+| `next-version`    | `string`  | Version of the next release.               |
+| `release-pr`      | `number`  | Number of the opened release pull request. |
+| `is-released`     | `boolean` | Current version has been released.         |
 
 ### Secrets
 
@@ -200,7 +206,9 @@ _None._
 
 ### Environment variables
 
-- `GITHUB_TOKEN`: Authentification token used for GitHub API.
+| Name           | Description                                 |
+| -------------- | ------------------------------------------- |
+| `GITHUB_TOKEN` | Authentification token used for GitHub API. |
 
 ## Development
 

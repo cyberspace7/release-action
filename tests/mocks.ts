@@ -1,7 +1,7 @@
 process.env["GITHUB_TOKEN"] = "token";
 
-const githubResponse = { data: undefined };
-const githubResponseList = { data: [] };
+export const githubResponse = { data: undefined };
+export const githubResponseList = { data: [] };
 
 export const core = {
   setFailed: jest.fn(),
@@ -59,6 +59,16 @@ core.group.mockImplementation(async (_, fn) => {
   return fn();
 });
 
+core.getInput
+  .mockReturnValueOnce("")
+  .mockReturnValueOnce("")
+  .mockReturnValueOnce("changelog-ignore")
+  .mockReturnValueOnce("type: fix")
+  .mockReturnValueOnce("type: feature")
+  .mockReturnValueOnce("breaking")
+  .mockReturnValueOnce("release: ready")
+  .mockReturnValueOnce("release: done");
+
 octokit.paginate.mockImplementation(async (fn, args, callback) => {
   const results: unknown[] = [];
   let isDone = false;
@@ -96,33 +106,3 @@ jest.mock("@actions/github", () => {
 jest.mock("fs", () => {
   return fileSystem;
 });
-
-export const mockPullRequestLists = ({
-  mergedRelease,
-  openRelease,
-  changes,
-}: {
-  mergedRelease?: unknown[];
-  openRelease?: unknown[];
-  changes?: unknown[];
-}) => {
-  if (mergedRelease) {
-    octokit.rest.pulls.list.mockResolvedValueOnce({
-      data: mergedRelease,
-    });
-  } else {
-    octokit.rest.pulls.list.mockResolvedValueOnce(githubResponseList);
-  }
-  if (openRelease) {
-    octokit.rest.pulls.list.mockResolvedValueOnce({
-      data: openRelease,
-    });
-  } else {
-    octokit.rest.pulls.list.mockResolvedValueOnce(githubResponseList);
-  }
-  if (changes) {
-    octokit.rest.pulls.list.mockResolvedValueOnce({
-      data: changes,
-    });
-  }
-};

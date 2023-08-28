@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import { context } from "@actions/github";
 import { SemVer } from "semver";
-import { getPreRelease, getReleaseAs } from "./libs/inputs";
+import { inputs } from "./libs/inputs";
 import { getNodePackage } from "./libs/nodePackage";
 import { createReleasePullRequestBody } from "./libs/releaseNotes";
 import {
@@ -33,13 +33,11 @@ export const setup = async () => {
   const openReleasePullRequest = await getReleasePullRequest("open");
   const pullRequests = await getPullRequestsSinceLastRelease();
   const bumpLevel = getVersionBumpLevel(pullRequests, currentVersion);
-  const releaseAs = getReleaseAs();
-  core.info(`Release as: ${releaseAs?.version || "none"}.`);
-  const preRelease = getPreRelease();
-  core.info(`Pre-release: ${preRelease || "none"}.`);
-  const nextVersion = !releaseAs
-    ? tryGetNextVersion(currentVersion, bumpLevel, preRelease)
-    : releaseAs;
+  core.info(`Release as: ${inputs.releaseAs?.version || "none"}.`);
+  core.info(`Pre-release: ${inputs.preRelease || "none"}.`);
+  const nextVersion = !inputs.releaseAs
+    ? tryGetNextVersion(currentVersion, bumpLevel, inputs.preRelease)
+    : inputs.releaseAs;
   const releaseNotes = nextVersion
     ? await generatePullRequestBody(nextVersion)
     : undefined;
@@ -49,7 +47,7 @@ export const setup = async () => {
     currentVersion,
     nextVersion,
     isManualVersion:
-      (!!preRelease || !!releaseAs) &&
+      (!!inputs.preRelease || !!inputs.releaseAs) &&
       context.eventName === "workflow_dispatch",
     mergedReleasePullRequest,
     openReleasePullRequest,
