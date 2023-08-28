@@ -67,6 +67,20 @@ const inputsValidator = z.object({
         return value?.length ? value : "release: done";
       }),
   }),
+  branches: z.object({
+    production: z
+      .string()
+      .or(z.literal(""))
+      .transform((value) => {
+        return value?.length ? value : "main";
+      }),
+    release: z
+      .string()
+      .or(z.literal(""))
+      .transform((value) => {
+        return value?.length ? value : "releases/next";
+      }),
+  }),
 });
 
 export const parseEnvironment = () => {
@@ -84,6 +98,10 @@ export const parseInputs = () => {
       major: getInput("label-major"),
       ready: getInput("label-ready"),
       done: getInput("label-done"),
+    },
+    labels: {
+      production: getInput("branch-production"),
+      release: getInput("branch-release"),
     },
   });
 };
