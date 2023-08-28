@@ -6,6 +6,7 @@ export const mockInputs = ({
   preRelease,
   releaseAs,
   releaseLabels,
+  branches,
 }: {
   preRelease?: string;
   releaseAs?: string;
@@ -17,6 +18,10 @@ export const mockInputs = ({
     ready?: string;
     done?: string;
   };
+  branches?: {
+    production?: string;
+    release?: string;
+  };
 }) => {
   const { ignore, patch, minor, major, ready, done } = releaseLabels || {};
   core.getInput
@@ -27,7 +32,9 @@ export const mockInputs = ({
     .mockReturnValueOnce(minor ?? "")
     .mockReturnValueOnce(major ?? "")
     .mockReturnValueOnce(ready ?? "")
-    .mockReturnValueOnce(done ?? "");
+    .mockReturnValueOnce(done ?? "")
+    .mockReturnValueOnce(branches?.production ?? "")
+    .mockReturnValueOnce(branches?.release ?? "");
 };
 
 describe("parseInputs()", () => {
@@ -132,6 +139,40 @@ describe("parseInputs()", () => {
         major: "major-label",
         ready: "ready-label",
         done: "done-label",
+      });
+    });
+  });
+
+  describe("when `branches`", () => {
+    it("should return default values when empty", () => {
+      mockInputs({
+        branches: {
+          production: "",
+          release: "",
+        },
+      });
+
+      const result = parseInputs();
+
+      expect(result.branches).toEqual({
+        production: "main",
+        release: "releases/next",
+      });
+    });
+
+    it("should return values when defined", () => {
+      mockInputs({
+        branches: {
+          production: "production",
+          release: "release",
+        },
+      });
+
+      const result = parseInputs();
+
+      expect(result.branches).toEqual({
+        production: "production",
+        release: "release",
       });
     });
   });

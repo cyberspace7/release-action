@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import { SemVer } from "semver";
+import { inputs } from "./libs/inputs";
 import { createNewNodePackageEncodedContent } from "./libs/nodePackage";
 import {
   addLabelToReleasePullRequest,
@@ -11,7 +12,6 @@ import {
   generateReleasePullRequestUpdateComment,
   getNodePackageSha,
   getReleaseBranch,
-  NEXT_RELEASE_BRANCH_NAME,
   PullRequest,
   updateReleasePullRequest,
 } from "./libs/repository";
@@ -29,7 +29,7 @@ const getOrCreateReleaseBranch = async () => {
 
   await createReleaseBranch();
   core.notice(
-    `Next release branch "${NEXT_RELEASE_BRANCH_NAME}" has been created.`,
+    `Next release branch "${inputs.branches.release}" has been created.`,
     {
       title: "Branch Created",
     },

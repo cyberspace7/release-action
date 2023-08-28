@@ -12,6 +12,10 @@ export const mockDefaultInputs = () => {
     ready: "release: ready",
     done: "release: done",
   };
+  inputs.branches = {
+    production: "main",
+    release: "releases/next",
+  };
 };
 
 export const mockPullRequestLists = ({

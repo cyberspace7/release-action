@@ -32,24 +32,24 @@ GitHub release when a specific PR is merged. It works in two phases:
 
 1. **Prepare**: Gets all merged PRs since last release, determines the next version based
    on labels (major, minor, patch) unless overriden (see [inputs](#inputs)) and creates
-   (or updates) a pull request including the updated `package.json` file;
+   (or updates) a pull request including the bumped version in `package.json` file;
 2. **Release** (actually runs first): Once the release PR merged, a release is made on GitHub, that's it!
 
 ```mermaid
 sequenceDiagram
   autonumber
   participant D as Developments
-  participant M as Main Branch
+  participant P as Production Branch
   participant R as Release PR
 
-  D ->> M: Merge PR #35;1 (fix)
-  M -->> R: Open PR #35;2 (automatic)
-  Note over M,R: Release v1.0.1
-  D ->> M: Merge PR #35;3 (feature)
-  M -->> R: Update PR #35;2 (automatic)
-  Note over M,R: Release v1.1.0
-  R ->> M: Merge
-  Note over M: Release v1.1.0
+  D ->> P: Merge PR #35;1 (fix)
+  P -->> R: Open PR #35;2 (automatic)
+  Note over P,R: Release v1.0.1
+  D ->> P: Merge PR #35;3 (feature)
+  P -->> R: Update PR #35;2 (automatic)
+  Note over P,R: Release v1.1.0
+  R ->> P: Merge
+  Note over P: Release v1.1.0
 ```
 
 Below is the prepare process when new changes are detected:
@@ -138,8 +138,8 @@ jobs:
 > another job to deploy the fresh release (i.e. create a package, deploy a Docker container,
 > etc.).
 
-When opening a PR on the `main` branch, use one (or more) of the following labels in
-order to bump the version to the right level. They can be customised through [inputs](#inputs).
+When opening a PR on the main/production branch, use one (or more) of the following labels in
+order to bump the version to the right level. Labels and branches can be customised through [inputs](#inputs).
 
 - `type: fix`: Bump the **patch** part of the version.
 - `type: feature`: Bump the **minor** part of the version.
@@ -147,7 +147,7 @@ order to bump the version to the right level. They can be customised through [in
 - `changelog-ignore`: Dont bump whatever other labels are. It should be excluded from
   the release notes generation (see bellow).
 
-That's it, when merged, you should find an open release PR. You just have to merge it when you wish to release, voilà !
+That's it, when merged, you should find an open release PR. You just have to merge it when you wish to release, voilà!
 
 Changes are found comparing GitHub
 [generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes),
@@ -180,16 +180,18 @@ permissions:
 
 ### Inputs
 
-| Name           | Description                                                                                                               | Default Value      |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `release-as`   | Force a specific version.                                                                                                 |                    |
-| `pre-release`  | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                     |                    |
-| `label-ignore` | Label for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage). | `changelog-ignore` |
-| `label-patch`  | Label for pull requests to bump a patch version.                                                                          | `type: fix`        |
-| `label-minor`  | Label for pull requests to bump a minor version.                                                                          | `type: feature`    |
-| `label-major`  | Label for pull requests to bump a major version.                                                                          | `breaking`         |
-| `label-ready`  | Label automatically used by Release Action for release PRs.                                                               | `release: ready`   |
-| `label-done`   | Label automatically used by Release Action for release PRs that have been processed (current version released).           | `release: done`    |
+| Name                | Description                                                                                                               | Default Value      |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `release-as`        | Force a specific version.                                                                                                 |                    |
+| `pre-release`       | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                     |                    |
+| `label-ignore`      | Label for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage). | `changelog-ignore` |
+| `label-patch`       | Label for pull requests to bump a patch version.                                                                          | `type: fix`        |
+| `label-minor`       | Label for pull requests to bump a minor version.                                                                          | `type: feature`    |
+| `label-major`       | Label for pull requests to bump a major version.                                                                          | `breaking`         |
+| `label-ready`       | Label automatically used by Release Action for release PRs.                                                               | `release: ready`   |
+| `label-done`        | Label automatically used by Release Action for release PRs that have been processed (current version released).           | `release: done`    |
+| `branch-production` | Branch used for production, the base for all PRs going to production.                                                     | `main`             |
+| `branch-release`    | Branch used for release PRs.                                                                                              | `releases/next`    |
 
 ### Outputs
 

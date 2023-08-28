@@ -59,16 +59,6 @@ core.group.mockImplementation(async (_, fn) => {
   return fn();
 });
 
-core.getInput
-  .mockReturnValueOnce("")
-  .mockReturnValueOnce("")
-  .mockReturnValueOnce("changelog-ignore")
-  .mockReturnValueOnce("type: fix")
-  .mockReturnValueOnce("type: feature")
-  .mockReturnValueOnce("breaking")
-  .mockReturnValueOnce("release: ready")
-  .mockReturnValueOnce("release: done");
-
 octokit.paginate.mockImplementation(async (fn, args, callback) => {
   const results: unknown[] = [];
   let isDone = false;

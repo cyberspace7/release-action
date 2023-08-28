@@ -20,8 +20,6 @@ export type Release =
   RestEndpointMethodTypes["repos"]["createRelease"]["response"]["data"];
 
 const RELEASE_TAG_PREFFIX = "v";
-const DEFAULT_BRANCH_NAME = "main";
-export const NEXT_RELEASE_BRANCH_NAME = "releases/next";
 
 const owner = context.repo.owner;
 const repo = context.repo.repo;
@@ -62,7 +60,7 @@ export const getNodePackageSha = () => {
       owner,
       repo,
       path: PACKAGE_FILE_NAME,
-      ref: `refs/heads/${NEXT_RELEASE_BRANCH_NAME}`,
+      ref: `refs/heads/${inputs.branches.release}`,
     });
     const sha = "sha" in contents ? contents.sha : undefined;
     if (!sha) {
@@ -117,13 +115,13 @@ export const getPullRequestsSinceLastRelease = () => {
 export const getReleaseBranch = () => {
   return tryExecute(async () => {
     try {
-      core.debug(`Getting branch "${NEXT_RELEASE_BRANCH_NAME}"...`);
+      core.debug(`Getting branch "${inputs.branches.release}"...`);
       const { data: branch } = await octokit.rest.repos.getBranch({
         owner,
         repo,
-        branch: NEXT_RELEASE_BRANCH_NAME,
+        branch: inputs.branches.release,
       });
-      core.info(`Branch "${NEXT_RELEASE_BRANCH_NAME}" found.`);
+      core.info(`Branch "${inputs.branches.release}" found.`);
 
       return branch;
     } catch (error) {
@@ -134,10 +132,10 @@ export const getReleaseBranch = () => {
         throw error;
       }
 
-      core.info(`Branch "${NEXT_RELEASE_BRANCH_NAME}" not found.`);
+      core.info(`Branch "${inputs.branches.release}" not found.`);
       return undefined;
     }
-  }, `Error while getting branch "${NEXT_RELEASE_BRANCH_NAME}".`);
+  }, `Error while getting branch "${inputs.branches.release}".`);
 };
 
 export const getReleasePullRequest = (state: "open" | "merged") => {
@@ -147,8 +145,8 @@ export const getReleasePullRequest = (state: "open" | "merged") => {
       owner,
       repo,
       state: state === "open" ? "open" : "closed",
-      head: NEXT_RELEASE_BRANCH_NAME,
-      base: DEFAULT_BRANCH_NAME,
+      head: inputs.branches.release,
+      base: inputs.branches.production,
       sort: "updated",
       direction: "desc",
       per_page: 2,
@@ -201,17 +199,17 @@ export const generateReleaseNotesForPullRequest = (nextVersion: SemVer) => {
 
 export const createReleaseBranch = () => {
   return tryExecute(async () => {
-    core.debug(`Creating branch "${NEXT_RELEASE_BRANCH_NAME}"...`);
+    core.debug(`Creating branch "${inputs.branches.release}"...`);
     const { data: branch } = await octokit.rest.git.createRef({
       owner,
       repo,
-      ref: `refs/heads/${NEXT_RELEASE_BRANCH_NAME}`,
+      ref: `refs/heads/${inputs.branches.release}`,
       sha: context.sha,
     });
-    core.info(`Branch "${NEXT_RELEASE_BRANCH_NAME}" created.`);
+    core.info(`Branch "${inputs.branches.release}" created.`);
 
     return branch;
-  }, `Error while creating branch "${NEXT_RELEASE_BRANCH_NAME}".`);
+  }, `Error while creating branch "${inputs.branches.release}".`);
 };
 
 export const commitFileToReleaseBranch = (
@@ -220,7 +218,7 @@ export const commitFileToReleaseBranch = (
   nextVersion: SemVer,
 ) => {
   return tryExecute(async () => {
-    core.debug(`Commiting to branch "${NEXT_RELEASE_BRANCH_NAME}"...`);
+    core.debug(`Commiting to branch "${inputs.branches.release}"...`);
     const { data: commit } =
       await octokit.rest.repos.createOrUpdateFileContents({
         owner,
@@ -229,12 +227,12 @@ export const commitFileToReleaseBranch = (
         message: getReleaseCommitMessage(nextVersion),
         content,
         sha,
-        branch: NEXT_RELEASE_BRANCH_NAME,
+        branch: inputs.branches.release,
       });
-    core.info(`Commit created to branch "${NEXT_RELEASE_BRANCH_NAME}".`);
+    core.info(`Commit created to branch "${inputs.branches.release}".`);
 
     return commit;
-  }, `Error while commiting to branch "${NEXT_RELEASE_BRANCH_NAME}".`);
+  }, `Error while commiting to branch "${inputs.branches.release}".`);
 };
 
 export const createReleasePullRequest = (nextVersion: SemVer, body: string) => {
@@ -246,8 +244,8 @@ export const createReleasePullRequest = (nextVersion: SemVer, body: string) => {
       owner,
       repo,
       title,
-      head: NEXT_RELEASE_BRANCH_NAME,
-      base: DEFAULT_BRANCH_NAME,
+      head: inputs.branches.release,
+      base: inputs.branches.production,
       body,
     });
     core.info(
