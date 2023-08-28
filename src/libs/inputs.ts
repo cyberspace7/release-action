@@ -99,7 +99,7 @@ export const parseInputs = () => {
       ready: getInput("label-ready"),
       done: getInput("label-done"),
     },
-    labels: {
+    branches: {
       production: getInput("branch-production"),
       release: getInput("branch-release"),
     },
