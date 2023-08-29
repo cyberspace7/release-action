@@ -12,6 +12,7 @@ import {
   generateReleasePullRequestUpdateComment,
   getNodePackageSha,
   getReleaseBranch,
+  mergeIntoReleaseBranch,
   PullRequest,
   updateReleasePullRequest,
 } from "./libs/repository";
@@ -24,7 +25,7 @@ const commitNodePackage = async (nextVersion: SemVer) => {
 
 const getOrCreateReleaseBranch = async () => {
   if (await getReleaseBranch()) {
-    return;
+    return false;
   }
 
   await createReleaseBranch();
@@ -34,6 +35,7 @@ const getOrCreateReleaseBranch = async () => {
       title: "Branch Created",
     },
   );
+  return true;
 };
 
 const createOrUpdateReleasePullRequest = async (
@@ -87,9 +89,15 @@ export const prepare = async (
   isManualVersion: boolean,
 ) => {
   core.info(`Preparing new release...`);
+
+  let skipMerge = false;
   if (!releasePullRequest) {
-    await getOrCreateReleaseBranch();
+    skipMerge = await getOrCreateReleaseBranch();
   }
+  if (!skipMerge) {
+    await mergeIntoReleaseBranch();
+  }
+
   if (!releasePullRequest?.title.includes(nextVersion.version)) {
     await commitNodePackage(nextVersion);
   }

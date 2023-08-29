@@ -321,6 +321,25 @@ export const addLabelToReleasePullRequest = (number: number) => {
   }, `Error while adding label "${inputs.releaseLabels.ready}" to release pull request #${number}.`);
 };
 
+export const mergeIntoReleaseBranch = () => {
+  return tryExecute(async () => {
+    core.debug(
+      `Merging branch "${inputs.branches.production}" into "${inputs.branches.release}"...`,
+    );
+    const { data: merge } = await octokit.rest.repos.merge({
+      owner,
+      repo,
+      base: inputs.branches.release,
+      head: inputs.branches.production,
+      commit_message: `chore(main): merge "${inputs.branches.production}"`,
+    });
+    core.info(
+      `Branch "${inputs.branches.production}" merged into "${inputs.branches.release}".`,
+    );
+    return merge;
+  }, `Error while merging branch "${inputs.branches.production}" into "${inputs.branches.release}".`);
+};
+
 export const updateReleasePullRequest = (
   pullRequest: PullRequest,
   nextVersion: SemVer,

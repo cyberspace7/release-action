@@ -19078,6 +19078,20 @@ const addLabelToReleasePullRequest = (number) => {
         return updatedPullRequest;
     }, `Error while adding label "${inputs.releaseLabels.ready}" to release pull request #${number}.`);
 };
+const mergeIntoReleaseBranch = () => {
+    return tryExecute(async () => {
+        core.debug(`Merging branch "${inputs.branches.production}" into "${inputs.branches.release}"...`);
+        const { data: merge } = await octokit.rest.repos.merge({
+            owner,
+            repo,
+            base: inputs.branches.release,
+            head: inputs.branches.production,
+            commit_message: `chore(main): merge "${inputs.branches.production}"`,
+        });
+        core.info(`Branch "${inputs.branches.production}" merged into "${inputs.branches.release}".`);
+        return merge;
+    }, `Error while merging branch "${inputs.branches.production}" into "${inputs.branches.release}".`);
+};
 const updateReleasePullRequest = (pullRequest, nextVersion, body) => {
     const { number } = pullRequest;
     return tryExecute(async () => {
@@ -19133,12 +19147,13 @@ const commitNodePackage = async (nextVersion) => {
 };
 const getOrCreateReleaseBranch = async () => {
     if (await getReleaseBranch()) {
-        return;
+        return false;
     }
     await createReleaseBranch();
     core.notice(`Next release branch "${inputs.branches.release}" has been created.`, {
         title: "Branch Created",
     });
+    return true;
 };
 const createOrUpdateReleasePullRequest = async (nextVersion, releasePullRequest, releaseNotes, isManualVersion) => {
     if (!releasePullRequest) {
@@ -19172,8 +19187,12 @@ const createOrUpdateReleasePullRequest = async (nextVersion, releasePullRequest,
 };
 const prepare = async (nextVersion, releaseNotes, releasePullRequest, isManualVersion) => {
     core.info(`Preparing new release...`);
+    let skipMerge = false;
     if (!releasePullRequest) {
-        await getOrCreateReleaseBranch();
+        skipMerge = await getOrCreateReleaseBranch();
+    }
+    if (!skipMerge) {
+        await mergeIntoReleaseBranch();
     }
     if (!releasePullRequest?.title.includes(nextVersion.version)) {
         await commitNodePackage(nextVersion);
