@@ -14,6 +14,7 @@ const {
       getBranch,
       createOrUpdateFileContents,
       createRelease,
+      merge,
     },
     git: { createRef, createTag },
     pulls,
@@ -141,6 +142,7 @@ describe("main()", () => {
       ref: "refs/heads/releases/next",
       sha: "contextSha",
     });
+    expect(merge).toHaveBeenCalledTimes(0);
     expect(readFileSync).toHaveBeenCalledTimes(2);
     expect(readFileSync).toHaveBeenNthCalledWith(1, "package.json", "utf8");
     expect(readFileSync).toHaveBeenNthCalledWith(2, "package.json", "utf8");
@@ -217,6 +219,7 @@ describe("main()", () => {
     expect(generateReleaseNotes).toHaveBeenCalledTimes(0);
     expect(getBranch).toHaveBeenCalledTimes(0);
     expect(createRef).toHaveBeenCalledTimes(0);
+    expect(merge).toHaveBeenCalledTimes(0);
     expect(readFileSync).toHaveBeenCalledTimes(1);
     expect(getContent).toHaveBeenCalledTimes(0);
     expect(createOrUpdateFileContents).toHaveBeenCalledTimes(0);
@@ -257,6 +260,7 @@ describe("main()", () => {
     expect(generateReleaseNotes).toHaveBeenCalledTimes(0);
     expect(getBranch).toHaveBeenCalledTimes(0);
     expect(createRef).toHaveBeenCalledTimes(0);
+    expect(merge).toHaveBeenCalledTimes(0);
     expect(readFileSync).toHaveBeenCalledTimes(1);
     expect(getContent).toHaveBeenCalledTimes(0);
     expect(createOrUpdateFileContents).toHaveBeenCalledTimes(0);
@@ -310,6 +314,7 @@ describe("main()", () => {
     expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
     expect(getBranch).toHaveBeenCalledTimes(1);
     expect(createRef).toHaveBeenCalledTimes(1);
+    expect(merge).toHaveBeenCalledTimes(0);
     expect(readFileSync).toHaveBeenCalledTimes(2);
     expect(getContent).toHaveBeenCalledTimes(1);
     expect(createOrUpdateFileContents).toHaveBeenCalledTimes(1);
@@ -365,6 +370,14 @@ describe("main()", () => {
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(1);
       expect(createRef).toHaveBeenCalledTimes(0);
+      expect(merge).toHaveBeenCalledTimes(1);
+      expect(merge).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        base: "releases/next",
+        head: "main",
+        commit_message: 'chore(main): merge "main"',
+      });
       expect(readFileSync).toHaveBeenCalledTimes(2);
       expect(getContent).toHaveBeenCalledTimes(1);
       expect(createOrUpdateFileContents).toHaveBeenCalledTimes(1);
@@ -433,6 +446,7 @@ describe("main()", () => {
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(0);
       expect(createRef).toHaveBeenCalledTimes(0);
+      expect(merge).toHaveBeenCalledTimes(0);
       expect(readFileSync).toHaveBeenCalledTimes(1);
       expect(getContent).toHaveBeenCalledTimes(0);
       expect(createOrUpdateFileContents).toHaveBeenCalledTimes(0);
@@ -487,6 +501,7 @@ describe("main()", () => {
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(0);
       expect(createRef).toHaveBeenCalledTimes(0);
+      expect(merge).toHaveBeenCalledTimes(0);
       expect(readFileSync).toHaveBeenCalledTimes(1);
       expect(getContent).toHaveBeenCalledTimes(0);
       expect(createOrUpdateFileContents).toHaveBeenCalledTimes(0);
@@ -535,6 +550,14 @@ describe("main()", () => {
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(0);
       expect(createRef).toHaveBeenCalledTimes(0);
+      expect(merge).toHaveBeenCalledTimes(1);
+      expect(merge).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        base: "releases/next",
+        head: "main",
+        commit_message: 'chore(main): merge "main"',
+      });
       expect(readFileSync).toHaveBeenCalledTimes(1);
       expect(getContent).toHaveBeenCalledTimes(0);
       expect(createOrUpdateFileContents).toHaveBeenCalledTimes(0);
@@ -600,6 +623,14 @@ describe("main()", () => {
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(0);
       expect(createRef).toHaveBeenCalledTimes(0);
+      expect(merge).toHaveBeenCalledTimes(1);
+      expect(merge).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        base: "releases/next",
+        head: "main",
+        commit_message: 'chore(main): merge "main"',
+      });
       expect(readFileSync).toHaveBeenCalledTimes(2);
       expect(readFileSync).toHaveBeenNthCalledWith(2, "package.json", "utf8");
       expect(getContent).toHaveBeenCalledTimes(1);
@@ -663,6 +694,14 @@ describe("main()", () => {
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(0);
       expect(createRef).toHaveBeenCalledTimes(0);
+      expect(merge).toHaveBeenCalledTimes(1);
+      expect(merge).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        base: "releases/next",
+        head: "main",
+        commit_message: 'chore(main): merge "main"',
+      });
       expect(readFileSync).toHaveBeenCalledTimes(2);
       expect(getContent).toHaveBeenCalledTimes(1);
       expect(createOrUpdateFileContents).toHaveBeenCalledTimes(1);

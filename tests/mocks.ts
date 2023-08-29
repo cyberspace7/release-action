@@ -30,6 +30,7 @@ export const octokit = {
       generateReleaseNotes: jest.fn().mockResolvedValue(githubResponse),
       createOrUpdateFileContents: jest.fn().mockResolvedValue(githubResponse),
       createRelease: jest.fn().mockResolvedValue(githubResponse),
+      merge: jest.fn().mockResolvedValue(githubResponse),
     },
     pulls: {
       list: jest.fn().mockResolvedValue(githubResponseList),
