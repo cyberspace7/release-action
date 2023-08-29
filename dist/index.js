@@ -18822,7 +18822,7 @@ const createReleasePullRequestBody = (releaseNotes) => {
     return selectedLines.join("\n");
 };
 const getDiffMarkdown = (oldContent, newContent) => {
-    const diff = diffLines(oldContent.trim(), newContent.trim());
+    const diff = diffLines(oldContent.trim() + "\n", newContent.trim() + "\n");
     const markdownDiff = diff
         .map(({ added, removed, value }) => {
         const printedValue = value.replace(/\n$/, "");

@@ -12,7 +12,7 @@ export const createReleasePullRequestBody = (releaseNotes: string) => {
 };
 
 export const getDiffMarkdown = (oldContent: string, newContent: string) => {
-  const diff = diffLines(oldContent.trim(), newContent.trim());
+  const diff = diffLines(oldContent.trim() + "\n", newContent.trim() + "\n");
   const markdownDiff = diff
     .map(({ added, removed, value }) => {
       const printedValue = value.replace(/\n$/, "");

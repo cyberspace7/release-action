@@ -49,6 +49,15 @@ describe("createReleasePullRequestBody()", () => {
 });
 
 describe("getDiffMarkdown()", () => {
+  it("should return diff when adds", () => {
+    const oldContent = ["Line 1", "Line 2"].join("\n");
+    const newContent = ["Line 1", "Line 2", "Line 3"].join("\n");
+
+    const result = getDiffMarkdown(oldContent, newContent);
+
+    expect(result).toEqual("```diff\n+  Line 3\n```");
+  });
+
   it("should return diff when changes", () => {
     const oldContent = ["Line 1", "Line 2", "", "Line 3"].join("\n");
     const newContent = ["Line 1", "Line 1a", "", "Line 3"].join("\n");
