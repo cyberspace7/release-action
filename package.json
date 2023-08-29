@@ -1,6 +1,6 @@
 {
   "name": "@cyberspace7/release-action",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint --max-warnings 0 .",
