@@ -9,7 +9,7 @@ before marking this PR as ready. -->
 - [ ] PR: Add assignees
 - [ ] PR: Add labels (`type: fix`, `type: feature`, `breaking`, `changelog-ignore`) _if needed_
 - [ ] Code: Update tests _if needed_
-- [ ] Code: Update documentation ([`README`](README.md), ...) _if needed_
+- [ ] Code: Update documentation (`README`, ...) _if needed_
 
 ### Notes
 
