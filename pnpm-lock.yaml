@@ -1963,7 +1963,7 @@ packages:
       - supports-color
     dev: true
 
-  /@typescript-eslint/utils@6.5.0(eslint@8.48.0)(typescript@5.2.2):
+  /@typescript-eslint/utils@6.5.0(eslint@8.46.0)(typescript@5.2.2):
     resolution:
       {
         integrity: sha512-9nqtjkNykFzeVtt9Pj6lyR9WEdd8npPhhIPM992FWVkZuS6tmxHfGVnlUcjpUP2hv8r4w35nT33mlxd+Be1ACQ==,
@@ -1978,7 +1978,7 @@ packages:
       "@typescript-eslint/scope-manager": 6.5.0
       "@typescript-eslint/types": 6.5.0
       "@typescript-eslint/typescript-estree": 6.5.0(typescript@5.2.2)
-      eslint: 8.48.0
+      eslint: 8.46.0
       semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
