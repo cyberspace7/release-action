@@ -136,7 +136,7 @@ jobs:
 
 > :bulb: **Tip:** Use the `is-released` output (see [outputs](#outputs)) to execute
 > another job to deploy the fresh release (i.e. create a package, deploy a Docker container,
-> etc.).
+> etc.), as well as `pre-release`.
 
 When opening a PR on the main/production branch, use one (or more) of the following labels in
 order to bump the version to the right level. Labels and branches can be customised through [inputs](#inputs).
@@ -201,6 +201,7 @@ permissions:
 | `next-version`    | `string`  | Version of the next release.               |
 | `release-pr`      | `number`  | Number of the opened release pull request. |
 | `is-released`     | `boolean` | Current version has been released.         |
+| `pre-release`     | `boolean` | Pre-release part of the current version.   |
 
 ### Secrets
 
