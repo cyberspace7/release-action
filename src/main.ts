@@ -11,8 +11,9 @@ const tryRelease = async (
   releasePullRequest: PullRequest | undefined,
 ) => {
   if (currentVersion) {
-    core.info(`Current version: ${currentVersion?.version}`);
+    core.info(`Current version: ${currentVersion.version}`);
     core.setOutput("current-version", currentVersion.version);
+    core.setOutput("pre-release", currentVersion.prerelease.at(0));
     if (releasePullRequest) {
       await core.group("Release current version", () =>
         release(name, currentVersion, releasePullRequest),
@@ -27,6 +28,7 @@ const tryRelease = async (
   } else {
     core.info("No current version.");
     core.setOutput("current-version", undefined);
+    core.setOutput("pre-release", undefined);
   }
   core.setOutput("is-released", false);
 
