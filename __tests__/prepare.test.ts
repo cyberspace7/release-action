@@ -113,15 +113,16 @@ describe("main()", () => {
       "Release PR #1 has been opened.",
       { title: "PR Opened" },
     );
-    expect(setOutput).toHaveBeenCalledTimes(4);
+    expect(setOutput).toHaveBeenCalledTimes(5);
     expect(setOutput).toHaveBeenNthCalledWith(
       1,
       "current-version",
       "1.2.3-alpha.4",
     );
-    expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
-    expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", "1.3.0");
-    expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", 1);
+    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", "1.3.0");
+    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", 1);
     expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
     expect(generateReleaseNotes).toHaveBeenCalledWith({
       owner: "owner",
@@ -207,15 +208,16 @@ describe("main()", () => {
     expect(error).toHaveBeenCalledTimes(0);
     expect(warning).toHaveBeenCalledTimes(0);
     expect(notice).toHaveBeenCalledTimes(2);
-    expect(setOutput).toHaveBeenCalledTimes(4);
+    expect(setOutput).toHaveBeenCalledTimes(5);
     expect(setOutput).toHaveBeenNthCalledWith(
       1,
       "current-version",
       "1.2.3-alpha.4",
     );
-    expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", true);
-    expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", true);
+    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", undefined);
     expect(generateReleaseNotes).toHaveBeenCalledTimes(0);
     expect(getBranch).toHaveBeenCalledTimes(0);
     expect(createRef).toHaveBeenCalledTimes(0);
@@ -248,15 +250,16 @@ describe("main()", () => {
         title: "No Changes",
       },
     );
-    expect(setOutput).toHaveBeenCalledTimes(4);
+    expect(setOutput).toHaveBeenCalledTimes(5);
     expect(setOutput).toHaveBeenNthCalledWith(
       1,
       "current-version",
       "1.2.3-alpha.4",
     );
-    expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
-    expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", undefined);
     expect(generateReleaseNotes).toHaveBeenCalledTimes(0);
     expect(getBranch).toHaveBeenCalledTimes(0);
     expect(createRef).toHaveBeenCalledTimes(0);
@@ -298,19 +301,20 @@ describe("main()", () => {
       "Release PR #1 has been opened.",
       { title: "PR Opened" },
     );
-    expect(setOutput).toHaveBeenCalledTimes(4);
+    expect(setOutput).toHaveBeenCalledTimes(5);
     expect(setOutput).toHaveBeenNthCalledWith(
       1,
       "current-version",
       "1.2.3-alpha.4",
     );
-    expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
+    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
     expect(setOutput).toHaveBeenNthCalledWith(
-      3,
+      4,
       "next-version",
       "3.4.5-beta.6",
     );
-    expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", 1);
+    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", 1);
     expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
     expect(getBranch).toHaveBeenCalledTimes(1);
     expect(createRef).toHaveBeenCalledTimes(1);
@@ -358,15 +362,16 @@ describe("main()", () => {
         "Release PR #1 has been opened.",
         { title: "PR Opened" },
       );
-      expect(setOutput).toHaveBeenCalledTimes(4);
+      expect(setOutput).toHaveBeenCalledTimes(5);
       expect(setOutput).toHaveBeenNthCalledWith(
         1,
         "current-version",
         "1.2.3-alpha.4",
       );
-      expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
-      expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", "1.3.0");
-      expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", 1);
+      expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+      expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+      expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", "1.3.0");
+      expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", 1);
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(1);
       expect(createRef).toHaveBeenCalledTimes(0);
@@ -434,15 +439,16 @@ describe("main()", () => {
         "No new changes since the last check. Release PR #1 is up to date.",
         { title: "Up To Date" },
       );
-      expect(setOutput).toHaveBeenCalledTimes(4);
+      expect(setOutput).toHaveBeenCalledTimes(5);
       expect(setOutput).toHaveBeenNthCalledWith(
         1,
         "current-version",
         "1.2.3-alpha.4",
       );
-      expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
-      expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", "1.3.0");
-      expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", 1);
+      expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+      expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+      expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", "1.3.0");
+      expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", 1);
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(0);
       expect(createRef).toHaveBeenCalledTimes(0);
@@ -489,15 +495,16 @@ describe("main()", () => {
         "No new changes since the last check. Release PR #1 is up to date.",
         { title: "Up To Date" },
       );
-      expect(setOutput).toHaveBeenCalledTimes(4);
+      expect(setOutput).toHaveBeenCalledTimes(5);
       expect(setOutput).toHaveBeenNthCalledWith(
         1,
         "current-version",
         "1.2.3-alpha.4",
       );
-      expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
-      expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", "1.3.0");
-      expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", 1);
+      expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+      expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+      expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", "1.3.0");
+      expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", 1);
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(0);
       expect(createRef).toHaveBeenCalledTimes(0);
@@ -538,15 +545,16 @@ describe("main()", () => {
         "The existing release PR #1 has been updated.",
         { title: "PR Updated" },
       );
-      expect(setOutput).toHaveBeenCalledTimes(4);
+      expect(setOutput).toHaveBeenCalledTimes(5);
       expect(setOutput).toHaveBeenNthCalledWith(
         1,
         "current-version",
         "1.2.3-alpha.4",
       );
-      expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
-      expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", "1.3.0");
-      expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", 1);
+      expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+      expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+      expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", "1.3.0");
+      expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", 1);
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(0);
       expect(createRef).toHaveBeenCalledTimes(0);
@@ -611,15 +619,16 @@ describe("main()", () => {
         "The existing release PR #1 has been updated.",
         { title: "PR Updated" },
       );
-      expect(setOutput).toHaveBeenCalledTimes(4);
+      expect(setOutput).toHaveBeenCalledTimes(5);
       expect(setOutput).toHaveBeenNthCalledWith(
         1,
         "current-version",
         "1.2.3-alpha.4",
       );
-      expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
-      expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", "2.0.0");
-      expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", 1);
+      expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+      expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+      expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", "2.0.0");
+      expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", 1);
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(0);
       expect(createRef).toHaveBeenCalledTimes(0);
@@ -678,19 +687,20 @@ describe("main()", () => {
         "The existing release PR #1 has been updated.",
         { title: "PR Updated" },
       );
-      expect(setOutput).toHaveBeenCalledTimes(4);
+      expect(setOutput).toHaveBeenCalledTimes(5);
       expect(setOutput).toHaveBeenNthCalledWith(
         1,
         "current-version",
         "1.2.3-alpha.4",
       );
-      expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
+      expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+      expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
       expect(setOutput).toHaveBeenNthCalledWith(
-        3,
+        4,
         "next-version",
         "1.3.0-beta.0",
       );
-      expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", 1);
+      expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", 1);
       expect(generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(getBranch).toHaveBeenCalledTimes(0);
       expect(createRef).toHaveBeenCalledTimes(0);

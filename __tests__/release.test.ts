@@ -79,11 +79,12 @@ describe("main()", () => {
         title: "Release Created",
       },
     );
-    expect(setOutput).toHaveBeenCalledTimes(4);
+    expect(setOutput).toHaveBeenCalledTimes(5);
     expect(setOutput).toHaveBeenNthCalledWith(1, "current-version", "1.2.3");
-    expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", true);
-    expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", true);
+    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", undefined);
     expect(createTag).toHaveBeenCalledTimes(1);
     expect(createTag).toHaveBeenCalledWith({
       owner: "owner",
@@ -151,15 +152,16 @@ describe("main()", () => {
         title: "Release Created",
       },
     );
-    expect(setOutput).toHaveBeenCalledTimes(4);
+    expect(setOutput).toHaveBeenCalledTimes(5);
     expect(setOutput).toHaveBeenNthCalledWith(
       1,
       "current-version",
       "1.2.3-alpha.4",
     );
-    expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", true);
-    expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", true);
+    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", undefined);
     expect(createTag).toHaveBeenCalledTimes(1);
     expect(createTag).toHaveBeenCalledWith({
       owner: "owner",
@@ -189,11 +191,12 @@ describe("main()", () => {
     expect(error).toHaveBeenCalledTimes(0);
     expect(warning).toHaveBeenCalledTimes(0);
     expect(notice).toHaveBeenCalledTimes(1);
-    expect(setOutput).toHaveBeenCalledTimes(4);
+    expect(setOutput).toHaveBeenCalledTimes(5);
     expect(setOutput).toHaveBeenNthCalledWith(1, "current-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
-    expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", undefined);
     expect(createTag).toHaveBeenCalledTimes(0);
     expect(createRelease).toHaveBeenCalledTimes(0);
   });
@@ -208,15 +211,16 @@ describe("main()", () => {
     expect(notice).toHaveBeenNthCalledWith(1, "No pull request to release.", {
       title: "No Release",
     });
-    expect(setOutput).toHaveBeenCalledTimes(4);
+    expect(setOutput).toHaveBeenCalledTimes(5);
     expect(setOutput).toHaveBeenNthCalledWith(
       1,
       "current-version",
       "1.2.3-alpha.4",
     );
-    expect(setOutput).toHaveBeenNthCalledWith(2, "is-released", false);
-    expect(setOutput).toHaveBeenNthCalledWith(3, "next-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(4, "release-pr", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", undefined);
+    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", undefined);
     expect(createTag).toHaveBeenCalledTimes(0);
     expect(createRelease).toHaveBeenCalledTimes(0);
   });
