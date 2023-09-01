@@ -16,8 +16,8 @@ runs:
     - name: Create npm configuration
       shell: bash
       run: |
-        echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > .npmrc
-        echo "registry=https://npm.pkg.github.com/" >> .npmrc
+        echo "@cyberspace7:registry=https://npm.pkg.github.com/" > .npmrc
+        echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
         echo "always-auth=true" >> .npmrc
     - name: Install dependencies
       shell: bash
