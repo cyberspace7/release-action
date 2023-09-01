@@ -66,4 +66,4 @@ jobs:
       - name: Build
         run: pnpm build
       - name: Check if there is any diff
-        run: git diff dist/ --exit-code
+        run: git diff --exit-code dist/
