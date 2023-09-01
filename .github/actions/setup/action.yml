@@ -13,6 +13,12 @@ runs:
       with:
         node-version: 18
         cache: "pnpm"
+    - name: Create npm configuration
+      shell: bash
+      run: |
+        echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > .npmrc
+        echo "registry=https://npm.pkg.github.com/" >> .npmrc
+        echo "always-auth=true" >> .npmrc
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
