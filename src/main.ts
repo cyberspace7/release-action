@@ -71,7 +71,7 @@ const tryPrepare = async (
   const prNumber = await core.group("Prepare", () =>
     prepare(
       nextVersion,
-      releaseNotes || "",
+      releaseNotes ?? "",
       releasePullRequest,
       isManualVersion,
     ),

@@ -29,7 +29,7 @@ const getReleaseCommitMessage = (nextVersion: SemVer) => {
 };
 
 const getReleasePullRequestTitle = (nextVersion: SemVer) => {
-  return `Release ${RELEASE_TAG_PREFFIX}${nextVersion}`;
+  return `Release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
 };
 
 export const generateManualVersionComment = (nextVersion: SemVer) => {

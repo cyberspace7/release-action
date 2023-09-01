@@ -33,8 +33,8 @@ export const setup = async () => {
   const openReleasePullRequest = await getReleasePullRequest("open");
   const pullRequests = await getPullRequestsSinceLastRelease();
   const bumpLevel = getVersionBumpLevel(pullRequests, currentVersion);
-  core.info(`Release as: ${inputs.releaseAs?.version || "none"}.`);
-  core.info(`Pre-release: ${inputs.preRelease || "none"}.`);
+  core.info(`Release as: ${inputs.releaseAs?.version ?? "none"}.`);
+  core.info(`Pre-release: ${inputs.preRelease ?? "none"}.`);
   const nextVersion = !inputs.releaseAs
     ? tryGetNextVersion(currentVersion, bumpLevel, inputs.preRelease)
     : inputs.releaseAs;

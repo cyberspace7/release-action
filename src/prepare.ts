@@ -63,10 +63,10 @@ const createOrUpdateReleasePullRequest = async (
   const { number, body } = releasePullRequest;
   await updateReleasePullRequest(releasePullRequest, nextVersion, releaseNotes);
   const diffComment = generateReleasePullRequestUpdateComment(
-    body || "",
+    body ?? "",
     releaseNotes,
   );
-  if (diffComment || isManualVersion) {
+  if (diffComment ?? isManualVersion) {
     const manualVersionComment = isManualVersion
       ? generateManualVersionComment(nextVersion)
       : "";

@@ -1,17 +1,15 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/** @type {import("path")} */
 const path = require("path");
 
 /** @type {import("eslint").Linter.Config} */
 const configuration = {
-  parser: "@typescript-eslint/parser",
   parserOptions: {
     project: path.join(__dirname, "tsconfig.json"),
   },
-  plugins: ["@typescript-eslint"],
-  extends: ["plugin:@typescript-eslint/recommended", "prettier"],
-  rules: {
-    "no-console": "warn",
-  },
+  extends: ["@cyberspace7", "prettier"],
 };
 
 module.exports = configuration;

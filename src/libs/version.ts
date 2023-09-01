@@ -13,7 +13,7 @@ export const getVersionBumpLevel = (
   currentVersion: SemVer | null,
 ) => {
   const isStable = (currentVersion?.major ?? 0) > 0;
-  const releaseLabelNames = Object.values(releaseLabels) as string[];
+  const releaseLabelNames = Object.values(releaseLabels);
   const bumpLevels = pullRequests.map(({ labels }) => {
     const bumpLabels = labels
       .filter(({ name }) => {

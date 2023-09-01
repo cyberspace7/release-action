@@ -23,7 +23,7 @@ export const mockInputs = ({
     release?: string;
   };
 }) => {
-  const { ignore, patch, minor, major, ready, done } = releaseLabels || {};
+  const { ignore, patch, minor, major, ready, done } = releaseLabels ?? {};
   core.getInput
     .mockReturnValueOnce(preRelease ?? "")
     .mockReturnValueOnce(releaseAs ?? "")
