@@ -96,7 +96,7 @@ on:
       - main
   workflow_dispatch:
     inputs:
-      release-as:
+      release-as: # Specify a version, especially useful for first release if no significant PRs
         type: string
         description: Force the release version
       pre-release:
@@ -129,6 +129,13 @@ jobs:
         with:
           release-as: ${{ inputs.release-as }}
           pre-release: ${{ inputs.pre-release }}
+  publish: # You can execute another job when a release has been made
+    name: Publish
+    needs: release
+    if: ${{ needs.release.outputs.is-released == 'true' }}
+    uses: ./.github/workflows/publish.yml # Your own publish workflow
+    with:
+      pre-release: ${{ inputs.pre-release != '' }}
 ```
 
 > :warning: Use a manual version (`v0.3.1` in the example) until a `v1` becomes available.
