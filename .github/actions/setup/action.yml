@@ -17,7 +17,7 @@ runs:
       shell: bash
       run: |
         echo "@cyberspace7:registry=https://npm.pkg.github.com/" > .npmrc
-        echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+        echo "//npm.pkg.github.com/:_authToken=${GH_NPM_TOKEN}" >> .npmrc
         echo "always-auth=true" >> .npmrc
     - name: Install dependencies
       shell: bash
