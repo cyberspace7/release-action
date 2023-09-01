@@ -22,9 +22,11 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  packages: read
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_NPM_TOKEN: ${{ secrets.GH_NPM_TOKEN }}
 
 jobs:
   release:

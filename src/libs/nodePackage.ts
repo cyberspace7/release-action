@@ -36,7 +36,9 @@ export const getNodePackage = () => {
     core.debug(`Reading ${PACKAGE_FILE_NAME}...`);
     const packageFile = readFileSync(PACKAGE_FILE_NAME, "utf8");
     const nodePackage = nodePackageValidator.parse(JSON.parse(packageFile));
-    core.debug(`name="${nodePackage.name}"; version=${nodePackage.version}.`);
+    core.debug(
+      `name="${nodePackage.name}"; version=${nodePackage.version?.version}.`,
+    );
     core.info(`${PACKAGE_FILE_NAME} read.`);
 
     return nodePackage;
@@ -47,8 +49,8 @@ export const createNewNodePackageEncodedContent = (version: SemVer) => {
   return tryExecute(() => {
     core.debug(`Creating new ${PACKAGE_FILE_NAME} encoded content...`);
     const packageFile = readFileSync(PACKAGE_FILE_NAME, "utf8");
-    const content = JSON.parse(packageFile);
-    content.version = version.version;
+    const content = JSON.parse(packageFile) as Record<string, unknown>;
+    content["version"] = version.version;
     const newContent = Buffer.from(
       JSON.stringify(content, null, 2) + "\n",
     ).toString("base64");

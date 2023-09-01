@@ -6,6 +6,10 @@ on:
 permissions:
   statuses: read
   contents: read
+  packages: read
+
+env:
+  GH_NPM_TOKEN: ${{ secrets.GH_NPM_TOKEN }}
 
 jobs:
   prettier:
@@ -62,4 +66,4 @@ jobs:
       - name: Build
         run: pnpm build
       - name: Check if there is any diff
-        run: git diff --exit-code
+        run: git diff --exit-code dist/

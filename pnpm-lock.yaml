@@ -28,6 +28,9 @@ dependencies:
     version: 3.22.2
 
 devDependencies:
+  '@cyberspace7/eslint-config':
+    specifier: ^0.1.0
+    version: 0.1.0(@typescript-eslint/eslint-plugin@6.5.0)(eslint@8.46.0)(typescript@5.2.2)
   '@ianvs/prettier-plugin-sort-imports':
     specifier: ^4.1.0
     version: 4.1.0(prettier@3.0.3)
@@ -49,9 +52,6 @@ devDependencies:
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.5.0
     version: 6.5.0(@typescript-eslint/parser@6.5.0)(eslint@8.46.0)(typescript@5.2.2)
-  '@typescript-eslint/parser':
-    specifier: ^6.5.0
-    version: 6.5.0(eslint@8.46.0)(typescript@5.2.2)
   '@vercel/ncc':
     specifier: ^0.36.1
     version: 0.36.1
@@ -453,6 +453,20 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
+    dev: true
+
+  /@cyberspace7/eslint-config@0.1.0(@typescript-eslint/eslint-plugin@6.5.0)(eslint@8.46.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-CI6fejyiUumgAx9C5fqmKmK0ArQBSmMWLKeVgJDeBY7VqlDekP8O3UBo4SOIXvcosZqFvSrh4a+sfUorUN/EFA==, tarball: https://npm.pkg.github.com/download/@cyberspace7/eslint-config/0.1.0/ef5db9755438ba4a11ce74899ee008bb4baefac6}
+    peerDependencies:
+      '@typescript-eslint/eslint-plugin': '>= 6.5.0'
+      eslint: '>= 3'
+    dependencies:
+      '@typescript-eslint/eslint-plugin': 6.5.0(@typescript-eslint/parser@6.5.0)(eslint@8.46.0)(typescript@5.2.2)
+      '@typescript-eslint/parser': 6.5.0(eslint@8.46.0)(typescript@5.2.2)
+      eslint: 8.46.0
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
     dev: true
 
   /@esbuild-kit/cjs-loader@2.4.2:

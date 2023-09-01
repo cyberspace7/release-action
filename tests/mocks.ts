@@ -56,32 +56,41 @@ export const fileSystem = {
   readFileSync: jest.fn(),
 };
 
-core.group.mockImplementation(async (_, fn) => {
+core.group.mockImplementation((_, fn: () => unknown) => {
   return fn();
 });
 
-octokit.paginate.mockImplementation(async (fn, args, callback) => {
-  const results: unknown[] = [];
-  let isDone = false;
-  const done = () => {
-    isDone = true;
-  };
-  while (!isDone) {
-    const { data } = await fn(args);
-    if (!data?.length) {
-      break;
+octokit.paginate.mockImplementation(
+  async (
+    fn: (args: unknown[]) => Promise<{ data: unknown[] }>,
+    args: unknown[],
+    callback: (
+      result: { data: unknown[] },
+      done: () => void,
+    ) => Promise<unknown[]>,
+  ) => {
+    const results: unknown[] = [];
+    let isDone = false;
+    const done = () => {
+      isDone = true;
+    };
+    while (!isDone) {
+      const { data } = await fn(args);
+      if (!data?.length) {
+        break;
+      }
+
+      const newData = await callback({ data }, done);
+      if (newData?.length > 0) {
+        results.push(...newData);
+      } else {
+        break;
+      }
     }
 
-    const newData = await callback({ data }, done);
-    if (newData?.length > 0) {
-      results.push(...newData);
-    } else {
-      break;
-    }
-  }
-
-  return results;
-});
+    return results;
+  },
+);
 
 jest.mock("@actions/core", () => {
   return core;
