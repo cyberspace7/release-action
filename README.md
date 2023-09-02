@@ -120,6 +120,8 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    outputs:
+      is-released: ${{ steps.action.outputs.is-released }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -129,11 +131,11 @@ jobs:
         with:
           release-as: ${{ inputs.release-as }}
           pre-release: ${{ inputs.pre-release }}
-  publish: # You can execute another job when a release has been made
+  publish: # Execute another job when a release has been made
     name: Publish
     needs: release
     if: ${{ needs.release.outputs.is-released == 'true' }}
-    uses: ./.github/workflows/publish.yml # Your own publish workflow
+    uses: ./.github/workflows/publish.yml
     with:
       pre-release: ${{ inputs.pre-release != '' }}
 ```
@@ -202,13 +204,13 @@ permissions:
 
 ### Outputs
 
-| Name              | Type      | Description                                |
-| ----------------- | --------- | ------------------------------------------ |
-| `current-version` | `string`  | Version of the current code.               |
-| `next-version`    | `string`  | Version of the next release.               |
-| `release-pr`      | `number`  | Number of the opened release pull request. |
-| `is-released`     | `boolean` | Current version has been released.         |
-| `pre-release`     | `boolean` | Pre-release part of the current version.   |
+| Name              | Description                                |
+| ----------------- | ------------------------------------------ |
+| `current-version` | Version of the current code.               |
+| `next-version`    | Version of the next release.               |
+| `release-pr`      | Number of the opened release pull request. |
+| `is-released`     | Current version has been released.         |
+| `pre-release`     | Pre-release part of the current version.   |
 
 ### Secrets
 
