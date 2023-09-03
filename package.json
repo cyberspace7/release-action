@@ -5,7 +5,7 @@
   "scripts": {
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint --max-warnings 0 .",
-    "typecheck": "tsc --noEmit",
+    "check": "tsc --noEmit",
     "test": "jest",
     "build": "ncc build src/index.ts --source-map --license licenses.txt -o dist"
   },

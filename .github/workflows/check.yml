@@ -32,18 +32,16 @@ jobs:
         uses: ./.github/actions/setup
       - name: Run lint
         run: pnpm lint
-
-  typecheck:
-    name: Types
+  check:
+    name: Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
       - name: Setup project
         uses: ./.github/actions/setup
-      - name: Run type check
-        run: pnpm typecheck
-
+      - name: Run check
+        run: pnpm check
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -54,7 +52,6 @@ jobs:
         uses: ./.github/actions/setup
       - name: Run test
         run: pnpm test
-
   build:
     name: Build
     runs-on: ubuntu-latest
