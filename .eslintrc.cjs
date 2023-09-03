@@ -9,7 +9,7 @@ const configuration = {
   parserOptions: {
     project: path.join(__dirname, "tsconfig.json"),
   },
-  extends: ["@cyberspace7", "prettier"],
+  extends: ["@cyberspace-7", "prettier"],
 };
 
 module.exports = configuration;
