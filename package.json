@@ -19,7 +19,7 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@cyberspace7/eslint-config": "^0.1.0",
+    "@cyberspace-7/eslint-config": "^0.1.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.1.0",
     "@types/diff": "^5.0.3",
     "@types/eslint": "^8.44.2",

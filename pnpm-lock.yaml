@@ -28,7 +28,7 @@ dependencies:
     version: 3.22.2
 
 devDependencies:
-  '@cyberspace7/eslint-config':
+  '@cyberspace-7/eslint-config':
     specifier: ^0.1.0
     version: 0.1.0(@typescript-eslint/eslint-plugin@6.5.0)(eslint@8.46.0)(typescript@5.2.2)
   '@ianvs/prettier-plugin-sort-imports':
@@ -455,8 +455,8 @@ packages:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
 
-  /@cyberspace7/eslint-config@0.1.0(@typescript-eslint/eslint-plugin@6.5.0)(eslint@8.46.0)(typescript@5.2.2):
-    resolution: {integrity: sha512-CI6fejyiUumgAx9C5fqmKmK0ArQBSmMWLKeVgJDeBY7VqlDekP8O3UBo4SOIXvcosZqFvSrh4a+sfUorUN/EFA==, tarball: https://npm.pkg.github.com/download/@cyberspace7/eslint-config/0.1.0/ef5db9755438ba4a11ce74899ee008bb4baefac6}
+  /@cyberspace-7/eslint-config@0.1.0(@typescript-eslint/eslint-plugin@6.5.0)(eslint@8.46.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-MP4u0jfJAJGqj1u8zpip2bCAfUd6Tu/uPH0o2vDX6F3DvxFvO/QQbQBT6TqMLP/cRPmAzASOE0pRzKC781gSAg==}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': '>= 6.5.0'
       eslint: '>= 3'
