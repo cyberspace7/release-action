@@ -1,5 +1,5 @@
 import { SemVer } from "semver";
-import { PullRequest } from "../../src/libs/repository";
+import type { PullRequest } from "../../src/libs/repository";
 import { getVersionBumpLevel } from "../../src/libs/version";
 
 describe("getVersionBumpLevel()", () => {

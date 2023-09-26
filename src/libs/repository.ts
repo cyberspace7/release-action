@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 import { RequestError } from "@octokit/request-error";
-import { RestEndpointMethodTypes } from "@octokit/rest";
+import type { RestEndpointMethodTypes } from "@octokit/rest";
 import { SemVer } from "semver";
 import { tryExecute } from "./common";
 import { environment, inputs } from "./inputs";

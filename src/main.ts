@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import { SemVer } from "semver";
-import { PullRequest } from "./libs/repository";
+import type { PullRequest } from "./libs/repository";
 import { prepare } from "./prepare";
 import { release } from "./release";
 import { setup } from "./setup";

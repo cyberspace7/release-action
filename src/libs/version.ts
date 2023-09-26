@@ -1,6 +1,6 @@
 import { SemVer } from "semver";
 import { inputs } from "./inputs";
-import { PullRequest } from "./repository";
+import type { PullRequest } from "./repository";
 
 const { releaseLabels } = inputs;
 
