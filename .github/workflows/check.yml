@@ -67,5 +67,5 @@ jobs:
         uses: ./.github/actions/setup
       - name: Build
         run: pnpm build
-      - name: Check if there is any diff
+      - name: Check if there is any difference
         run: git diff --exit-code dist/
