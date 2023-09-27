@@ -34,6 +34,6 @@
     "target": "ES2022",
     "verbatimModuleSyntax": true
   },
-  "include": [".eslintrc.cjs", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
+  "include": ["**/*", ".eslintrc.cjs"],
   "exclude": ["node_modules", "dist", "coverage"]
 }
