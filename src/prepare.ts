@@ -13,8 +13,8 @@ import {
   getNodePackageSha,
   getReleaseBranch,
   mergeIntoReleaseBranch,
-  PullRequest,
   updateReleasePullRequest,
+  type PullRequest,
 } from "./libs/repository";
 
 const commitNodePackage = async (nextVersion: SemVer) => {

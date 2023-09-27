@@ -3,4 +3,4 @@ const globalSetup = () => {
   process.env["NODE_ENV"] = "test";
 };
 
-export default globalSetup;
+module.exports = globalSetup;

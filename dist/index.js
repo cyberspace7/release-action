@@ -13037,13 +13037,13 @@ __nccwpck_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+core@1.10.1/node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(8434);
+// EXTERNAL MODULE: ./node_modules/.pnpm/semver@7.5.4/node_modules/semver/index.js
+var semver = __nccwpck_require__(5467);
+var semver_default = /*#__PURE__*/__nccwpck_require__.n(semver);
 // EXTERNAL MODULE: ./src/libs/inputs.ts
 var inputs = __nccwpck_require__(8886);
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
-// EXTERNAL MODULE: ./node_modules/.pnpm/semver@7.5.4/node_modules/semver/index.js
-var semver = __nccwpck_require__(5467);
-var semver_default = /*#__PURE__*/__nccwpck_require__.n(semver);
 // EXTERNAL MODULE: ./node_modules/.pnpm/zod@3.22.2/node_modules/zod/lib/index.mjs
 var lib = __nccwpck_require__(3108);
 ;// CONCATENATED MODULE: ./src/libs/common.ts
@@ -14717,6 +14717,8 @@ const getDiffMarkdown = (oldContent, newContent) => {
 
 
 
+
+
 const octokit = (0,github.getOctokit)(inputs/* environment.GITHUB_TOKEN */.NZ.GITHUB_TOKEN);
 const RELEASE_TAG_PREFFIX = "v";
 const owner = github.context.repo.owner;
@@ -15003,6 +15005,7 @@ const commentPullRequest = (number, body) => {
 
 
 
+
 const commitNodePackage = async (nextVersion) => {
     const sha = await getNodePackageSha();
     const content = createNewNodePackageEncodedContent(nextVersion);
@@ -15066,6 +15069,7 @@ const prepare = async (nextVersion, releaseNotes, releasePullRequest, isManualVe
 };
 
 ;// CONCATENATED MODULE: ./src/release.ts
+
 
 
 const release = async (appName, currentVersion, releasePullRequest) => {
@@ -15157,6 +15161,7 @@ const getNextVersion = (currentVersion, bumpLevel, preRelease) => {
 
 
 
+
 const tryGetNextVersion = (currentVersion, bumpLevel, preRelease) => {
     return bumpLevel > 0 || preRelease
         ? getNextVersion(currentVersion, bumpLevel, preRelease)
@@ -15193,6 +15198,7 @@ const setup = async () => {
 };
 
 ;// CONCATENATED MODULE: ./src/main.ts
+
 
 
 

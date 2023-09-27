@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /** @type {import("path")} */
@@ -10,6 +9,9 @@ const configuration = {
     project: path.join(__dirname, "tsconfig.json"),
   },
   extends: ["@cyberspace-7", "prettier"],
+  env: {
+    node: true,
+  },
 };
 
 module.exports = configuration;

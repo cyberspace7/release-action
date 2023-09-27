@@ -6,7 +6,7 @@ import {
   createRelease,
   createReleaseTag,
   generateReleaseComment,
-  PullRequest,
+  type PullRequest,
 } from "./libs/repository";
 
 export const release = async (
