@@ -22,19 +22,19 @@
     "@cyberspace-7/eslint-config": "^0.1.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
     "@types/diff": "^5.0.7",
-    "@types/eslint": "^8.44.3",
+    "@types/eslint": "^8.44.8",
     "@types/jest": "^29.5.5",
     "@types/node": "^20.8.2",
     "@types/semver": "^7.5.3",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@vercel/ncc": "^0.38.0",
-    "eslint": "^8.50.0",
+    "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.0.0",
     "jest": "^29.7.0",
     "prettier": "^3.1.0",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "tsx": "^3.13.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.2"
   }
 }
