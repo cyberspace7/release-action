@@ -4,11 +4,17 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+      time: "00:00"
+      timezone: "Etc/UTC"
     labels:
       - "type: dependencies"
+    reviewers:
+      - "benjamin-guibert"
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "monthly"
+      time: "00:00"
+      timezone: "Etc/UTC"
     labels:
       - "type: dependencies"
