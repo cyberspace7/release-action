@@ -35,8 +35,8 @@ devDependencies:
     specifier: ^4.1.1
     version: 4.1.1(prettier@3.1.0)
   '@types/diff':
-    specifier: ^5.0.7
-    version: 5.0.7
+    specifier: ^5.0.9
+    version: 5.0.9
   '@types/eslint':
     specifier: ^8.44.8
     version: 8.44.8
@@ -1330,8 +1330,8 @@ packages:
       '@babel/types': 7.22.10
     dev: true
 
-  /@types/diff@5.0.7:
-    resolution: {integrity: sha512-adBosR2GntaQQiuHnfRN9HtxYpoHHJBcdyz7VSXhjpSAmtvIfu/S1fjTqwuIx/Ypba6LCZdfWIqPYx2BR5TneQ==}
+  /@types/diff@5.0.9:
+    resolution: {integrity: sha512-RWVEhh/zGXpAVF/ZChwNnv7r4rvqzJ7lYNSmZSVTxjV0PBLf6Qu7RNg+SUtkpzxmiNkjCx0Xn2tPp7FIkshJwQ==}
     dev: true
 
   /@types/eslint@8.44.8:
