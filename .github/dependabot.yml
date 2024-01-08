@@ -18,3 +18,5 @@ updates:
       timezone: "Etc/UTC"
     labels:
       - "type: dependencies"
+    reviewers:
+      - "benjamin-guibert"
