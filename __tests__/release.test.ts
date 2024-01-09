@@ -3,18 +3,9 @@ import { main } from "../src/main";
 import { mockPullRequestLists } from "../tests/helpers";
 import { core, fileSystem, octokit } from "../tests/mocks";
 
-const { readFileSync } = fileSystem;
-const { setFailed, setOutput, error, warning, notice } = core;
-const {
-  rest: {
-    git: { createTag },
-    repos: { createRelease },
-  },
-} = octokit;
-
 describe("main()", () => {
   beforeEach(() => {
-    readFileSync.mockReturnValue(
+    fileSystem.readFileSync.mockReturnValue(
       '{"name": "@owner/application", "version": "1.2.3-alpha.4"}',
     );
   });
@@ -24,7 +15,7 @@ describe("main()", () => {
   });
 
   it("should release", async () => {
-    readFileSync.mockReturnValueOnce(
+    fileSystem.readFileSync.mockReturnValueOnce(
       '{"name": "@owner/application", "version": "1.2.3"}',
     );
     mockPullRequestLists({
@@ -51,12 +42,12 @@ describe("main()", () => {
         },
       ],
     });
-    createTag.mockResolvedValue({
+    octokit.rest.git.createTag.mockResolvedValue({
       data: {
         tag: "v1.2.3",
       },
     });
-    createRelease.mockResolvedValueOnce({
+    octokit.rest.repos.createRelease.mockResolvedValueOnce({
       data: {
         name: "application v1.2.3",
         html_url: "https://url.com",
@@ -65,28 +56,36 @@ describe("main()", () => {
 
     await main();
 
-    expect(setFailed).toHaveBeenCalledTimes(0);
-    expect(error).toHaveBeenCalledTimes(0);
-    expect(warning).toHaveBeenCalledTimes(0);
-    expect(notice).toHaveBeenCalledTimes(2);
-    expect(notice).toHaveBeenNthCalledWith(1, "Release tag v1.2.3 created.", {
-      title: "Tag Created",
-    });
-    expect(notice).toHaveBeenNthCalledWith(
+    expect(core.setFailed).toHaveBeenCalledTimes(0);
+    expect(core.error).toHaveBeenCalledTimes(0);
+    expect(core.warning).toHaveBeenCalledTimes(0);
+    expect(core.notice).toHaveBeenCalledTimes(2);
+    expect(core.notice).toHaveBeenNthCalledWith(
+      1,
+      "Release tag v1.2.3 created.",
+      {
+        title: "Tag Created",
+      },
+    );
+    expect(core.notice).toHaveBeenNthCalledWith(
       2,
       "Release application v1.2.3 created.",
       {
         title: "Release Created",
       },
     );
-    expect(setOutput).toHaveBeenCalledTimes(5);
-    expect(setOutput).toHaveBeenNthCalledWith(1, "current-version", "1.2.3");
-    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", true);
-    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", undefined);
-    expect(createTag).toHaveBeenCalledTimes(1);
-    expect(createTag).toHaveBeenCalledWith({
+    expect(core.setOutput).toHaveBeenCalledTimes(5);
+    expect(core.setOutput).toHaveBeenNthCalledWith(
+      1,
+      "current-version",
+      "1.2.3",
+    );
+    expect(core.setOutput).toHaveBeenNthCalledWith(2, "pre-release", null);
+    expect(core.setOutput).toHaveBeenNthCalledWith(3, "is-released", true);
+    expect(core.setOutput).toHaveBeenNthCalledWith(4, "next-version", null);
+    expect(core.setOutput).toHaveBeenNthCalledWith(5, "release-pr", null);
+    expect(octokit.rest.git.createTag).toHaveBeenCalledTimes(1);
+    expect(octokit.rest.git.createTag).toHaveBeenCalledWith({
       owner: "owner",
       repo: "repository",
       tag: "v1.2.3",
@@ -94,8 +93,8 @@ describe("main()", () => {
       object: "sha",
       type: "commit",
     });
-    expect(createRelease).toHaveBeenCalledTimes(1);
-    expect(createRelease).toHaveBeenCalledWith({
+    expect(octokit.rest.repos.createRelease).toHaveBeenCalledTimes(1);
+    expect(octokit.rest.repos.createRelease).toHaveBeenCalledWith({
       owner: "owner",
       repo: "repository",
       tag_name: "v1.2.3",
@@ -106,7 +105,7 @@ describe("main()", () => {
   });
 
   it("should release pre-release", async () => {
-    readFileSync.mockReturnValueOnce(
+    fileSystem.readFileSync.mockReturnValueOnce(
       '{"name": "@owner/application", "version": "1.2.3-alpha.4"}',
     );
     mockPullRequestLists({
@@ -120,12 +119,12 @@ describe("main()", () => {
         },
       ],
     });
-    createTag.mockResolvedValue({
+    octokit.rest.git.createTag.mockResolvedValue({
       data: {
         tag: "v1.2.3-alpha.4",
       },
     });
-    createRelease.mockResolvedValueOnce({
+    octokit.rest.repos.createRelease.mockResolvedValueOnce({
       data: {
         name: "application v1.2.3-alpha.4",
         html_url: "https://url.com",
@@ -134,36 +133,36 @@ describe("main()", () => {
 
     await main();
 
-    expect(setFailed).toHaveBeenCalledTimes(0);
-    expect(error).toHaveBeenCalledTimes(0);
-    expect(warning).toHaveBeenCalledTimes(0);
-    expect(notice).toHaveBeenCalledTimes(2);
-    expect(notice).toHaveBeenNthCalledWith(
+    expect(core.setFailed).toHaveBeenCalledTimes(0);
+    expect(core.error).toHaveBeenCalledTimes(0);
+    expect(core.warning).toHaveBeenCalledTimes(0);
+    expect(core.notice).toHaveBeenCalledTimes(2);
+    expect(core.notice).toHaveBeenNthCalledWith(
       1,
       "Release tag v1.2.3-alpha.4 created.",
       {
         title: "Tag Created",
       },
     );
-    expect(notice).toHaveBeenNthCalledWith(
+    expect(core.notice).toHaveBeenNthCalledWith(
       2,
       "Release application v1.2.3-alpha.4 created.",
       {
         title: "Release Created",
       },
     );
-    expect(setOutput).toHaveBeenCalledTimes(5);
-    expect(setOutput).toHaveBeenNthCalledWith(
+    expect(core.setOutput).toHaveBeenCalledTimes(5);
+    expect(core.setOutput).toHaveBeenNthCalledWith(
       1,
       "current-version",
       "1.2.3-alpha.4",
     );
-    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
-    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", true);
-    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", undefined);
-    expect(createTag).toHaveBeenCalledTimes(1);
-    expect(createTag).toHaveBeenCalledWith({
+    expect(core.setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+    expect(core.setOutput).toHaveBeenNthCalledWith(3, "is-released", true);
+    expect(core.setOutput).toHaveBeenNthCalledWith(4, "next-version", null);
+    expect(core.setOutput).toHaveBeenNthCalledWith(5, "release-pr", null);
+    expect(octokit.rest.git.createTag).toHaveBeenCalledTimes(1);
+    expect(octokit.rest.git.createTag).toHaveBeenCalledWith({
       owner: "owner",
       repo: "repository",
       tag: "v1.2.3-alpha.4",
@@ -171,8 +170,8 @@ describe("main()", () => {
       object: "sha",
       type: "commit",
     });
-    expect(createRelease).toHaveBeenCalledTimes(1);
-    expect(createRelease).toHaveBeenCalledWith({
+    expect(octokit.rest.repos.createRelease).toHaveBeenCalledTimes(1);
+    expect(octokit.rest.repos.createRelease).toHaveBeenCalledWith({
       owner: "owner",
       repo: "repository",
       tag_name: "v1.2.3-alpha.4",
@@ -183,45 +182,51 @@ describe("main()", () => {
   });
 
   it("should not release when no current version", async () => {
-    readFileSync.mockReturnValueOnce('{"name": "@owner/application"}');
+    fileSystem.readFileSync.mockReturnValueOnce(
+      '{"name": "@owner/application"}',
+    );
 
     await main();
 
-    expect(setFailed).toHaveBeenCalledTimes(0);
-    expect(error).toHaveBeenCalledTimes(0);
-    expect(warning).toHaveBeenCalledTimes(0);
-    expect(notice).toHaveBeenCalledTimes(1);
-    expect(setOutput).toHaveBeenCalledTimes(5);
-    expect(setOutput).toHaveBeenNthCalledWith(1, "current-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
-    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", undefined);
-    expect(createTag).toHaveBeenCalledTimes(0);
-    expect(createRelease).toHaveBeenCalledTimes(0);
+    expect(core.setFailed).toHaveBeenCalledTimes(0);
+    expect(core.error).toHaveBeenCalledTimes(0);
+    expect(core.warning).toHaveBeenCalledTimes(0);
+    expect(core.notice).toHaveBeenCalledTimes(1);
+    expect(core.setOutput).toHaveBeenCalledTimes(5);
+    expect(core.setOutput).toHaveBeenNthCalledWith(1, "current-version", null);
+    expect(core.setOutput).toHaveBeenNthCalledWith(2, "pre-release", null);
+    expect(core.setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+    expect(core.setOutput).toHaveBeenNthCalledWith(4, "next-version", null);
+    expect(core.setOutput).toHaveBeenNthCalledWith(5, "release-pr", null);
+    expect(octokit.rest.git.createTag).toHaveBeenCalledTimes(0);
+    expect(octokit.rest.repos.createRelease).toHaveBeenCalledTimes(0);
   });
 
   it("should not release when no release pull request", async () => {
     await main();
 
-    expect(setFailed).toHaveBeenCalledTimes(0);
-    expect(error).toHaveBeenCalledTimes(0);
-    expect(warning).toHaveBeenCalledTimes(0);
-    expect(notice).toHaveBeenCalledTimes(2);
-    expect(notice).toHaveBeenNthCalledWith(1, "No pull request to release.", {
-      title: "No Release",
-    });
-    expect(setOutput).toHaveBeenCalledTimes(5);
-    expect(setOutput).toHaveBeenNthCalledWith(
+    expect(core.setFailed).toHaveBeenCalledTimes(0);
+    expect(core.error).toHaveBeenCalledTimes(0);
+    expect(core.warning).toHaveBeenCalledTimes(0);
+    expect(core.notice).toHaveBeenCalledTimes(2);
+    expect(core.notice).toHaveBeenNthCalledWith(
+      1,
+      "No pull request to release.",
+      {
+        title: "No Release",
+      },
+    );
+    expect(core.setOutput).toHaveBeenCalledTimes(5);
+    expect(core.setOutput).toHaveBeenNthCalledWith(
       1,
       "current-version",
       "1.2.3-alpha.4",
     );
-    expect(setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
-    expect(setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
-    expect(setOutput).toHaveBeenNthCalledWith(4, "next-version", undefined);
-    expect(setOutput).toHaveBeenNthCalledWith(5, "release-pr", undefined);
-    expect(createTag).toHaveBeenCalledTimes(0);
-    expect(createRelease).toHaveBeenCalledTimes(0);
+    expect(core.setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+    expect(core.setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+    expect(core.setOutput).toHaveBeenNthCalledWith(4, "next-version", null);
+    expect(core.setOutput).toHaveBeenNthCalledWith(5, "release-pr", null);
+    expect(octokit.rest.git.createTag).toHaveBeenCalledTimes(0);
+    expect(octokit.rest.repos.createRelease).toHaveBeenCalledTimes(0);
   });
 });

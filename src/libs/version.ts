@@ -2,35 +2,33 @@ import { SemVer } from "semver";
 import { inputs } from "./inputs";
 import type { PullRequest } from "./repository";
 
-const { releaseLabels } = inputs;
-
-export const createNewVersion = () => {
+export function createNewVersion() {
   return new SemVer("0.0.0");
-};
+}
 
-export const getVersionBumpLevel = (
+export function getVersionBumpLevel(
   pullRequests: PullRequest[],
   currentVersion: SemVer | null,
-) => {
+) {
   const isStable = (currentVersion?.major ?? 0) > 0;
-  const releaseLabelNames = Object.values(releaseLabels);
-  const bumpLevels = pullRequests.map(({ labels }) => {
-    const bumpLabels = labels
-      .filter(({ name }) => {
-        return releaseLabelNames.includes(name);
+  const releaseLabelNames = Object.values(inputs.releaseLabels);
+  const bumpLevels = pullRequests.map((pullRequest) => {
+    const bumpLabels = pullRequest.labels
+      .filter((label) => {
+        return releaseLabelNames.includes(label.name);
       })
-      .map(({ name }) => name);
+      .map((label) => label.name);
 
-    if (bumpLabels.includes(releaseLabels.ignore)) {
+    if (bumpLabels.includes(inputs.releaseLabels.ignore)) {
       return 0;
     }
-    if (bumpLabels.includes(releaseLabels.major)) {
+    if (bumpLabels.includes(inputs.releaseLabels.major)) {
       return isStable ? 3 : 2;
     }
-    if (bumpLabels.includes(releaseLabels.minor)) {
+    if (bumpLabels.includes(inputs.releaseLabels.minor)) {
       return 2;
     }
-    if (bumpLabels.includes(releaseLabels.patch)) {
+    if (bumpLabels.includes(inputs.releaseLabels.patch)) {
       return 1;
     }
 
@@ -38,13 +36,13 @@ export const getVersionBumpLevel = (
   });
 
   return Math.max(0, ...bumpLevels);
-};
+}
 
-export const getNextVersion = (
+export function getNextVersion(
   currentVersion: SemVer | null,
   bumpLevel: number,
-  preRelease?: string | undefined,
-) => {
+  preRelease?: string,
+) {
   const version = currentVersion
     ? new SemVer(currentVersion.version)
     : createNewVersion();
@@ -78,4 +76,4 @@ export const getNextVersion = (
     default:
       throw new Error(`Invalid bump level: ${bumpLevel}.`);
   }
-};
+}

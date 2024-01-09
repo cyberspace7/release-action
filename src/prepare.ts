@@ -17,13 +17,13 @@ import {
   type PullRequest,
 } from "./libs/repository";
 
-const commitNodePackage = async (nextVersion: SemVer) => {
+async function commitNodePackage(nextVersion: SemVer) {
   const sha = await getNodePackageSha();
   const content = createNewNodePackageEncodedContent(nextVersion);
   await commitFileToReleaseBranch(sha, content, nextVersion);
-};
+}
 
-const getOrCreateReleaseBranch = async () => {
+async function getOrCreateReleaseBranch() {
   if (await getReleaseBranch()) {
     return false;
   }
@@ -36,34 +36,33 @@ const getOrCreateReleaseBranch = async () => {
     },
   );
   return true;
-};
+}
 
-const createOrUpdateReleasePullRequest = async (
+async function createOrUpdateReleasePullRequest(
   nextVersion: SemVer,
-  releasePullRequest: PullRequest | undefined,
+  releasePullRequest: PullRequest | null,
   releaseNotes: string,
   isManualVersion: boolean,
-) => {
+) {
   if (!releasePullRequest) {
-    const { number } = await createReleasePullRequest(
+    const newPullRequest = await createReleasePullRequest(
       nextVersion,
       releaseNotes,
     );
-    await addLabelToReleasePullRequest(number);
-    core.notice(`Release PR #${number} has been opened.`, {
+    await addLabelToReleasePullRequest(newPullRequest.number);
+    core.notice(`Release PR #${newPullRequest.number} has been opened.`, {
       title: "PR Opened",
     });
     if (isManualVersion) {
       const comment = generateManualVersionComment(nextVersion);
-      await commentPullRequest(number, comment);
+      await commentPullRequest(newPullRequest.number, comment);
     }
-    return number;
+    return newPullRequest.number;
   }
 
-  const { number, body } = releasePullRequest;
   await updateReleasePullRequest(releasePullRequest, nextVersion, releaseNotes);
   const diffComment = generateReleasePullRequestUpdateComment(
-    body ?? "",
+    releasePullRequest.body ?? "",
     releaseNotes,
   );
   if (diffComment ?? isManualVersion) {
@@ -73,21 +72,24 @@ const createOrUpdateReleasePullRequest = async (
     const comment = [manualVersionComment, diffComment]
       .filter((value) => !!value)
       .join("\n\n");
-    await commentPullRequest(number, comment);
+    await commentPullRequest(releasePullRequest.number, comment);
   }
-  core.notice(`The existing release PR #${number} has been updated.`, {
-    title: "PR Updated",
-  });
+  core.notice(
+    `The existing release PR #${releasePullRequest.number} has been updated.`,
+    {
+      title: "PR Updated",
+    },
+  );
 
   return releasePullRequest.number;
-};
+}
 
-export const prepare = async (
+export async function prepare(
   nextVersion: SemVer,
   releaseNotes: string,
-  releasePullRequest: PullRequest | undefined,
+  releasePullRequest: PullRequest | null,
   isManualVersion: boolean,
-) => {
+) {
   core.info(`Preparing new release...`);
 
   let skipMerge = false;
@@ -110,4 +112,4 @@ export const prepare = async (
   core.info(`New release prepared.`);
 
   return prNumber;
-};
+}

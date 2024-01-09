@@ -2,12 +2,7 @@ import { parseInputs } from "../../src/libs/inputs";
 import { mockDefaultInputs } from "../../tests/helpers";
 import { core } from "../../tests/mocks";
 
-export const mockInputs = ({
-  preRelease,
-  releaseAs,
-  releaseLabels,
-  branches,
-}: {
+export function mockInputs(inputs: {
   preRelease?: string;
   releaseAs?: string;
   releaseLabels?: {
@@ -22,20 +17,19 @@ export const mockInputs = ({
     production?: string;
     release?: string;
   };
-}) => {
-  const { ignore, patch, minor, major, ready, done } = releaseLabels ?? {};
+}) {
   core.getInput
-    .mockReturnValueOnce(preRelease ?? "")
-    .mockReturnValueOnce(releaseAs ?? "")
-    .mockReturnValueOnce(ignore ?? "")
-    .mockReturnValueOnce(patch ?? "")
-    .mockReturnValueOnce(minor ?? "")
-    .mockReturnValueOnce(major ?? "")
-    .mockReturnValueOnce(ready ?? "")
-    .mockReturnValueOnce(done ?? "")
-    .mockReturnValueOnce(branches?.production ?? "")
-    .mockReturnValueOnce(branches?.release ?? "");
-};
+    .mockReturnValueOnce(inputs.preRelease ?? "")
+    .mockReturnValueOnce(inputs.releaseAs ?? "")
+    .mockReturnValueOnce(inputs.releaseLabels?.ignore ?? "")
+    .mockReturnValueOnce(inputs.releaseLabels?.patch ?? "")
+    .mockReturnValueOnce(inputs.releaseLabels?.minor ?? "")
+    .mockReturnValueOnce(inputs.releaseLabels?.major ?? "")
+    .mockReturnValueOnce(inputs.releaseLabels?.ready ?? "")
+    .mockReturnValueOnce(inputs.releaseLabels?.done ?? "")
+    .mockReturnValueOnce(inputs.branches?.production ?? "")
+    .mockReturnValueOnce(inputs.branches?.release ?? "");
+}
 
 describe("parseInputs()", () => {
   beforeEach(() => {
@@ -51,12 +45,12 @@ describe("parseInputs()", () => {
       expect(result.preRelease).toEqual("alpha-01");
     });
 
-    it("should return `undefined` when empty", () => {
+    it("should return `null` when empty", () => {
       mockInputs({ preRelease: "" });
 
       const result = parseInputs();
 
-      expect(result.preRelease).toEqual(undefined);
+      expect(result.preRelease).toEqual(null);
     });
 
     test.each(["te.st", "te_st", "te st", "test!"])(
@@ -78,12 +72,12 @@ describe("parseInputs()", () => {
       expect(result.releaseAs?.version).toEqual("1.2.3-alpha.4");
     });
 
-    it("should return `undefined` when empty", () => {
+    it("should return `null` when empty", () => {
       mockInputs({ releaseAs: "" });
 
       const result = parseInputs();
 
-      expect(result.releaseAs).toEqual(undefined);
+      expect(result.releaseAs).toEqual(null);
     });
 
     it("should throw when `test`", () => {

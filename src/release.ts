@@ -9,11 +9,11 @@ import {
   type PullRequest,
 } from "./libs/repository";
 
-export const release = async (
+export async function release(
   appName: string,
   currentVersion: SemVer,
   releasePullRequest: PullRequest,
-) => {
+) {
   core.info(`Releasing version ${currentVersion.version}...`);
   const tag = await createReleaseTag(releasePullRequest, currentVersion);
   core.notice(`Release tag ${tag.tag} created.`, {
@@ -31,4 +31,4 @@ export const release = async (
   const comment = generateReleaseComment(release);
   await commentPullRequest(releasePullRequest.number, comment);
   core.info("Release completed.");
-};
+}

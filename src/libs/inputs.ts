@@ -4,20 +4,20 @@ import { z } from "zod";
 
 const PRE_RELEASE_REGEX = /^[A-Za-z0-9-]+$/;
 
-export type Environment = z.infer<typeof environmentValidator>;
-export type Inputs = z.infer<typeof inputsValidator>;
+export type Environment = z.infer<typeof environmentSchema>;
+export type Inputs = z.infer<typeof inputsSchema>;
 
-const environmentValidator = z.object({
+const environmentSchema = z.object({
   GITHUB_TOKEN: z.string(),
 });
 
-const inputsValidator = z.object({
+const inputsSchema = z.object({
   preRelease: z
     .string()
     .regex(PRE_RELEASE_REGEX)
     .or(z.literal(""))
     .transform((value) => {
-      return value !== "" ? value : undefined;
+      return value !== "" ? value : null;
     }),
   releaseAs: z
     .string()
@@ -27,7 +27,7 @@ const inputsValidator = z.object({
         throw new Error(`Invalid version: "${value}".`);
       }
 
-      return value ? semver.parse(value) ?? undefined : undefined;
+      return value ? semver.parse(value) : null;
     }),
   releaseLabels: z.object({
     ignore: z
@@ -84,11 +84,11 @@ const inputsValidator = z.object({
 });
 
 export const parseEnvironment = () => {
-  return environmentValidator.parse(process.env);
+  return environmentSchema.parse(process.env);
 };
 
 export const parseInputs = () => {
-  return inputsValidator.parse({
+  return inputsSchema.parse({
     preRelease: getInput("pre-release"),
     releaseAs: getInput("release-as"),
     releaseLabels: {

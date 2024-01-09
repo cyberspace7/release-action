@@ -7,7 +7,7 @@ import { tryExecute } from "./common";
 const NODE_PACKAGE_NAME_REGEX = /^(@[a-zA-Z0-9_-]+\/)?[a-zA-Z0-9_-]+$/;
 export const PACKAGE_FILE_NAME = "package.json";
 
-const nodePackageValidator = z.object({
+const nodePackageSchema = z.object({
   name: z
     .string()
     .regex(NODE_PACKAGE_NAME_REGEX)
@@ -31,11 +31,11 @@ const nodePackageValidator = z.object({
     }),
 });
 
-export const getNodePackage = () => {
+export function getNodePackage() {
   return tryExecute(() => {
     core.debug(`Reading ${PACKAGE_FILE_NAME}...`);
     const packageFile = readFileSync(PACKAGE_FILE_NAME, "utf8");
-    const nodePackage = nodePackageValidator.parse(JSON.parse(packageFile));
+    const nodePackage = nodePackageSchema.parse(JSON.parse(packageFile));
     core.debug(
       `name="${nodePackage.name}"; version=${nodePackage.version?.version}.`,
     );
@@ -43,9 +43,9 @@ export const getNodePackage = () => {
 
     return nodePackage;
   }, `Error while reading ${PACKAGE_FILE_NAME}.`);
-};
+}
 
-export const createNewNodePackageEncodedContent = (version: SemVer) => {
+export function createNewNodePackageEncodedContent(version: SemVer) {
   return tryExecute(() => {
     core.debug(`Creating new ${PACKAGE_FILE_NAME} encoded content...`);
     const packageFile = readFileSync(PACKAGE_FILE_NAME, "utf8");
@@ -58,4 +58,4 @@ export const createNewNodePackageEncodedContent = (version: SemVer) => {
 
     return newContent;
   }, `Error while creating new ${PACKAGE_FILE_NAME} encoded content.`);
-};
+}

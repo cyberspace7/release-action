@@ -24,56 +24,53 @@ const RELEASE_TAG_PREFFIX = "v";
 const owner = context.repo.owner;
 const repo = context.repo.repo;
 
-const getReleaseCommitMessage = (nextVersion: SemVer) => {
+function getReleaseCommitMessage(nextVersion: SemVer) {
   return `chore(main): release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
-};
+}
 
-const getReleasePullRequestTitle = (nextVersion: SemVer) => {
+function getReleasePullRequestTitle(nextVersion: SemVer) {
   return `Release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
-};
+}
 
-export const generateManualVersionComment = (nextVersion: SemVer) => {
+export function generateManualVersionComment(nextVersion: SemVer) {
   return `Version \`${nextVersion.version}\` has been manually requested by @${context.actor}.`;
-};
+}
 
-export const generateReleaseComment = (release: Release) => {
-  const { name, html_url } = release;
+export function generateReleaseComment(release: Release) {
+  return `:package: [**${release.name}**](${release.html_url}) has been released.`;
+}
 
-  return `:package: [**${name}**](${html_url}) has been released.`;
-};
-
-export const generateReleasePullRequestUpdateComment = (
+export function generateReleasePullRequestUpdateComment(
   oldContent: string,
   newContent: string,
-) => {
+) {
   const markdownDiff = getDiffMarkdown(oldContent, newContent);
 
-  return markdownDiff
-    ? `Content has been updated:\n\n${markdownDiff}`
-    : undefined;
-};
+  return markdownDiff ? `Content has been updated:\n\n${markdownDiff}` : null;
+}
 
-export const getNodePackageSha = () => {
+export function getNodePackageSha() {
   return tryExecute(async () => {
     core.debug(`Getting ${PACKAGE_FILE_NAME} file SHA...`);
-    const { data: contents } = await octokit.rest.repos.getContent({
+    const content = await octokit.rest.repos.getContent({
       owner,
       repo,
       path: PACKAGE_FILE_NAME,
       ref: `refs/heads/${inputs.branches.release}`,
     });
-    const sha = "sha" in contents ? contents.sha : undefined;
+    const sha = "sha" in content.data ? content.data.sha : null;
     if (!sha) {
       throw new Error(`${PACKAGE_FILE_NAME} content not found.`);
     }
+
     core.debug(`${PACKAGE_FILE_NAME} file SHA: "${sha}".`);
     core.info(`${PACKAGE_FILE_NAME} file SHA retrieved.`);
 
     return sha;
   }, `Error while getting ${PACKAGE_FILE_NAME} file SHA.`);
-};
+}
 
-export const getPullRequestsSinceLastRelease = () => {
+export function getPullRequestsSinceLastRelease() {
   return tryExecute(async () => {
     core.debug("Getting pull requests since last release...");
     const pullRequests = await octokit.paginate(
@@ -85,23 +82,25 @@ export const getPullRequestsSinceLastRelease = () => {
         sort: "updated",
         direction: "desc",
       },
-      ({ data: pullRequests }, done) => {
-        const releasePrIndex = pullRequests.findIndex(({ labels }) => {
-          return labels.some(({ name }) => name === inputs.releaseLabels.done);
+      (pullRequests, done) => {
+        const releasePrIndex = pullRequests.data.findIndex((pullRequest) => {
+          return pullRequest.labels.some(
+            ({ name }) => name === inputs.releaseLabels.done,
+          );
         });
 
         if (releasePrIndex > -1) {
           done();
 
-          const prsAfterRelease = pullRequests.slice(0, releasePrIndex);
+          const prsAfterRelease = pullRequests.data.slice(0, releasePrIndex);
           core.debug(
             `${prsAfterRelease.length} pull request(s) loaded. Last Release pull request found.`,
           );
           return prsAfterRelease;
         }
 
-        core.debug(`${pullRequests.length} pull request(s) loaded...`);
-        return pullRequests;
+        core.debug(`${pullRequests.data.length} pull request(s) loaded...`);
+        return pullRequests.data;
       },
     );
     core.info(
@@ -110,20 +109,20 @@ export const getPullRequestsSinceLastRelease = () => {
 
     return pullRequests;
   }, "Error while getting pull requests since last release.");
-};
+}
 
-export const getReleaseBranch = () => {
+export function getReleaseBranch() {
   return tryExecute(async () => {
     try {
       core.debug(`Getting branch "${inputs.branches.release}"...`);
-      const { data: branch } = await octokit.rest.repos.getBranch({
+      const branch = await octokit.rest.repos.getBranch({
         owner,
         repo,
         branch: inputs.branches.release,
       });
       core.info(`Branch "${inputs.branches.release}" found.`);
 
-      return branch;
+      return branch.data;
     } catch (error) {
       if (
         (error as Error).name !== "HttpError" ||
@@ -133,15 +132,15 @@ export const getReleaseBranch = () => {
       }
 
       core.info(`Branch "${inputs.branches.release}" not found.`);
-      return undefined;
+      return null;
     }
   }, `Error while getting branch "${inputs.branches.release}".`);
-};
+}
 
-export const getReleasePullRequest = (state: "open" | "merged") => {
+export function getReleasePullRequest(state: "open" | "merged") {
   return tryExecute(async () => {
     core.debug(`Getting ${state} release pull request...`);
-    const { data: pullRequests } = await octokit.rest.pulls.list({
+    const pullRequests = await octokit.rest.pulls.list({
       owner,
       repo,
       state: state === "open" ? "open" : "closed",
@@ -153,13 +152,17 @@ export const getReleasePullRequest = (state: "open" | "merged") => {
     });
     const filteredPullRequests =
       state === "merged"
-        ? pullRequests.filter(
-            ({ labels, merged_at }) =>
-              !!merged_at &&
-              labels.some(({ name }) => name === inputs.releaseLabels.ready),
+        ? pullRequests.data.filter(
+            (pullRequest) =>
+              !!pullRequest.merged_at &&
+              pullRequest.labels.some(
+                (label) => label.name === inputs.releaseLabels.ready,
+              ),
           )
-        : pullRequests.filter(({ labels }) =>
-            labels.some(({ name }) => name === inputs.releaseLabels.ready),
+        : pullRequests.data.filter((pullRequest) =>
+            pullRequest.labels.some(
+              (label) => label.name === inputs.releaseLabels.ready,
+            ),
           );
     if (filteredPullRequests.length > 1) {
       core.warning(
@@ -169,23 +172,21 @@ export const getReleasePullRequest = (state: "open" | "merged") => {
         },
       );
     }
-    const foundPullrequest = filteredPullRequests.at(0);
+    const foundPullrequest = filteredPullRequests.at(0) ?? null;
     core.info(
       `Release pull request (${state}) found: #${foundPullrequest?.number}.`,
     );
 
     return foundPullrequest;
   }, `Error while getting ${state} release pull request.`);
-};
+}
 
-export const generateReleaseNotesForPullRequest = (nextVersion: SemVer) => {
+export function generateReleaseNotesForPullRequest(nextVersion: SemVer) {
   const tagName = `${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
 
   return tryExecute(async () => {
     core.debug(`Generating release notes for ${tagName}...`);
-    const {
-      data: { body },
-    } = await octokit.rest.repos.generateReleaseNotes({
+    const releaseNote = await octokit.rest.repos.generateReleaseNotes({
       owner,
       repo,
       tag_name: tagName,
@@ -193,14 +194,14 @@ export const generateReleaseNotesForPullRequest = (nextVersion: SemVer) => {
     });
     core.info(`Release notes generated for ${tagName}.`);
 
-    return body;
+    return releaseNote.data.body;
   }, `Error while generating release notes for ${tagName}.`);
-};
+}
 
-export const createReleaseBranch = () => {
+export function createReleaseBranch() {
   return tryExecute(async () => {
     core.debug(`Creating branch "${inputs.branches.release}"...`);
-    const { data: branch } = await octokit.rest.git.createRef({
+    const branch = await octokit.rest.git.createRef({
       owner,
       repo,
       ref: `refs/heads/${inputs.branches.release}`,
@@ -208,39 +209,38 @@ export const createReleaseBranch = () => {
     });
     core.info(`Branch "${inputs.branches.release}" created.`);
 
-    return branch;
+    return branch.data;
   }, `Error while creating branch "${inputs.branches.release}".`);
-};
+}
 
-export const commitFileToReleaseBranch = (
+export function commitFileToReleaseBranch(
   sha: string,
   content: string,
   nextVersion: SemVer,
-) => {
+) {
   return tryExecute(async () => {
     core.debug(`Commiting to branch "${inputs.branches.release}"...`);
-    const { data: commit } =
-      await octokit.rest.repos.createOrUpdateFileContents({
-        owner,
-        repo,
-        path: PACKAGE_FILE_NAME,
-        message: getReleaseCommitMessage(nextVersion),
-        content,
-        sha,
-        branch: inputs.branches.release,
-      });
+    const contents = await octokit.rest.repos.createOrUpdateFileContents({
+      owner,
+      repo,
+      path: PACKAGE_FILE_NAME,
+      message: getReleaseCommitMessage(nextVersion),
+      content,
+      sha,
+      branch: inputs.branches.release,
+    });
     core.info(`Commit created to branch "${inputs.branches.release}".`);
 
-    return commit;
+    return contents.data.commit;
   }, `Error while commiting to branch "${inputs.branches.release}".`);
-};
+}
 
-export const createReleasePullRequest = (nextVersion: SemVer, body: string) => {
+export function createReleasePullRequest(nextVersion: SemVer, body: string) {
   const title = getReleasePullRequestTitle(nextVersion);
 
   return tryExecute(async () => {
     core.debug(`Creating release pull request "${title}"...`);
-    const { data: pullRequest } = await octokit.rest.pulls.create({
+    const pullRequest = await octokit.rest.pulls.create({
       owner,
       repo,
       title,
@@ -249,46 +249,43 @@ export const createReleasePullRequest = (nextVersion: SemVer, body: string) => {
       body,
     });
     core.info(
-      `Release pull request "${title}" created: #${pullRequest.number}.`,
+      `Release pull request "${title}" created: #${pullRequest.data.number}.`,
     );
 
-    return pullRequest;
+    return pullRequest.data;
   }, `Error while creating release pull request "${title}".`);
-};
+}
 
-export const createReleaseTag = (pullRequest: PullRequest, version: SemVer) => {
+export function createReleaseTag(pullRequest: PullRequest, version: SemVer) {
   return tryExecute(async () => {
     core.debug(`Creating release tag.`);
-    const { merge_commit_sha, number } = pullRequest;
-    if (!merge_commit_sha) {
-      throw new Error(`Pull request #${number} has no merge commit SHA.`);
+    if (!pullRequest.merge_commit_sha) {
+      throw new Error(
+        `Pull request #${pullRequest.number} has no merge commit SHA.`,
+      );
     }
 
     const tagName = `${RELEASE_TAG_PREFFIX}${version.version}`;
-    const { data: tag } = await octokit.rest.git.createTag({
+    const tag = await octokit.rest.git.createTag({
       owner,
       repo,
       tag: tagName,
       message: `Release ${tagName}`,
-      object: merge_commit_sha,
+      object: pullRequest.merge_commit_sha,
       type: "commit",
     });
-    core.info(`Release tag "${tag.tag}" created.`);
+    core.info(`Release tag "${tag.data.tag}" created.`);
 
-    return tag;
+    return tag.data;
   }, `Error while creating release tag.`);
-};
+}
 
-export const createRelease = (
-  appName: string,
-  tag: Tag,
-  preRelease?: boolean | undefined,
-) => {
+export function createRelease(appName: string, tag: Tag, preRelease?: boolean) {
   const releaseName = `${appName} ${tag.tag}`;
 
   return tryExecute(async () => {
     core.debug(`Creating release "${releaseName}"...`);
-    const { data: release } = await octokit.rest.repos.createRelease({
+    const release = await octokit.rest.repos.createRelease({
       owner,
       repo,
       tag_name: tag.tag,
@@ -296,18 +293,18 @@ export const createRelease = (
       generate_release_notes: true,
       prerelease: !!preRelease,
     });
-    core.info(`Release "${release.name}" created.`);
+    core.info(`Release "${release.data.name}" created.`);
 
-    return release;
+    return release.data;
   }, `Error while creating release ${releaseName}.`);
-};
+}
 
-export const addLabelToReleasePullRequest = (number: number) => {
+export function addLabelToReleasePullRequest(number: number) {
   return tryExecute(async () => {
     core.debug(
       `Adding label "${inputs.releaseLabels.ready}" to release pull request #${number}...`,
     );
-    const { data: updatedPullRequest } = await octokit.rest.issues.addLabels({
+    const updatedPullRequest = await octokit.rest.issues.addLabels({
       owner,
       repo,
       issue_number: number,
@@ -317,16 +314,16 @@ export const addLabelToReleasePullRequest = (number: number) => {
       `Label "${inputs.releaseLabels.ready}" added to release pull request #${number}.`,
     );
 
-    return updatedPullRequest;
+    return updatedPullRequest.data;
   }, `Error while adding label "${inputs.releaseLabels.ready}" to release pull request #${number}.`);
-};
+}
 
-export const mergeIntoReleaseBranch = () => {
+export function mergeIntoReleaseBranch() {
   return tryExecute(async () => {
     core.debug(
       `Merging branch "${inputs.branches.production}" into "${inputs.branches.release}"...`,
     );
-    const { data: merge } = await octokit.rest.repos.merge({
+    const merge = await octokit.rest.repos.merge({
       owner,
       repo,
       base: inputs.branches.release,
@@ -336,53 +333,49 @@ export const mergeIntoReleaseBranch = () => {
     core.info(
       `Branch "${inputs.branches.production}" merged into "${inputs.branches.release}".`,
     );
-    return merge;
+    return merge.data;
   }, `Error while merging branch "${inputs.branches.production}" into "${inputs.branches.release}".`);
-};
+}
 
-export const updateReleasePullRequest = (
+export function updateReleasePullRequest(
   pullRequest: PullRequest,
   nextVersion: SemVer,
   body: string,
-) => {
-  const { number } = pullRequest;
-
+) {
   return tryExecute(async () => {
-    core.debug(`Updating release pull request #${number}...`);
-    const { data: updatedPullRequest } = await octokit.rest.pulls.update({
+    core.debug(`Updating release pull request #${pullRequest.number}...`);
+    const updatedPullRequest = await octokit.rest.pulls.update({
       owner,
       repo,
-      pull_number: number,
+      pull_number: pullRequest.number,
       title: getReleasePullRequestTitle(nextVersion),
       body,
     });
-    core.info(`Release pull request #${number} updated.`);
+    core.info(`Release pull request #${pullRequest.number} updated.`);
 
-    return updatedPullRequest;
-  }, `Error while updating release pull request #${number}.`);
-};
+    return updatedPullRequest.data;
+  }, `Error while updating release pull request #${pullRequest.number}.`);
+}
 
-export const completeReleasePullRequest = (pullRequest: PullRequest) => {
-  const { number } = pullRequest;
-
+export function completeReleasePullRequest(pullRequest: PullRequest) {
   return tryExecute(async () => {
-    core.debug(`Updating release pull request #${number}...`);
-    const { data: updatedPullRequest } = await octokit.rest.issues.update({
+    core.debug(`Updating release pull request #${pullRequest.number}...`);
+    const updatedPullRequest = await octokit.rest.issues.update({
       owner,
       repo,
-      issue_number: number,
+      issue_number: pullRequest.number,
       labels: [inputs.releaseLabels.done],
     });
-    core.info(`Release pull request #${number} updated.`);
+    core.info(`Release pull request #${pullRequest.number} updated.`);
 
-    return updatedPullRequest;
-  }, `Error while updating release pull request #${number}.`);
-};
+    return updatedPullRequest.data;
+  }, `Error while updating release pull request #${pullRequest.number}.`);
+}
 
-export const commentPullRequest = (number: number, body: string) => {
+export function commentPullRequest(number: number, body: string) {
   return tryExecute(async () => {
     core.debug(`Adding comment to release pull request #${number}...`);
-    const { data: comment } = await octokit.rest.issues.createComment({
+    const comment = await octokit.rest.issues.createComment({
       owner,
       repo,
       issue_number: number,
@@ -390,6 +383,6 @@ export const commentPullRequest = (number: number, body: string) => {
     });
     core.info(`Comment added to release pull request #${number}.`);
 
-    return comment;
+    return comment.data;
   }, `Error while adding comment to release pull request #${number}.`);
-};
+}
