@@ -11,40 +11,40 @@ import {
 } from "./libs/repository";
 import { getNextVersion, getVersionBumpLevel } from "./libs/version";
 
-const tryGetNextVersion = (
+function tryGetNextVersion(
   currentVersion: SemVer | null,
   bumpLevel: number,
-  preRelease: string | undefined,
-) => {
+  preRelease: string | null,
+) {
   return bumpLevel > 0 || preRelease
-    ? getNextVersion(currentVersion, bumpLevel, preRelease)
+    ? getNextVersion(currentVersion, bumpLevel, preRelease ?? undefined)
     : null;
-};
+}
 
-const generatePullRequestBody = async (nextVersion: SemVer) => {
+async function generatePullRequestBody(nextVersion: SemVer) {
   const releaseNotes = await generateReleaseNotesForPullRequest(nextVersion);
 
   return createReleasePullRequestBody(releaseNotes);
-};
+}
 
-export const setup = async () => {
-  const { name, version: currentVersion } = getNodePackage();
+export async function setup() {
+  const nodePackage = getNodePackage();
   const mergedReleasePullRequest = await getReleasePullRequest("merged");
   const openReleasePullRequest = await getReleasePullRequest("open");
   const pullRequests = await getPullRequestsSinceLastRelease();
-  const bumpLevel = getVersionBumpLevel(pullRequests, currentVersion);
+  const bumpLevel = getVersionBumpLevel(pullRequests, nodePackage.version);
   core.info(`Release as: ${inputs.releaseAs?.version ?? "none"}.`);
   core.info(`Pre-release: ${inputs.preRelease ?? "none"}.`);
   const nextVersion = !inputs.releaseAs
-    ? tryGetNextVersion(currentVersion, bumpLevel, inputs.preRelease)
+    ? tryGetNextVersion(nodePackage.version, bumpLevel, inputs.preRelease)
     : inputs.releaseAs;
   const releaseNotes = nextVersion
     ? await generatePullRequestBody(nextVersion)
-    : undefined;
+    : null;
 
   return {
-    name,
-    currentVersion,
+    name: nodePackage.name,
+    currentVersion: nodePackage.version,
     nextVersion,
     isManualVersion:
       (!!inputs.preRelease || !!inputs.releaseAs) &&
@@ -53,4 +53,4 @@ export const setup = async () => {
     openReleasePullRequest,
     releaseNotes,
   };
-};
+}

@@ -1,9 +1,9 @@
 import { inputs } from "../src/libs/inputs";
 import { githubResponseList, octokit } from "./mocks";
 
-export const mockDefaultInputs = () => {
-  inputs.preRelease = undefined;
-  inputs.releaseAs = undefined;
+export function mockDefaultInputs() {
+  inputs.preRelease = null;
+  inputs.releaseAs = null;
   inputs.releaseLabels = {
     ignore: "changelog-ignore",
     patch: "type: fix",
@@ -16,34 +16,30 @@ export const mockDefaultInputs = () => {
     production: "main",
     release: "releases/next",
   };
-};
+}
 
-export const mockPullRequestLists = ({
-  mergedRelease,
-  openRelease,
-  changes,
-}: {
+export function mockPullRequestLists(pullRequests: {
   mergedRelease?: unknown[];
   openRelease?: unknown[];
   changes?: unknown[];
-}) => {
-  if (mergedRelease) {
+}) {
+  if (pullRequests.mergedRelease) {
     octokit.rest.pulls.list.mockResolvedValueOnce({
-      data: mergedRelease,
+      data: pullRequests.mergedRelease,
     });
   } else {
     octokit.rest.pulls.list.mockResolvedValueOnce(githubResponseList);
   }
-  if (openRelease) {
+  if (pullRequests.openRelease) {
     octokit.rest.pulls.list.mockResolvedValueOnce({
-      data: openRelease,
+      data: pullRequests.openRelease,
     });
   } else {
     octokit.rest.pulls.list.mockResolvedValueOnce(githubResponseList);
   }
-  if (changes) {
+  if (pullRequests.changes) {
     octokit.rest.pulls.list.mockResolvedValueOnce({
-      data: changes,
+      data: pullRequests.changes,
     });
   }
-};
+}

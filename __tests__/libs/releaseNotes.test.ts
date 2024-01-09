@@ -67,21 +67,21 @@ describe("getDiffMarkdown()", () => {
     expect(result).toEqual("```diff\n-  Line 2\n+  Line 1a\n```");
   });
 
-  it("should return `undefined` when no changes", () => {
+  it("should return `null` when no changes", () => {
     const oldContent = ["Line 1", "Line 2", "", "Line 3"].join("\n");
     const newContent = ["Line 1", "Line 2", "", "Line 3"].join("\n");
 
     const result = getDiffMarkdown(oldContent, newContent);
 
-    expect(result).toEqual(undefined);
+    expect(result).toEqual(null);
   });
 
-  it("should return `undefined` when empty", () => {
+  it("should return `null` when empty", () => {
     const oldContent = "";
     const newContent = " ";
 
     const result = getDiffMarkdown(oldContent, newContent);
 
-    expect(result).toEqual(undefined);
+    expect(result).toEqual(null);
   });
 });

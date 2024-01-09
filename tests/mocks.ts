@@ -1,6 +1,6 @@
 process.env["GITHUB_TOKEN"] = "token";
 
-export const githubResponse = { data: undefined };
+export const githubResponse = { data: { commit: null } };
 export const githubResponseList = { data: [] };
 
 export const core = {

@@ -1,6 +1,6 @@
 import type { JestConfigWithTsJest } from "ts-jest";
 
-const configuration: JestConfigWithTsJest = {
+const configuration = {
   extensionsToTreatAsEsm: [".ts"],
   fakeTimers: {
     enableGlobally: true,
@@ -16,6 +16,6 @@ const configuration: JestConfigWithTsJest = {
     "^.+\\.ts$": ["ts-jest", { useESM: true, tsconfig: "tsconfig.test.json" }],
   },
   verbose: true,
-};
+} satisfies JestConfigWithTsJest;
 
 module.exports = configuration;

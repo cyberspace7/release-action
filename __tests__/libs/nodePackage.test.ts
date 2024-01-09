@@ -5,12 +5,10 @@ import {
 } from "../../src/libs/nodePackage";
 import { fileSystem } from "../../tests/mocks";
 
-const { readFileSync } = fileSystem;
-
 describe("getNodePackage()", () => {
   describe("when `name`", () => {
     it("should return value when `n-a_me1`", () => {
-      readFileSync.mockReturnValueOnce(`{"name": "n-a_me1"}`);
+      fileSystem.readFileSync.mockReturnValueOnce(`{"name": "n-a_me1"}`);
 
       const result = getNodePackage();
 
@@ -18,7 +16,9 @@ describe("getNodePackage()", () => {
     });
 
     it("should return value when `@o-w_ner2/n-a_me1`", () => {
-      readFileSync.mockReturnValueOnce(`{"name": "@o-w_ner2/n-a_me1"}`);
+      fileSystem.readFileSync.mockReturnValueOnce(
+        `{"name": "@o-w_ner2/n-a_me1"}`,
+      );
 
       const result = getNodePackage();
 
@@ -34,7 +34,7 @@ describe("getNodePackage()", () => {
       "@owner!/name",
       "ow ner/name",
     ])("should throw when `%s`", (value) => {
-      readFileSync.mockReturnValueOnce(`{"name": "${value}`);
+      fileSystem.readFileSync.mockReturnValueOnce(`{"name": "${value}`);
 
       expect(getNodePackage).toThrow();
     });
@@ -42,7 +42,7 @@ describe("getNodePackage()", () => {
 
   describe("when `version`", () => {
     it("should return value when `1.2.3-alpha.4`", () => {
-      readFileSync.mockReturnValueOnce(
+      fileSystem.readFileSync.mockReturnValueOnce(
         '{"name": "name", "version": "1.2.3-alpha.4"}',
       );
 
@@ -52,7 +52,9 @@ describe("getNodePackage()", () => {
     });
 
     it("should return `null` when empty", () => {
-      readFileSync.mockReturnValueOnce('{"name": "name", "version": ""}');
+      fileSystem.readFileSync.mockReturnValueOnce(
+        '{"name": "name", "version": ""}',
+      );
 
       const result = getNodePackage();
 
@@ -60,7 +62,9 @@ describe("getNodePackage()", () => {
     });
 
     it("should throw when `test`", () => {
-      readFileSync.mockReturnValueOnce('{"name": "name", "version": "test"}');
+      fileSystem.readFileSync.mockReturnValueOnce(
+        '{"name": "name", "version": "test"}',
+      );
 
       expect(getNodePackage).toThrow();
     });
@@ -69,7 +73,7 @@ describe("getNodePackage()", () => {
 
 describe("createNewNodePackageEncodedContent()", () => {
   it("should return content when version defined", () => {
-    readFileSync.mockReturnValue(
+    fileSystem.readFileSync.mockReturnValue(
       '{"name": "@owner/application", "version": "1.2.3-alpha.4", "bugs": { "url": "http://bugs.com", "email": "bugs@email.com" }, "author": { "name": "Name", "email": "name@email.com", "url": "http://name.com" }, "dependencies": {}}',
     );
 
@@ -81,7 +85,7 @@ describe("createNewNodePackageEncodedContent()", () => {
   });
 
   it("should return content when version undefined", () => {
-    readFileSync.mockReturnValue(
+    fileSystem.readFileSync.mockReturnValue(
       '{"name": "@owner/application", "bugs": { "url": "http://bugs.com", "email": "bugs@email.com" }, "author": { "name": "Name", "email": "name@email.com", "url": "http://name.com" }, "dependencies": {}}',
     );
 

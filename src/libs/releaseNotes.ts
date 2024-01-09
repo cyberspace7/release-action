@@ -1,6 +1,6 @@
 import { diffLines } from "diff";
 
-export const createReleasePullRequestBody = (releaseNotes: string) => {
+export function createReleasePullRequestBody(releaseNotes: string) {
   const lines = releaseNotes.split("\n");
   const endIndex = lines.findIndex(
     (line) =>
@@ -9,9 +9,9 @@ export const createReleasePullRequestBody = (releaseNotes: string) => {
   );
   const selectedLines = endIndex > 0 ? lines.splice(2, endIndex - 2) : lines;
   return selectedLines.join("\n");
-};
+}
 
-export const getDiffMarkdown = (oldContent: string, newContent: string) => {
+export function getDiffMarkdown(oldContent: string, newContent: string) {
   const diff = diffLines(oldContent.trim() + "\n", newContent.trim() + "\n");
   const markdownDiff = diff
     .map(({ added, removed, value }) => {
@@ -29,12 +29,10 @@ export const getDiffMarkdown = (oldContent: string, newContent: string) => {
           .join("\n");
       }
 
-      return undefined;
+      return null;
     })
     .filter((value) => !!value)
     .join("\n");
 
-  return markdownDiff.length
-    ? `\`\`\`diff\n${markdownDiff}\n\`\`\``
-    : undefined;
-};
+  return markdownDiff.length ? `\`\`\`diff\n${markdownDiff}\n\`\`\`` : null;
+}

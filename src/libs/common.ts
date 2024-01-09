@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 
-export const tryExecute = <T>(fn: () => T, errorMessage: string) => {
+export function tryExecute<T>(fn: () => T, errorMessage: string) {
   try {
     return fn();
   } catch (error) {
@@ -11,4 +11,4 @@ export const tryExecute = <T>(fn: () => T, errorMessage: string) => {
     core.error(error);
     throw new Error(errorMessage);
   }
-};
+}

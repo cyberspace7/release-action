@@ -5,15 +5,15 @@ import { prepare } from "./prepare";
 import { release } from "./release";
 import { setup } from "./setup";
 
-const tryRelease = async (
+async function tryRelease(
   name: string,
   currentVersion: SemVer | null,
-  releasePullRequest: PullRequest | undefined,
-) => {
+  releasePullRequest: PullRequest | null,
+) {
   if (currentVersion) {
     core.info(`Current version: ${currentVersion.version}`);
     core.setOutput("current-version", currentVersion.version);
-    core.setOutput("pre-release", currentVersion.prerelease.at(0));
+    core.setOutput("pre-release", currentVersion.prerelease.at(0) ?? null);
     if (releasePullRequest) {
       await core.group("Release current version", () =>
         release(name, currentVersion, releasePullRequest),
@@ -27,26 +27,26 @@ const tryRelease = async (
     }
   } else {
     core.info("No current version.");
-    core.setOutput("current-version", undefined);
-    core.setOutput("pre-release", undefined);
+    core.setOutput("current-version", null);
+    core.setOutput("pre-release", null);
   }
   core.setOutput("is-released", false);
 
   return false;
-};
+}
 
-const tryPrepare = async (
+async function tryPrepare(
   nextVersion: SemVer | null,
-  releasePullRequest: PullRequest | undefined,
-  releaseNotes: string | undefined,
+  releasePullRequest: PullRequest | null,
+  releaseNotes: string | null,
   isManualVersion: boolean,
-) => {
+) {
   if (!nextVersion || (!releaseNotes && !isManualVersion)) {
     core.notice("No changes since last release.", {
       title: "No Changes",
     });
-    core.setOutput("next-version", undefined);
-    core.setOutput("release-pr", undefined);
+    core.setOutput("next-version", null);
+    core.setOutput("release-pr", null);
     return;
   }
 
@@ -77,36 +77,28 @@ const tryPrepare = async (
     ),
   );
   core.setOutput("release-pr", prNumber);
-};
+}
 
-export const main = async () => {
+export async function main() {
   try {
-    const {
-      name,
-      currentVersion,
-      nextVersion,
-      isManualVersion,
-      mergedReleasePullRequest,
-      openReleasePullRequest,
-      releaseNotes,
-    } = await core.group("Setup", setup);
+    const context = await core.group("Setup", setup);
     const isReleased = await tryRelease(
-      name,
-      currentVersion,
-      mergedReleasePullRequest,
+      context.name,
+      context.currentVersion,
+      context.mergedReleasePullRequest,
     );
     if (isReleased) {
-      core.setOutput("next-version", undefined);
-      core.setOutput("release-pr", undefined);
+      core.setOutput("next-version", null);
+      core.setOutput("release-pr", null);
 
       return;
     }
 
     await tryPrepare(
-      nextVersion,
-      openReleasePullRequest,
-      releaseNotes,
-      isManualVersion,
+      context.nextVersion,
+      context.openReleasePullRequest,
+      context.releaseNotes,
+      context.isManualVersion,
     );
   } catch (error) {
     if (typeof error !== "string" && !(error instanceof Error)) {
@@ -115,4 +107,4 @@ export const main = async () => {
 
     core.setFailed(error instanceof Error ? error.message : error);
   }
-};
+}
