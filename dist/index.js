@@ -33751,15 +33751,15 @@ __webpack_async_result__();
 
 
 const PRE_RELEASE_REGEX = /^[A-Za-z0-9-]+$/;
-const environmentValidator = zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
+const environmentSchema = zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
     GITHUB_TOKEN: zod__WEBPACK_IMPORTED_MODULE_2__.z.string(),
 });
-const inputsValidator = zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
+const inputsSchema = zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
     preRelease: zod__WEBPACK_IMPORTED_MODULE_2__.z.string()
         .regex(PRE_RELEASE_REGEX)
         .or(zod__WEBPACK_IMPORTED_MODULE_2__.z.literal(""))
         .transform((value) => {
-        return value !== "" ? value : undefined;
+        return value !== "" ? value : null;
     }),
     releaseAs: zod__WEBPACK_IMPORTED_MODULE_2__.z.string()
         .or(zod__WEBPACK_IMPORTED_MODULE_2__.z.literal(""))
@@ -33767,7 +33767,7 @@ const inputsValidator = zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
         if (value && !semver__WEBPACK_IMPORTED_MODULE_1___default().valid(value)) {
             throw new Error(`Invalid version: "${value}".`);
         }
-        return value ? semver__WEBPACK_IMPORTED_MODULE_1___default().parse(value) ?? undefined : undefined;
+        return value ? semver__WEBPACK_IMPORTED_MODULE_1___default().parse(value) : null;
     }),
     releaseLabels: zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
         ignore: zod__WEBPACK_IMPORTED_MODULE_2__.z.string()
@@ -33815,10 +33815,10 @@ const inputsValidator = zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
     }),
 });
 const parseEnvironment = () => {
-    return environmentValidator.parse(process.env);
+    return environmentSchema.parse(process.env);
 };
 const parseInputs = () => {
-    return inputsValidator.parse({
+    return inputsSchema.parse({
         preRelease: (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("pre-release"),
         releaseAs: (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("release-as"),
         releaseLabels: {
@@ -33864,7 +33864,7 @@ var external_fs_ = __nccwpck_require__(7147);
 var lib = __nccwpck_require__(7686);
 ;// CONCATENATED MODULE: ./src/libs/common.ts
 
-const tryExecute = (fn, errorMessage) => {
+function tryExecute(fn, errorMessage) {
     try {
         return fn();
     }
@@ -33875,7 +33875,7 @@ const tryExecute = (fn, errorMessage) => {
         core.error(error);
         throw new Error(errorMessage);
     }
-};
+}
 
 ;// CONCATENATED MODULE: ./src/libs/nodePackage.ts
 
@@ -33885,7 +33885,7 @@ const tryExecute = (fn, errorMessage) => {
 
 const NODE_PACKAGE_NAME_REGEX = /^(@[a-zA-Z0-9_-]+\/)?[a-zA-Z0-9_-]+$/;
 const PACKAGE_FILE_NAME = "package.json";
-const nodePackageValidator = lib.z.object({
+const nodePackageSchema = lib.z.object({
     name: lib.z.string()
         .regex(NODE_PACKAGE_NAME_REGEX)
         .transform((value) => {
@@ -33904,17 +33904,17 @@ const nodePackageValidator = lib.z.object({
         return semver_default().parse(value);
     }),
 });
-const getNodePackage = () => {
+function getNodePackage() {
     return tryExecute(() => {
         core.debug(`Reading ${PACKAGE_FILE_NAME}...`);
         const packageFile = (0,external_fs_.readFileSync)(PACKAGE_FILE_NAME, "utf8");
-        const nodePackage = nodePackageValidator.parse(JSON.parse(packageFile));
+        const nodePackage = nodePackageSchema.parse(JSON.parse(packageFile));
         core.debug(`name="${nodePackage.name}"; version=${nodePackage.version?.version}.`);
         core.info(`${PACKAGE_FILE_NAME} read.`);
         return nodePackage;
     }, `Error while reading ${PACKAGE_FILE_NAME}.`);
-};
-const createNewNodePackageEncodedContent = (version) => {
+}
+function createNewNodePackageEncodedContent(version) {
     return tryExecute(() => {
         core.debug(`Creating new ${PACKAGE_FILE_NAME} encoded content...`);
         const packageFile = (0,external_fs_.readFileSync)(PACKAGE_FILE_NAME, "utf8");
@@ -33924,7 +33924,7 @@ const createNewNodePackageEncodedContent = (version) => {
         core.info(`${PACKAGE_FILE_NAME} updated.`);
         return newContent;
     }, `Error while creating new ${PACKAGE_FILE_NAME} encoded content.`);
-};
+}
 
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+github@6.0.0/node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(6764);
@@ -35493,14 +35493,14 @@ function escapeHTML(s) {
 
 ;// CONCATENATED MODULE: ./src/libs/releaseNotes.ts
 
-const createReleasePullRequestBody = (releaseNotes) => {
+function createReleasePullRequestBody(releaseNotes) {
     const lines = releaseNotes.split("\n");
     const endIndex = lines.findIndex((line) => line.startsWith("## New Contributors") ||
         line.startsWith("**Full Changelog**"));
     const selectedLines = endIndex > 0 ? lines.splice(2, endIndex - 2) : lines;
     return selectedLines.join("\n");
-};
-const getDiffMarkdown = (oldContent, newContent) => {
+}
+function getDiffMarkdown(oldContent, newContent) {
     const diff = diffLines(oldContent.trim() + "\n", newContent.trim() + "\n");
     const markdownDiff = diff
         .map(({ added, removed, value }) => {
@@ -35517,14 +35517,12 @@ const getDiffMarkdown = (oldContent, newContent) => {
                 .map((line) => `+  ${line}`)
                 .join("\n");
         }
-        return undefined;
+        return null;
     })
         .filter((value) => !!value)
         .join("\n");
-    return markdownDiff.length
-        ? `\`\`\`diff\n${markdownDiff}\n\`\`\``
-        : undefined;
-};
+    return markdownDiff.length ? `\`\`\`diff\n${markdownDiff}\n\`\`\`` : null;
+}
 
 ;// CONCATENATED MODULE: ./src/libs/repository.ts
 
@@ -35539,35 +35537,32 @@ const octokit = (0,github.getOctokit)(inputs/* environment.GITHUB_TOKEN */.NZ.GI
 const RELEASE_TAG_PREFFIX = "v";
 const owner = github.context.repo.owner;
 const repo = github.context.repo.repo;
-const getReleaseCommitMessage = (nextVersion) => {
+function getReleaseCommitMessage(nextVersion) {
     return `chore(main): release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
-};
-const getReleasePullRequestTitle = (nextVersion) => {
+}
+function getReleasePullRequestTitle(nextVersion) {
     return `Release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
-};
-const generateManualVersionComment = (nextVersion) => {
+}
+function generateManualVersionComment(nextVersion) {
     return `Version \`${nextVersion.version}\` has been manually requested by @${github.context.actor}.`;
-};
-const generateReleaseComment = (release) => {
-    const { name, html_url } = release;
-    return `:package: [**${name}**](${html_url}) has been released.`;
-};
-const generateReleasePullRequestUpdateComment = (oldContent, newContent) => {
+}
+function generateReleaseComment(release) {
+    return `:package: [**${release.name}**](${release.html_url}) has been released.`;
+}
+function generateReleasePullRequestUpdateComment(oldContent, newContent) {
     const markdownDiff = getDiffMarkdown(oldContent, newContent);
-    return markdownDiff
-        ? `Content has been updated:\n\n${markdownDiff}`
-        : undefined;
-};
-const getNodePackageSha = () => {
+    return markdownDiff ? `Content has been updated:\n\n${markdownDiff}` : null;
+}
+function getNodePackageSha() {
     return tryExecute(async () => {
         core.debug(`Getting ${PACKAGE_FILE_NAME} file SHA...`);
-        const { data: contents } = await octokit.rest.repos.getContent({
+        const content = await octokit.rest.repos.getContent({
             owner,
             repo,
             path: PACKAGE_FILE_NAME,
             ref: `refs/heads/${inputs/* inputs.branches.release */.FU.branches.release}`,
         });
-        const sha = "sha" in contents ? contents.sha : undefined;
+        const sha = "sha" in content.data ? content.data.sha : null;
         if (!sha) {
             throw new Error(`${PACKAGE_FILE_NAME} content not found.`);
         }
@@ -35575,8 +35570,8 @@ const getNodePackageSha = () => {
         core.info(`${PACKAGE_FILE_NAME} file SHA retrieved.`);
         return sha;
     }, `Error while getting ${PACKAGE_FILE_NAME} file SHA.`);
-};
-const getPullRequestsSinceLastRelease = () => {
+}
+function getPullRequestsSinceLastRelease() {
     return tryExecute(async () => {
         core.debug("Getting pull requests since last release...");
         const pullRequests = await octokit.paginate(octokit.rest.pulls.list, {
@@ -35585,34 +35580,34 @@ const getPullRequestsSinceLastRelease = () => {
             state: "closed",
             sort: "updated",
             direction: "desc",
-        }, ({ data: pullRequests }, done) => {
-            const releasePrIndex = pullRequests.findIndex(({ labels }) => {
-                return labels.some(({ name }) => name === inputs/* inputs.releaseLabels.done */.FU.releaseLabels.done);
+        }, (pullRequests, done) => {
+            const releasePrIndex = pullRequests.data.findIndex((pullRequest) => {
+                return pullRequest.labels.some(({ name }) => name === inputs/* inputs.releaseLabels.done */.FU.releaseLabels.done);
             });
             if (releasePrIndex > -1) {
                 done();
-                const prsAfterRelease = pullRequests.slice(0, releasePrIndex);
+                const prsAfterRelease = pullRequests.data.slice(0, releasePrIndex);
                 core.debug(`${prsAfterRelease.length} pull request(s) loaded. Last Release pull request found.`);
                 return prsAfterRelease;
             }
-            core.debug(`${pullRequests.length} pull request(s) loaded...`);
-            return pullRequests;
+            core.debug(`${pullRequests.data.length} pull request(s) loaded...`);
+            return pullRequests.data;
         });
         core.info(`${pullRequests.length} pull request(s) found since last release.`);
         return pullRequests;
     }, "Error while getting pull requests since last release.");
-};
-const getReleaseBranch = () => {
+}
+function getReleaseBranch() {
     return tryExecute(async () => {
         try {
             core.debug(`Getting branch "${inputs/* inputs.branches.release */.FU.branches.release}"...`);
-            const { data: branch } = await octokit.rest.repos.getBranch({
+            const branch = await octokit.rest.repos.getBranch({
                 owner,
                 repo,
                 branch: inputs/* inputs.branches.release */.FU.branches.release,
             });
             core.info(`Branch "${inputs/* inputs.branches.release */.FU.branches.release}" found.`);
-            return branch;
+            return branch.data;
         }
         catch (error) {
             if (error.name !== "HttpError" ||
@@ -35620,14 +35615,14 @@ const getReleaseBranch = () => {
                 throw error;
             }
             core.info(`Branch "${inputs/* inputs.branches.release */.FU.branches.release}" not found.`);
-            return undefined;
+            return null;
         }
     }, `Error while getting branch "${inputs/* inputs.branches.release */.FU.branches.release}".`);
-};
-const getReleasePullRequest = (state) => {
+}
+function getReleasePullRequest(state) {
     return tryExecute(async () => {
         core.debug(`Getting ${state} release pull request...`);
-        const { data: pullRequests } = await octokit.rest.pulls.list({
+        const pullRequests = await octokit.rest.pulls.list({
             owner,
             repo,
             state: state === "open" ? "open" : "closed",
@@ -35638,50 +35633,50 @@ const getReleasePullRequest = (state) => {
             per_page: 2,
         });
         const filteredPullRequests = state === "merged"
-            ? pullRequests.filter(({ labels, merged_at }) => !!merged_at &&
-                labels.some(({ name }) => name === inputs/* inputs.releaseLabels.ready */.FU.releaseLabels.ready))
-            : pullRequests.filter(({ labels }) => labels.some(({ name }) => name === inputs/* inputs.releaseLabels.ready */.FU.releaseLabels.ready));
+            ? pullRequests.data.filter((pullRequest) => !!pullRequest.merged_at &&
+                pullRequest.labels.some((label) => label.name === inputs/* inputs.releaseLabels.ready */.FU.releaseLabels.ready))
+            : pullRequests.data.filter((pullRequest) => pullRequest.labels.some((label) => label.name === inputs/* inputs.releaseLabels.ready */.FU.releaseLabels.ready));
         if (filteredPullRequests.length > 1) {
             core.warning(`More than one ${state} release pull request found. Using the last updated.`, {
                 title: "Multiple Release PR",
             });
         }
-        const foundPullrequest = filteredPullRequests.at(0);
+        const foundPullrequest = filteredPullRequests.at(0) ?? null;
         core.info(`Release pull request (${state}) found: #${foundPullrequest?.number}.`);
         return foundPullrequest;
     }, `Error while getting ${state} release pull request.`);
-};
-const generateReleaseNotesForPullRequest = (nextVersion) => {
+}
+function generateReleaseNotesForPullRequest(nextVersion) {
     const tagName = `${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
     return tryExecute(async () => {
         core.debug(`Generating release notes for ${tagName}...`);
-        const { data: { body }, } = await octokit.rest.repos.generateReleaseNotes({
+        const releaseNote = await octokit.rest.repos.generateReleaseNotes({
             owner,
             repo,
             tag_name: tagName,
             target_commitish: github.context.sha,
         });
         core.info(`Release notes generated for ${tagName}.`);
-        return body;
+        return releaseNote.data.body;
     }, `Error while generating release notes for ${tagName}.`);
-};
-const createReleaseBranch = () => {
+}
+function createReleaseBranch() {
     return tryExecute(async () => {
         core.debug(`Creating branch "${inputs/* inputs.branches.release */.FU.branches.release}"...`);
-        const { data: branch } = await octokit.rest.git.createRef({
+        const branch = await octokit.rest.git.createRef({
             owner,
             repo,
             ref: `refs/heads/${inputs/* inputs.branches.release */.FU.branches.release}`,
             sha: github.context.sha,
         });
         core.info(`Branch "${inputs/* inputs.branches.release */.FU.branches.release}" created.`);
-        return branch;
+        return branch.data;
     }, `Error while creating branch "${inputs/* inputs.branches.release */.FU.branches.release}".`);
-};
-const commitFileToReleaseBranch = (sha, content, nextVersion) => {
+}
+function commitFileToReleaseBranch(sha, content, nextVersion) {
     return tryExecute(async () => {
         core.debug(`Commiting to branch "${inputs/* inputs.branches.release */.FU.branches.release}"...`);
-        const { data: commit } = await octokit.rest.repos.createOrUpdateFileContents({
+        const contents = await octokit.rest.repos.createOrUpdateFileContents({
             owner,
             repo,
             path: PACKAGE_FILE_NAME,
@@ -35691,14 +35686,14 @@ const commitFileToReleaseBranch = (sha, content, nextVersion) => {
             branch: inputs/* inputs.branches.release */.FU.branches.release,
         });
         core.info(`Commit created to branch "${inputs/* inputs.branches.release */.FU.branches.release}".`);
-        return commit;
+        return contents.data.commit;
     }, `Error while commiting to branch "${inputs/* inputs.branches.release */.FU.branches.release}".`);
-};
-const createReleasePullRequest = (nextVersion, body) => {
+}
+function createReleasePullRequest(nextVersion, body) {
     const title = getReleasePullRequestTitle(nextVersion);
     return tryExecute(async () => {
         core.debug(`Creating release pull request "${title}"...`);
-        const { data: pullRequest } = await octokit.rest.pulls.create({
+        const pullRequest = await octokit.rest.pulls.create({
             owner,
             repo,
             title,
@@ -35706,35 +35701,34 @@ const createReleasePullRequest = (nextVersion, body) => {
             base: inputs/* inputs.branches.production */.FU.branches.production,
             body,
         });
-        core.info(`Release pull request "${title}" created: #${pullRequest.number}.`);
-        return pullRequest;
+        core.info(`Release pull request "${title}" created: #${pullRequest.data.number}.`);
+        return pullRequest.data;
     }, `Error while creating release pull request "${title}".`);
-};
-const createReleaseTag = (pullRequest, version) => {
+}
+function createReleaseTag(pullRequest, version) {
     return tryExecute(async () => {
         core.debug(`Creating release tag.`);
-        const { merge_commit_sha, number } = pullRequest;
-        if (!merge_commit_sha) {
-            throw new Error(`Pull request #${number} has no merge commit SHA.`);
+        if (!pullRequest.merge_commit_sha) {
+            throw new Error(`Pull request #${pullRequest.number} has no merge commit SHA.`);
         }
         const tagName = `${RELEASE_TAG_PREFFIX}${version.version}`;
-        const { data: tag } = await octokit.rest.git.createTag({
+        const tag = await octokit.rest.git.createTag({
             owner,
             repo,
             tag: tagName,
             message: `Release ${tagName}`,
-            object: merge_commit_sha,
+            object: pullRequest.merge_commit_sha,
             type: "commit",
         });
-        core.info(`Release tag "${tag.tag}" created.`);
-        return tag;
+        core.info(`Release tag "${tag.data.tag}" created.`);
+        return tag.data;
     }, `Error while creating release tag.`);
-};
-const createRelease = (appName, tag, preRelease) => {
+}
+function createRelease(appName, tag, preRelease) {
     const releaseName = `${appName} ${tag.tag}`;
     return tryExecute(async () => {
         core.debug(`Creating release "${releaseName}"...`);
-        const { data: release } = await octokit.rest.repos.createRelease({
+        const release = await octokit.rest.repos.createRelease({
             owner,
             repo,
             tag_name: tag.tag,
@@ -35742,27 +35736,27 @@ const createRelease = (appName, tag, preRelease) => {
             generate_release_notes: true,
             prerelease: !!preRelease,
         });
-        core.info(`Release "${release.name}" created.`);
-        return release;
+        core.info(`Release "${release.data.name}" created.`);
+        return release.data;
     }, `Error while creating release ${releaseName}.`);
-};
-const addLabelToReleasePullRequest = (number) => {
+}
+function addLabelToReleasePullRequest(number) {
     return tryExecute(async () => {
         core.debug(`Adding label "${inputs/* inputs.releaseLabels.ready */.FU.releaseLabels.ready}" to release pull request #${number}...`);
-        const { data: updatedPullRequest } = await octokit.rest.issues.addLabels({
+        const updatedPullRequest = await octokit.rest.issues.addLabels({
             owner,
             repo,
             issue_number: number,
             labels: [inputs/* inputs.releaseLabels.ready */.FU.releaseLabels.ready],
         });
         core.info(`Label "${inputs/* inputs.releaseLabels.ready */.FU.releaseLabels.ready}" added to release pull request #${number}.`);
-        return updatedPullRequest;
+        return updatedPullRequest.data;
     }, `Error while adding label "${inputs/* inputs.releaseLabels.ready */.FU.releaseLabels.ready}" to release pull request #${number}.`);
-};
-const mergeIntoReleaseBranch = () => {
+}
+function mergeIntoReleaseBranch() {
     return tryExecute(async () => {
         core.debug(`Merging branch "${inputs/* inputs.branches.production */.FU.branches.production}" into "${inputs/* inputs.branches.release */.FU.branches.release}"...`);
-        const { data: merge } = await octokit.rest.repos.merge({
+        const merge = await octokit.rest.repos.merge({
             owner,
             repo,
             base: inputs/* inputs.branches.release */.FU.branches.release,
@@ -35770,51 +35764,49 @@ const mergeIntoReleaseBranch = () => {
             commit_message: `chore(main): merge "${inputs/* inputs.branches.production */.FU.branches.production}"`,
         });
         core.info(`Branch "${inputs/* inputs.branches.production */.FU.branches.production}" merged into "${inputs/* inputs.branches.release */.FU.branches.release}".`);
-        return merge;
+        return merge.data;
     }, `Error while merging branch "${inputs/* inputs.branches.production */.FU.branches.production}" into "${inputs/* inputs.branches.release */.FU.branches.release}".`);
-};
-const updateReleasePullRequest = (pullRequest, nextVersion, body) => {
-    const { number } = pullRequest;
+}
+function updateReleasePullRequest(pullRequest, nextVersion, body) {
     return tryExecute(async () => {
-        core.debug(`Updating release pull request #${number}...`);
-        const { data: updatedPullRequest } = await octokit.rest.pulls.update({
+        core.debug(`Updating release pull request #${pullRequest.number}...`);
+        const updatedPullRequest = await octokit.rest.pulls.update({
             owner,
             repo,
-            pull_number: number,
+            pull_number: pullRequest.number,
             title: getReleasePullRequestTitle(nextVersion),
             body,
         });
-        core.info(`Release pull request #${number} updated.`);
-        return updatedPullRequest;
-    }, `Error while updating release pull request #${number}.`);
-};
-const completeReleasePullRequest = (pullRequest) => {
-    const { number } = pullRequest;
+        core.info(`Release pull request #${pullRequest.number} updated.`);
+        return updatedPullRequest.data;
+    }, `Error while updating release pull request #${pullRequest.number}.`);
+}
+function completeReleasePullRequest(pullRequest) {
     return tryExecute(async () => {
-        core.debug(`Updating release pull request #${number}...`);
-        const { data: updatedPullRequest } = await octokit.rest.issues.update({
+        core.debug(`Updating release pull request #${pullRequest.number}...`);
+        const updatedPullRequest = await octokit.rest.issues.update({
             owner,
             repo,
-            issue_number: number,
+            issue_number: pullRequest.number,
             labels: [inputs/* inputs.releaseLabels.done */.FU.releaseLabels.done],
         });
-        core.info(`Release pull request #${number} updated.`);
-        return updatedPullRequest;
-    }, `Error while updating release pull request #${number}.`);
-};
-const commentPullRequest = (number, body) => {
+        core.info(`Release pull request #${pullRequest.number} updated.`);
+        return updatedPullRequest.data;
+    }, `Error while updating release pull request #${pullRequest.number}.`);
+}
+function commentPullRequest(number, body) {
     return tryExecute(async () => {
         core.debug(`Adding comment to release pull request #${number}...`);
-        const { data: comment } = await octokit.rest.issues.createComment({
+        const comment = await octokit.rest.issues.createComment({
             owner,
             repo,
             issue_number: number,
             body,
         });
         core.info(`Comment added to release pull request #${number}.`);
-        return comment;
+        return comment.data;
     }, `Error while adding comment to release pull request #${number}.`);
-};
+}
 
 ;// CONCATENATED MODULE: ./src/prepare.ts
 
@@ -35822,12 +35814,12 @@ const commentPullRequest = (number, body) => {
 
 
 
-const commitNodePackage = async (nextVersion) => {
+async function commitNodePackage(nextVersion) {
     const sha = await getNodePackageSha();
     const content = createNewNodePackageEncodedContent(nextVersion);
     await commitFileToReleaseBranch(sha, content, nextVersion);
-};
-const getOrCreateReleaseBranch = async () => {
+}
+async function getOrCreateReleaseBranch() {
     if (await getReleaseBranch()) {
         return false;
     }
@@ -35836,23 +35828,22 @@ const getOrCreateReleaseBranch = async () => {
         title: "Branch Created",
     });
     return true;
-};
-const createOrUpdateReleasePullRequest = async (nextVersion, releasePullRequest, releaseNotes, isManualVersion) => {
+}
+async function createOrUpdateReleasePullRequest(nextVersion, releasePullRequest, releaseNotes, isManualVersion) {
     if (!releasePullRequest) {
-        const { number } = await createReleasePullRequest(nextVersion, releaseNotes);
-        await addLabelToReleasePullRequest(number);
-        core.notice(`Release PR #${number} has been opened.`, {
+        const newPullRequest = await createReleasePullRequest(nextVersion, releaseNotes);
+        await addLabelToReleasePullRequest(newPullRequest.number);
+        core.notice(`Release PR #${newPullRequest.number} has been opened.`, {
             title: "PR Opened",
         });
         if (isManualVersion) {
             const comment = generateManualVersionComment(nextVersion);
-            await commentPullRequest(number, comment);
+            await commentPullRequest(newPullRequest.number, comment);
         }
-        return number;
+        return newPullRequest.number;
     }
-    const { number, body } = releasePullRequest;
     await updateReleasePullRequest(releasePullRequest, nextVersion, releaseNotes);
-    const diffComment = generateReleasePullRequestUpdateComment(body ?? "", releaseNotes);
+    const diffComment = generateReleasePullRequestUpdateComment(releasePullRequest.body ?? "", releaseNotes);
     if (diffComment ?? isManualVersion) {
         const manualVersionComment = isManualVersion
             ? generateManualVersionComment(nextVersion)
@@ -35860,14 +35851,14 @@ const createOrUpdateReleasePullRequest = async (nextVersion, releasePullRequest,
         const comment = [manualVersionComment, diffComment]
             .filter((value) => !!value)
             .join("\n\n");
-        await commentPullRequest(number, comment);
+        await commentPullRequest(releasePullRequest.number, comment);
     }
-    core.notice(`The existing release PR #${number} has been updated.`, {
+    core.notice(`The existing release PR #${releasePullRequest.number} has been updated.`, {
         title: "PR Updated",
     });
     return releasePullRequest.number;
-};
-const prepare = async (nextVersion, releaseNotes, releasePullRequest, isManualVersion) => {
+}
+async function prepare(nextVersion, releaseNotes, releasePullRequest, isManualVersion) {
     core.info(`Preparing new release...`);
     let skipMerge = false;
     if (!releasePullRequest) {
@@ -35882,13 +35873,13 @@ const prepare = async (nextVersion, releaseNotes, releasePullRequest, isManualVe
     const prNumber = await createOrUpdateReleasePullRequest(nextVersion, releasePullRequest, releaseNotes, isManualVersion);
     core.info(`New release prepared.`);
     return prNumber;
-};
+}
 
 ;// CONCATENATED MODULE: ./src/release.ts
 
 
 
-const release = async (appName, currentVersion, releasePullRequest) => {
+async function release(appName, currentVersion, releasePullRequest) {
     core.info(`Releasing version ${currentVersion.version}...`);
     const tag = await createReleaseTag(releasePullRequest, currentVersion);
     core.notice(`Release tag ${tag.tag} created.`, {
@@ -35902,41 +35893,40 @@ const release = async (appName, currentVersion, releasePullRequest) => {
     const comment = generateReleaseComment(release);
     await commentPullRequest(releasePullRequest.number, comment);
     core.info("Release completed.");
-};
+}
 
 ;// CONCATENATED MODULE: ./src/libs/version.ts
 
 
-const { releaseLabels } = inputs/* inputs */.FU;
-const createNewVersion = () => {
+function createNewVersion() {
     return new semver.SemVer("0.0.0");
-};
-const getVersionBumpLevel = (pullRequests, currentVersion) => {
+}
+function getVersionBumpLevel(pullRequests, currentVersion) {
     const isStable = (currentVersion?.major ?? 0) > 0;
-    const releaseLabelNames = Object.values(releaseLabels);
-    const bumpLevels = pullRequests.map(({ labels }) => {
-        const bumpLabels = labels
-            .filter(({ name }) => {
-            return releaseLabelNames.includes(name);
+    const releaseLabelNames = Object.values(inputs/* inputs.releaseLabels */.FU.releaseLabels);
+    const bumpLevels = pullRequests.map((pullRequest) => {
+        const bumpLabels = pullRequest.labels
+            .filter((label) => {
+            return releaseLabelNames.includes(label.name);
         })
-            .map(({ name }) => name);
-        if (bumpLabels.includes(releaseLabels.ignore)) {
+            .map((label) => label.name);
+        if (bumpLabels.includes(inputs/* inputs.releaseLabels.ignore */.FU.releaseLabels.ignore)) {
             return 0;
         }
-        if (bumpLabels.includes(releaseLabels.major)) {
+        if (bumpLabels.includes(inputs/* inputs.releaseLabels.major */.FU.releaseLabels.major)) {
             return isStable ? 3 : 2;
         }
-        if (bumpLabels.includes(releaseLabels.minor)) {
+        if (bumpLabels.includes(inputs/* inputs.releaseLabels.minor */.FU.releaseLabels.minor)) {
             return 2;
         }
-        if (bumpLabels.includes(releaseLabels.patch)) {
+        if (bumpLabels.includes(inputs/* inputs.releaseLabels.patch */.FU.releaseLabels.patch)) {
             return 1;
         }
         return 0;
     });
     return Math.max(0, ...bumpLevels);
-};
-const getNextVersion = (currentVersion, bumpLevel, preRelease) => {
+}
+function getNextVersion(currentVersion, bumpLevel, preRelease) {
     const version = currentVersion
         ? new semver.SemVer(currentVersion.version)
         : createNewVersion();
@@ -35967,7 +35957,7 @@ const getNextVersion = (currentVersion, bumpLevel, preRelease) => {
         default:
             throw new Error(`Invalid bump level: ${bumpLevel}.`);
     }
-};
+}
 
 ;// CONCATENATED MODULE: ./src/setup.ts
 
@@ -35978,32 +35968,32 @@ const getNextVersion = (currentVersion, bumpLevel, preRelease) => {
 
 
 
-const tryGetNextVersion = (currentVersion, bumpLevel, preRelease) => {
+function tryGetNextVersion(currentVersion, bumpLevel, preRelease) {
     return bumpLevel > 0 || preRelease
-        ? getNextVersion(currentVersion, bumpLevel, preRelease)
+        ? getNextVersion(currentVersion, bumpLevel, preRelease ?? undefined)
         : null;
-};
-const generatePullRequestBody = async (nextVersion) => {
+}
+async function generatePullRequestBody(nextVersion) {
     const releaseNotes = await generateReleaseNotesForPullRequest(nextVersion);
     return createReleasePullRequestBody(releaseNotes);
-};
-const setup = async () => {
-    const { name, version: currentVersion } = getNodePackage();
+}
+async function setup() {
+    const nodePackage = getNodePackage();
     const mergedReleasePullRequest = await getReleasePullRequest("merged");
     const openReleasePullRequest = await getReleasePullRequest("open");
     const pullRequests = await getPullRequestsSinceLastRelease();
-    const bumpLevel = getVersionBumpLevel(pullRequests, currentVersion);
+    const bumpLevel = getVersionBumpLevel(pullRequests, nodePackage.version);
     core.info(`Release as: ${inputs/* inputs.releaseAs */.FU.releaseAs?.version ?? "none"}.`);
     core.info(`Pre-release: ${inputs/* inputs.preRelease */.FU.preRelease ?? "none"}.`);
     const nextVersion = !inputs/* inputs.releaseAs */.FU.releaseAs
-        ? tryGetNextVersion(currentVersion, bumpLevel, inputs/* inputs.preRelease */.FU.preRelease)
+        ? tryGetNextVersion(nodePackage.version, bumpLevel, inputs/* inputs.preRelease */.FU.preRelease)
         : inputs/* inputs.releaseAs */.FU.releaseAs;
     const releaseNotes = nextVersion
         ? await generatePullRequestBody(nextVersion)
-        : undefined;
+        : null;
     return {
-        name,
-        currentVersion,
+        name: nodePackage.name,
+        currentVersion: nodePackage.version,
         nextVersion,
         isManualVersion: (!!inputs/* inputs.preRelease */.FU.preRelease || !!inputs/* inputs.releaseAs */.FU.releaseAs) &&
             github.context.eventName === "workflow_dispatch",
@@ -36011,7 +36001,7 @@ const setup = async () => {
         openReleasePullRequest,
         releaseNotes,
     };
-};
+}
 
 ;// CONCATENATED MODULE: ./src/main.ts
 
@@ -36019,11 +36009,11 @@ const setup = async () => {
 
 
 
-const tryRelease = async (name, currentVersion, releasePullRequest) => {
+async function tryRelease(name, currentVersion, releasePullRequest) {
     if (currentVersion) {
         core.info(`Current version: ${currentVersion.version}`);
         core.setOutput("current-version", currentVersion.version);
-        core.setOutput("pre-release", currentVersion.prerelease.at(0));
+        core.setOutput("pre-release", currentVersion.prerelease.at(0) ?? null);
         if (releasePullRequest) {
             await core.group("Release current version", () => release(name, currentVersion, releasePullRequest));
             core.setOutput("is-released", true);
@@ -36037,19 +36027,19 @@ const tryRelease = async (name, currentVersion, releasePullRequest) => {
     }
     else {
         core.info("No current version.");
-        core.setOutput("current-version", undefined);
-        core.setOutput("pre-release", undefined);
+        core.setOutput("current-version", null);
+        core.setOutput("pre-release", null);
     }
     core.setOutput("is-released", false);
     return false;
-};
-const tryPrepare = async (nextVersion, releasePullRequest, releaseNotes, isManualVersion) => {
+}
+async function tryPrepare(nextVersion, releasePullRequest, releaseNotes, isManualVersion) {
     if (!nextVersion || (!releaseNotes && !isManualVersion)) {
         core.notice("No changes since last release.", {
             title: "No Changes",
         });
-        core.setOutput("next-version", undefined);
-        core.setOutput("release-pr", undefined);
+        core.setOutput("next-version", null);
+        core.setOutput("release-pr", null);
         return;
     }
     core.notice(`Next version is ${nextVersion.version}.`, {
@@ -36066,17 +36056,17 @@ const tryPrepare = async (nextVersion, releasePullRequest, releaseNotes, isManua
     }
     const prNumber = await core.group("Prepare", () => prepare(nextVersion, releaseNotes ?? "", releasePullRequest, isManualVersion));
     core.setOutput("release-pr", prNumber);
-};
-const main = async () => {
+}
+async function main() {
     try {
-        const { name, currentVersion, nextVersion, isManualVersion, mergedReleasePullRequest, openReleasePullRequest, releaseNotes, } = await core.group("Setup", setup);
-        const isReleased = await tryRelease(name, currentVersion, mergedReleasePullRequest);
+        const context = await core.group("Setup", setup);
+        const isReleased = await tryRelease(context.name, context.currentVersion, context.mergedReleasePullRequest);
         if (isReleased) {
-            core.setOutput("next-version", undefined);
-            core.setOutput("release-pr", undefined);
+            core.setOutput("next-version", null);
+            core.setOutput("release-pr", null);
             return;
         }
-        await tryPrepare(nextVersion, openReleasePullRequest, releaseNotes, isManualVersion);
+        await tryPrepare(context.nextVersion, context.openReleasePullRequest, context.releaseNotes, context.isManualVersion);
     }
     catch (error) {
         if (typeof error !== "string" && !(error instanceof Error)) {
@@ -36084,7 +36074,7 @@ const main = async () => {
         }
         core.setFailed(error instanceof Error ? error.message : error);
     }
-};
+}
 
 
 /***/ }),
