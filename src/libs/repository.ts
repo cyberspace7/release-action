@@ -29,7 +29,7 @@ function getReleaseCommitMessage(nextVersion: SemVer) {
 }
 
 function getReleasePullRequestTitle(nextVersion: SemVer) {
-  return `Release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
+  return `chore(main): release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
 }
 
 export function generateManualVersionComment(nextVersion: SemVer) {

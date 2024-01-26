@@ -33997,7 +33997,7 @@ function getReleaseCommitMessage(nextVersion) {
     return `chore(main): release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
 }
 function getReleasePullRequestTitle(nextVersion) {
-    return `Release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
+    return `chore(main): release ${RELEASE_TAG_PREFFIX}${nextVersion.version}`;
 }
 function generateManualVersionComment(nextVersion) {
     return `Version \`${nextVersion.version}\` has been manually requested by @${github.context.actor}.`;
