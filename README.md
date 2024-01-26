@@ -127,7 +127,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Execute action
         id: action
-        uses: cyberspace7/release-action@v0.3.1
+        uses: cyberspace7/release-action@v0.4.0
         with:
           release-as: ${{ inputs.release-as }}
           pre-release: ${{ inputs.pre-release }}
@@ -140,7 +140,7 @@ jobs:
       pre-release: ${{ inputs.pre-release != '' }}
 ```
 
-> :warning: Use a manual version (`v0.3.1` in the example) until a `v1` becomes available.
+> :warning: Use a manual version (`v0.4.0` in the example) until a `v1` becomes available.
 > Remember that this version **is not production ready**.
 
 > :bulb: **Tip:** Use the `is-released` output (see [outputs](#outputs)) to execute
