@@ -161,7 +161,7 @@ describe("main()", () => {
     expect(octokit.rest.pulls.create).toHaveBeenCalledWith({
       owner: "owner",
       repo: "repository",
-      title: "Release v1.3.0",
+      title: "chore(main): release v1.3.0",
       head: "releases/next",
       base: "main",
       body: "Release notes\n\n- title (#4)\n- title (#5)\n- title (#6)\n- title (#7)\n\nThe end.",
@@ -407,14 +407,14 @@ describe("main()", () => {
       openRelease: [
         {
           number: 2,
-          title: "Release v1.3.0",
+          title: "chore(main): release v1.3.0",
           state: "open",
           merge_commit_sha: "sha",
           labels: [{ name: inputs.releaseLabels.done }],
         },
         {
           number: 1,
-          title: "Release v1.3.0",
+          title: "chore(main): release v1.3.0",
           body: "Release notes\n\n- title (#4)\n- title (#5)\n\nThe end.",
           state: "open",
           merge_commit_sha: "sha",
@@ -602,7 +602,7 @@ describe("main()", () => {
       expect(octokit.rest.pulls.update).toHaveBeenCalledWith({
         owner: "owner",
         repo: "repository",
-        title: "Release v1.3.0",
+        title: "chore(main): release v1.3.0",
         pull_number: 1,
         body: "Release notes\n\n- title (#4)\n- title (#5)\n- title (#6)\n- title (#7)\n\nThe end.",
       });
@@ -687,7 +687,7 @@ describe("main()", () => {
       expect(octokit.rest.pulls.update).toHaveBeenCalledWith({
         owner: "owner",
         repo: "repository",
-        title: "Release v2.0.0",
+        title: "chore(main): release v2.0.0",
         pull_number: 1,
         body: "Release notes\n\n- title (#4)\n- title (#5)\n- title (#6)\n- title (#7)\n\nThe end.",
       });
