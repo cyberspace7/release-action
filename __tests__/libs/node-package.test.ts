@@ -2,7 +2,7 @@ import { SemVer } from "semver";
 import {
   createNewNodePackageEncodedContent,
   getNodePackage,
-} from "../../src/libs/nodePackage";
+} from "../../src/libs/node-package";
 import { fileSystem } from "../../tests/mocks";
 
 describe("getNodePackage()", () => {

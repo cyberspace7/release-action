@@ -1,0 +1,39 @@
+name: Code Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  code:
+    name: Check Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Setup project
+        uses: ./.github/actions/setup
+      - name: Run prettier
+        run: pnpm run format:check
+      - name: Run lint
+        run: pnpm run lint
+      - name: Run type check
+        run: pnpm run check
+      - name: Run test
+        run: pnpm test
+      - name: Build
+        run: pnpm build
+      - name: Check if there is any difference
+        run: git diff --exit-code dist/
