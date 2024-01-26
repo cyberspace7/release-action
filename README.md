@@ -44,12 +44,12 @@ sequenceDiagram
 
   D ->> P: Merge PR #35;1 (fix)
   P -->> R: Open PR #35;2 (automatic)
-  Note over P,R: Release v1.0.1
+  Note over P,R: chore(main): release v1.0.1
   D ->> P: Merge PR #35;3 (feature)
   P -->> R: Update PR #35;2 (automatic)
-  Note over P,R: Release v1.1.0
+  Note over P,R: chore(main): release v1.1.0
   R ->> P: Merge
-  Note over P: Release v1.1.0
+  Note over P: chore(main): release v1.1.0
 ```
 
 Below is the prepare process when new changes are detected:
