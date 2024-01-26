@@ -606,13 +606,7 @@ describe("main()", () => {
         pull_number: 1,
         body: "Release notes\n\n- title (#4)\n- title (#5)\n- title (#6)\n- title (#7)\n\nThe end.",
       });
-      expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(1);
-      expect(octokit.rest.issues.createComment).toHaveBeenCalledWith({
-        owner: "owner",
-        repo: "repository",
-        issue_number: 1,
-        body: "Content has been updated:\n\n```diff\n+  - title (#6)\n+  - title (#7)\n```",
-      });
+      expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(0);
     });
 
     it("should prepare when changes (new version)", async () => {
@@ -691,13 +685,7 @@ describe("main()", () => {
         pull_number: 1,
         body: "Release notes\n\n- title (#4)\n- title (#5)\n- title (#6)\n- title (#7)\n\nThe end.",
       });
-      expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(1);
-      expect(octokit.rest.issues.createComment).toHaveBeenCalledWith({
-        owner: "owner",
-        repo: "repository",
-        issue_number: 1,
-        body: "Content has been updated:\n\n```diff\n+  - title (#6)\n+  - title (#7)\n```",
-      });
+      expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(0);
     });
 
     it("should prepare when only change is pre-release", async () => {
@@ -762,7 +750,7 @@ describe("main()", () => {
         owner: "owner",
         repo: "repository",
         issue_number: 1,
-        body: "Version `1.3.0-beta.0` has been manually requested by @actor.\n\nContent has been updated:\n\n```diff\n+  - title (#6)\n+  - title (#7)\n```",
+        body: "Version `1.3.0-beta.0` has been manually requested by @actor.",
       });
     });
   });

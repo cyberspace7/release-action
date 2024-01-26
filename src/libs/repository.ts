@@ -6,7 +6,6 @@ import { SemVer } from "semver";
 import { tryExecute } from "./common";
 import { environment, inputs } from "./inputs";
 import { PACKAGE_FILE_NAME } from "./node-package";
-import { getDiffMarkdown } from "./release-notes";
 
 const octokit = getOctokit(environment.GITHUB_TOKEN);
 
@@ -38,15 +37,6 @@ export function generateManualVersionComment(nextVersion: SemVer) {
 
 export function generateReleaseComment(release: Release) {
   return `:package: [**${release.name}**](${release.html_url}) has been released.`;
-}
-
-export function generateReleasePullRequestUpdateComment(
-  oldContent: string,
-  newContent: string,
-) {
-  const markdownDiff = getDiffMarkdown(oldContent, newContent);
-
-  return markdownDiff ? `Content has been updated:\n\n${markdownDiff}` : null;
 }
 
 export function getNodePackageSha() {
