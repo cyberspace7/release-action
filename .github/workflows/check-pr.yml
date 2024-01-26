@@ -1,0 +1,26 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, edited]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pr:
+    name: Check Pull Request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Setup project
+        uses: ./.github/actions/setup
+      - name: Lint PR title
+        run: echo "${{ github.event.pull_request.title }}" | pnpm commitlint --verbose

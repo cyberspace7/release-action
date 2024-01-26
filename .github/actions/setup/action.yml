@@ -8,11 +8,17 @@ runs:
       uses: pnpm/action-setup@v2
       with:
         version: 8
-    - name: Setup Node
-      uses: actions/setup-node@v3
+    - name: Get Node version
+      id: nvm
+      shell: bash
+      run: |
+        echo "node-version=$(cat ./.nvmrc)" >> $GITHUB_OUTPUT
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version:  ${{ steps.nvm.outputs.node-version }}
         cache: "pnpm"
     - name: Install dependencies
       shell: bash
-      run: pnpm install --frozen-lockfile
+      run: |
+        pnpm install --frozen-lockfile

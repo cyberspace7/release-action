@@ -14,15 +14,18 @@ on:
         default: ""
         description: Pre-release
         options:
-          - ""
+          - " "
           - alpha
           - beta
           - rc
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
   pull-requests: write
-  packages: read
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -31,10 +34,12 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    outputs:
+      is-released: ${{ steps.action.outputs.is-released }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Execute action
+      - name: Release
         id: action
         uses: cyberspace7/release-action@v0.3.1
         with:

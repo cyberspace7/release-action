@@ -1,7 +1,7 @@
 import {
   createReleasePullRequestBody,
   getDiffMarkdown,
-} from "../../src/libs/releaseNotes";
+} from "../../src/libs/release-notes";
 
 describe("createReleasePullRequestBody()", () => {
   it("should return notes", () => {

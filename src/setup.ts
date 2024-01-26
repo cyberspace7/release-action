@@ -2,8 +2,8 @@ import * as core from "@actions/core";
 import { context } from "@actions/github";
 import { SemVer } from "semver";
 import { inputs } from "./libs/inputs";
-import { getNodePackage } from "./libs/nodePackage";
-import { createReleasePullRequestBody } from "./libs/releaseNotes";
+import { getNodePackage } from "./libs/node-package";
+import { createReleasePullRequestBody } from "./libs/release-notes";
 import {
   generateReleaseNotesForPullRequest,
   getPullRequestsSinceLastRelease,

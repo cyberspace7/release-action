@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "labels": ["type: dependencies"],
+  "reviewersFromCodeOwners": true,
+  "dependencyDashboardLabels": ["type: dependencies"],
+  "rebaseWhen": "conflicted",
+  "semanticCommits": "enabled",
+  "enabledManagers": ["npm", "github-actions"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeStrategy": "squash"
+    },
+    {
+      "packageNames": ["node"],
+      "enabled": false
+    }
+  ]
+}

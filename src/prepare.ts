@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import { SemVer } from "semver";
 import { inputs } from "./libs/inputs";
-import { createNewNodePackageEncodedContent } from "./libs/nodePackage";
+import { createNewNodePackageEncodedContent } from "./libs/node-package";
 import {
   addLabelToReleasePullRequest,
   commentPullRequest,

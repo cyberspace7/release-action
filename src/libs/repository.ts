@@ -5,8 +5,8 @@ import type { RestEndpointMethodTypes } from "@octokit/rest";
 import { SemVer } from "semver";
 import { tryExecute } from "./common";
 import { environment, inputs } from "./inputs";
-import { PACKAGE_FILE_NAME } from "./nodePackage";
-import { getDiffMarkdown } from "./releaseNotes";
+import { PACKAGE_FILE_NAME } from "./node-package";
+import { getDiffMarkdown } from "./release-notes";
 
 const octokit = getOctokit(environment.GITHUB_TOKEN);
 
