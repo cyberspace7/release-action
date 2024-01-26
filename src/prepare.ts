@@ -9,7 +9,6 @@ import {
   createReleaseBranch,
   createReleasePullRequest,
   generateManualVersionComment,
-  generateReleasePullRequestUpdateComment,
   getNodePackageSha,
   getReleaseBranch,
   mergeIntoReleaseBranch,
@@ -61,17 +60,8 @@ async function createOrUpdateReleasePullRequest(
   }
 
   await updateReleasePullRequest(releasePullRequest, nextVersion, releaseNotes);
-  const diffComment = generateReleasePullRequestUpdateComment(
-    releasePullRequest.body ?? "",
-    releaseNotes,
-  );
-  if (diffComment ?? isManualVersion) {
-    const manualVersionComment = isManualVersion
-      ? generateManualVersionComment(nextVersion)
-      : "";
-    const comment = [manualVersionComment, diffComment]
-      .filter((value) => !!value)
-      .join("\n\n");
+  if (isManualVersion) {
+    const comment = generateManualVersionComment(nextVersion);
     await commentPullRequest(releasePullRequest.number, comment);
   }
   core.notice(
