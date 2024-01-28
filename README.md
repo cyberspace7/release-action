@@ -100,10 +100,10 @@ on:
         description: Force the release version
       pre-release:
         type: choice
-        default: ""
+        default: " "
         description: Pre-release
         options:
-          - ""
+          - " "
           - alpha
           - beta
           - rc

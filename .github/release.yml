@@ -1,9 +1,15 @@
 changelog:
   exclude:
     labels:
-      - "changelog-ignore"
+      - "ignore"
       - "release: ready"
       - "release: done"
+      - "type: chore"
+      - "type: ci"
+      - "type: documentation"
+      - "type: refactor"
+      - "type: style"
+      - "type: test"
   categories:
     - title: ":warning: Breaking Changes"
       labels:
@@ -14,9 +20,15 @@ changelog:
     - title: ":beetle: Bug Fixes"
       labels:
         - "type: fix"
+    - title: ":rocket: Performance Improvements"
+      labels:
+        - "type: performance"
+    - title: ":hammer_and_wrench: Build"
+      labels:
+        - "type: build"
     - title: ":dependabot: Dependencies"
       labels:
-        - "type: dependencies"
-    - title: ":page_with_curl: Other Changes"
-      labels:
-        - "*"
+        - "type: build"
+      exclude:
+        authors:
+          - "dependabot[bot]"
