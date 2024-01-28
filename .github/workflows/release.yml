@@ -27,21 +27,23 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    outputs:
-      is-released: ${{ steps.action.outputs.is-released }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Release
         id: action
-        uses: cyberspace7/release-action@v0.4.0
+        uses: cyberspace7/release-action@v0.5.1-alpha.0
         with:
+          labels-patch: |-
+            "type: fix"
+            "type: performance"
+          labels-minor: "type: feature"
+          labels-major: "breaking"
           release-as: ${{ inputs.release-as }}
           pre-release: ${{ inputs.pre-release }}

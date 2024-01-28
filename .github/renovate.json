@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "labels": ["type: dependencies"],
+  "labels": ["type: build"],
   "reviewersFromCodeOwners": true,
   "dependencyDashboardLabels": ["type: build"],
   "rebaseWhen": "conflicted",
