@@ -70,7 +70,7 @@ flowchart LR
 
 It should be used if:
 
-- Commits (that matters) are systematically pushed to the main/production branch **through pull requests**;
+- Commits (that matter) are systematically pushed to the main/production branch **through pull requests**;
 - Labels are used in PRs to classify the level of update (patch, minor, major);
 - The release commit is just about updating the `package.json` file.
 
