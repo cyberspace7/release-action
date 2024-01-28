@@ -23,11 +23,7 @@ describe("getVersionBumpLevel()", () => {
         labels: [{ name: "patch" }],
       },
       {
-        labels: [
-          { name: "minor" },
-          { name: "major" },
-          { name: "changelog-ignore" },
-        ],
+        labels: [{ name: "minor" }, { name: "major" }, { name: "ignore" }],
       },
       {
         labels: [{ name: "minor" }],

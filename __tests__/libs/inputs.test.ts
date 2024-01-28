@@ -103,7 +103,7 @@ describe("parseInputs()", () => {
       const result = parseInputs();
 
       expect(result.releaseLabels).toEqual({
-        ignore: ["changelog-ignore"],
+        ignore: ["ignore"],
         patch: ["patch", "fix"],
         minor: ["minor", "feature"],
         major: ["major", "breaking"],
@@ -127,7 +127,7 @@ describe("parseInputs()", () => {
       const result = parseInputs();
 
       expect(result.releaseLabels).toEqual({
-        ignore: ["changelog-ignore"],
+        ignore: ["ignore"],
         patch: ["patch-label-1", "patch-label-2"],
         minor: ["minor-label"],
         major: ["major-label"],

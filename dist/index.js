@@ -32241,7 +32241,7 @@ const inputsSchema = zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
             .trim()
             .or(zod__WEBPACK_IMPORTED_MODULE_2__.z.literal(""))
             .transform((value) => {
-            return parseMultipleValues(value, ["changelog-ignore"]);
+            return parseMultipleValues(value, ["ignore"]);
         }),
         patch: zod__WEBPACK_IMPORTED_MODULE_2__.z.string()
             .trim()

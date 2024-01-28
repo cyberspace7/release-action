@@ -48,7 +48,7 @@ const inputsSchema = z.object({
       .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return parseMultipleValues(value, ["changelog-ignore"]);
+        return parseMultipleValues(value, ["ignore"]);
       }),
     patch: z
       .string()

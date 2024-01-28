@@ -155,7 +155,7 @@ order to bump the version to the right level. Labels and branches can be customi
 - `patch`: Bump the **patch** part of the version.
 - `minor`: Bump the **minor** part of the version.
 - `major`: Bump the **major** part of the version, or minor if current version is under `1.0`.
-- `changelog-ignore`: Dont bump whatever other labels are. It should be excluded from
+- `ignore`: Dont bump whatever other labels are. It should be excluded from
   the release notes generation (see bellow).
 
 That's it, when merged, you should find an open release PR. You just have to merge it when you wish to release, voilà!
@@ -168,7 +168,7 @@ therefore it's advised to define a `.github/release.yml` file excluding release 
 changelog:
   exclude:
     labels:
-      - "changelog-ignore"
+      - "ignore"
       - "release: ready"
       - "release: done"
 ```
@@ -196,7 +196,7 @@ permissions:
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------- |
 | `release-as`        | Force a specific version.                                                                                                  |                     |
 | `pre-release`       | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                      |                     |
-| `labels-ignore`\*   | Labels for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage). | `changelog-ignore`  |
+| `labels-ignore`\*   | Labels for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage). | `ignore`            |
 | `labels-patch`\*    | Labels for pull requests to bump a patch version.                                                                          | `patch`, `fix`      |
 | `labels-minor`\*    | Labels for pull requests to bump a minor version.                                                                          | `minor`, `feature`  |
 | `labels-major`\*    | Labels for pull requests to bump a major version.                                                                          | `major`, `breaking` |
