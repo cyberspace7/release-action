@@ -108,12 +108,13 @@ on:
           - beta
           - rc
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
   pull-requests: write
-
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   release:
@@ -121,9 +122,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       is-released: ${{ steps.action.outputs.is-released }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Execute action
         id: action
         uses: cyberspace7/release-action@v0.4.0
