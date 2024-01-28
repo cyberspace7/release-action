@@ -55,21 +55,21 @@ const inputsSchema = z.object({
       .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return parseMultipleValues(value, ["patch"]);
+        return parseMultipleValues(value, ["patch", "fix"]);
       }),
     minor: z
       .string()
       .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return parseMultipleValues(value, ["minor"]);
+        return parseMultipleValues(value, ["minor", "feature"]);
       }),
     major: z
       .string()
       .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return parseMultipleValues(value, ["major"]);
+        return parseMultipleValues(value, ["major", "breaking"]);
       }),
     ready: z
       .string()

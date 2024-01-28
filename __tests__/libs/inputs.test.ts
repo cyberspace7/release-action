@@ -104,9 +104,9 @@ describe("parseInputs()", () => {
 
       expect(result.releaseLabels).toEqual({
         ignore: ["changelog-ignore"],
-        patch: ["patch"],
-        minor: ["minor"],
-        major: ["major"],
+        patch: ["patch", "fix"],
+        minor: ["minor", "feature"],
+        major: ["major", "breaking"],
         ready: "release: ready",
         done: "release: done",
       });
