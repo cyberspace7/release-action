@@ -32247,19 +32247,19 @@ const inputsSchema = zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
             .trim()
             .or(zod__WEBPACK_IMPORTED_MODULE_2__.z.literal(""))
             .transform((value) => {
-            return parseMultipleValues(value, ["patch"]);
+            return parseMultipleValues(value, ["patch", "fix"]);
         }),
         minor: zod__WEBPACK_IMPORTED_MODULE_2__.z.string()
             .trim()
             .or(zod__WEBPACK_IMPORTED_MODULE_2__.z.literal(""))
             .transform((value) => {
-            return parseMultipleValues(value, ["minor"]);
+            return parseMultipleValues(value, ["minor", "feature"]);
         }),
         major: zod__WEBPACK_IMPORTED_MODULE_2__.z.string()
             .trim()
             .or(zod__WEBPACK_IMPORTED_MODULE_2__.z.literal(""))
             .transform((value) => {
-            return parseMultipleValues(value, ["major"]);
+            return parseMultipleValues(value, ["major", "breaking"]);
         }),
         ready: zod__WEBPACK_IMPORTED_MODULE_2__.z.string()
             .trim()
