@@ -1,7 +1,7 @@
 changelog:
   exclude:
     labels:
-      - "changelog-ignore"
+      - "ignore"
       - "release: ready"
       - "release: done"
       - "type: chore"

@@ -3,7 +3,7 @@
   "extends": ["config:recommended"],
   "labels": ["type: build"],
   "reviewersFromCodeOwners": true,
-  "dependencyDashboardLabels": ["type: build"],
+  "dependencyDashboardLabels": ["type: build", "ignore"],
   "rebaseWhen": "conflicted",
   "semanticCommits": "enabled",
   "semanticCommitType": "build",
