@@ -12,7 +12,7 @@ describe("getVersionBumpLevel()", () => {
     ],
     [
       {
-        labels: [{ name: "type: fix" }],
+        labels: [{ name: "patch" }],
       },
       {
         labels: [{ name: "label" }],
@@ -20,17 +20,17 @@ describe("getVersionBumpLevel()", () => {
     ],
     [
       {
-        labels: [{ name: "type: fix" }],
+        labels: [{ name: "patch" }],
       },
       {
         labels: [
-          { name: "type: feature" },
-          { name: "breaking" },
+          { name: "minor" },
+          { name: "major" },
           { name: "changelog-ignore" },
         ],
       },
       {
-        labels: [{ name: "type: feature" }],
+        labels: [{ name: "minor" }],
       },
       {
         labels: [{ name: "label" }],
@@ -38,10 +38,10 @@ describe("getVersionBumpLevel()", () => {
     ],
     [
       {
-        labels: [{ name: "type: fix" }],
+        labels: [{ name: "patch" }],
       },
       {
-        labels: [{ name: "type: feature" }, { name: "breaking" }],
+        labels: [{ name: "minor" }, { name: "major" }],
       },
       {
         labels: [{ name: "label" }],

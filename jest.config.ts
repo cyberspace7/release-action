@@ -7,6 +7,7 @@ const configuration = {
   },
   globalSetup: "<rootDir>/tests/jest.setup.ts",
   moduleNameMapper: {
+    "^lodash-es$": "lodash",
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   prettierPath: "<rootDir>/node_modules/prettier",

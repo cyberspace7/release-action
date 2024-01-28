@@ -42,10 +42,10 @@ describe("main()", () => {
     inputs.preRelease = null;
     inputs.releaseAs = null;
     inputs.releaseLabels = {
-      ignore: "changelog-ignore",
-      patch: "type: fix",
-      minor: "type: feature",
-      major: "breaking",
+      ignore: ["changelog-ignore"],
+      patch: ["type: fix", "type: performance"],
+      minor: ["type: feature"],
+      major: ["breaking"],
       ready: "release: ready",
       done: "release: done",
     };

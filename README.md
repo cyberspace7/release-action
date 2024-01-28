@@ -70,8 +70,8 @@ flowchart LR
 
 It should be used if:
 
-- Commits are systematically pushed to the main/production branch **through pull requests**;
-- Labels are used in PRs to classify the type (patch, minor, major);
+- Commits (that matter) are systematically pushed to the main/production branch **through pull requests**;
+- Labels are used in PRs to classify the level of update (patch, minor, major);
 - The release commit is just about updating the `package.json` file.
 
 ### When it should not be used
@@ -79,8 +79,7 @@ It should be used if:
 It should not be used if:
 
 - Commits are **pushed directly** to the main/production branch;
-- The release commit must include more than updating the `package.json` file,
-  such as a changelog (the changelog is generated in the PR body and GitHub release).
+- The version update is not managed in the `package.json` file.
 
 ## Usage
 
@@ -109,12 +108,13 @@ on:
           - beta
           - rc
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
   pull-requests: write
-
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   release:
@@ -122,9 +122,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       is-released: ${{ steps.action.outputs.is-released }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Execute action
         id: action
         uses: cyberspace7/release-action@v0.4.0
@@ -134,7 +136,7 @@ jobs:
   publish: # Execute another job when a release has been made
     name: Publish
     needs: release
-    if: ${{ needs.release.outputs.is-released == 'true' }}
+    if: needs.release.outputs.is-released == 'true'
     uses: ./.github/workflows/publish.yml
     with:
       pre-release: ${{ inputs.pre-release != '' }}
@@ -147,12 +149,12 @@ jobs:
 > another job to deploy the fresh release (i.e. create a package, deploy a Docker container,
 > etc.), as well as `pre-release`.
 
-When opening a PR on the main/production branch, use one (or more) of the following labels in
+When opening a PR on the production branch, use one (or more) of the following labels in
 order to bump the version to the right level. Labels and branches can be customised through [inputs](#inputs).
 
-- `type: fix`: Bump the **patch** part of the version.
-- `type: feature`: Bump the **minor** part of the version.
-- `breaking`: Bump the **major** part of the version, or minor if current version is under `1.0`.
+- `patch`: Bump the **patch** part of the version.
+- `minor`: Bump the **minor** part of the version.
+- `major`: Bump the **major** part of the version, or minor if current version is under `1.0`.
 - `changelog-ignore`: Dont bump whatever other labels are. It should be excluded from
   the release notes generation (see bellow).
 
@@ -160,8 +162,7 @@ That's it, when merged, you should find an open release PR. You just have to mer
 
 Changes are found comparing GitHub
 [generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes),
-therefore it's advised to have a `.github/release.yml` file excluding release PR labels and
-the ignore label so that they don't appear as changes:
+therefore it's advised to define a `.github/release.yml` file excluding release PR labels and ignore labels so that they don't appear in the changelog:
 
 ```yaml
 changelog:
@@ -191,18 +192,26 @@ permissions:
 
 ### Inputs
 
-| Name                | Description                                                                                                               | Default Value      |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `release-as`        | Force a specific version.                                                                                                 |                    |
-| `pre-release`       | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                     |                    |
-| `label-ignore`      | Label for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage). | `changelog-ignore` |
-| `label-patch`       | Label for pull requests to bump a patch version.                                                                          | `type: fix`        |
-| `label-minor`       | Label for pull requests to bump a minor version.                                                                          | `type: feature`    |
-| `label-major`       | Label for pull requests to bump a major version.                                                                          | `breaking`         |
-| `label-ready`       | Label automatically used by Release Action for release PRs.                                                               | `release: ready`   |
-| `label-done`        | Label automatically used by Release Action for release PRs that have been processed (current version released).           | `release: done`    |
-| `branch-production` | Branch used for production, the base for all PRs going to production.                                                     | `main`             |
-| `branch-release`    | Branch used for release PRs.                                                                                              | `releases/next`    |
+| Name                | Description                                                                                                                | Default Value       |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `release-as`        | Force a specific version.                                                                                                  |                     |
+| `pre-release`       | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                      |                     |
+| `labels-ignore`\*   | Labels for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage). | `changelog-ignore`  |
+| `labels-patch`\*    | Labels for pull requests to bump a patch version.                                                                          | `patch`, `fix`      |
+| `labels-minor`\*    | Labels for pull requests to bump a minor version.                                                                          | `minor`, `feature`  |
+| `labels-major`\*    | Labels for pull requests to bump a major version.                                                                          | `major`, `breaking` |
+| `label-ready`       | Label automatically used by Release Action for release PRs.                                                                | `release: ready`    |
+| `label-done`        | Label automatically used by Release Action for release PRs that have been processed (current version released).            | `release: done`     |
+| `branch-production` | Branch used for production, the base for all PRs going to production.                                                      | `main`              |
+| `branch-release`    | Branch used for release PRs.                                                                                               | `releases/next`     |
+
+\*Multiple labels can be defined using a multiline block such as follow:
+
+```yaml
+labels-patch: |-
+  patch
+  fix
+```
 
 ### Outputs
 
