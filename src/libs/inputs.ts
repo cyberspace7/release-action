@@ -7,6 +7,17 @@ const PRE_RELEASE_REGEX = /^[A-Za-z0-9-]+$/;
 export type Environment = z.infer<typeof environmentSchema>;
 export type Inputs = z.infer<typeof inputsSchema>;
 
+function parseMultipleValues(value: string, defaultValues: string[]) {
+  const values = value
+    .split(/\r|\n/)
+    .map((value) => value.trim())
+    .filter((value) => {
+      return value.length > 0;
+    });
+
+  return values.length ? values : defaultValues;
+}
+
 const environmentSchema = z.object({
   GITHUB_TOKEN: z.string(),
 });
@@ -14,6 +25,7 @@ const environmentSchema = z.object({
 const inputsSchema = z.object({
   preRelease: z
     .string()
+    .trim()
     .regex(PRE_RELEASE_REGEX)
     .or(z.literal(""))
     .transform((value) => {
@@ -21,6 +33,7 @@ const inputsSchema = z.object({
     }),
   releaseAs: z
     .string()
+    .trim()
     .or(z.literal(""))
     .transform((value) => {
       if (value && !semver.valid(value)) {
@@ -32,53 +45,61 @@ const inputsSchema = z.object({
   releaseLabels: z.object({
     ignore: z
       .string()
+      .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return value?.length ? value : "changelog-ignore";
+        return parseMultipleValues(value, ["changelog-ignore"]);
       }),
     patch: z
       .string()
+      .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return value?.length ? value : "type: fix";
+        return parseMultipleValues(value, ["patch"]);
       }),
     minor: z
       .string()
+      .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return value?.length ? value : "type: feature";
+        return parseMultipleValues(value, ["minor"]);
       }),
     major: z
       .string()
+      .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return value?.length ? value : "breaking";
+        return parseMultipleValues(value, ["major"]);
       }),
     ready: z
       .string()
+      .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return value?.length ? value : "release: ready";
+        return value.length > 0 ? value : "release: ready";
       }),
     done: z
       .string()
+      .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return value?.length ? value : "release: done";
+        return value.length > 0 ? value : "release: done";
       }),
   }),
   branches: z.object({
     production: z
       .string()
+      .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return value?.length ? value : "main";
+        return value.length > 0 ? value : "main";
       }),
     release: z
       .string()
+      .trim()
       .or(z.literal(""))
       .transform((value) => {
-        return value?.length ? value : "releases/next";
+        return value.length > 0 ? value : "releases/next";
       }),
   }),
 });
@@ -92,10 +113,10 @@ export const parseInputs = () => {
     preRelease: getInput("pre-release"),
     releaseAs: getInput("release-as"),
     releaseLabels: {
-      ignore: getInput("label-ignore"),
-      patch: getInput("label-patch"),
-      minor: getInput("label-minor"),
-      major: getInput("label-major"),
+      ignore: getInput("labels-ignore"),
+      patch: getInput("labels-patch"),
+      minor: getInput("labels-minor"),
+      major: getInput("labels-major"),
       ready: getInput("label-ready"),
       done: getInput("label-done"),
     },

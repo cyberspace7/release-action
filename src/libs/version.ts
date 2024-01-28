@@ -1,3 +1,4 @@
+import * as _ from "lodash-es";
 import { SemVer } from "semver";
 import { inputs } from "./inputs";
 import type { PullRequest } from "./repository";
@@ -11,24 +12,29 @@ export function getVersionBumpLevel(
   currentVersion: SemVer | null,
 ) {
   const isStable = (currentVersion?.major ?? 0) > 0;
-  const releaseLabelNames = Object.values(inputs.releaseLabels);
   const bumpLevels = pullRequests.map((pullRequest) => {
     const bumpLabels = pullRequest.labels
       .filter((label) => {
-        return releaseLabelNames.includes(label.name);
+        const labels = Object.values(inputs.releaseLabels);
+        return labels.some((labels) => {
+          return labels.includes(label.name);
+        });
       })
       .map((label) => label.name);
 
-    if (bumpLabels.includes(inputs.releaseLabels.ignore)) {
+    if (_.intersection(bumpLabels, inputs.releaseLabels.ignore).length > 0) {
       return 0;
     }
-    if (bumpLabels.includes(inputs.releaseLabels.major)) {
+
+    if (_.intersection(bumpLabels, inputs.releaseLabels.major).length > 0) {
       return isStable ? 3 : 2;
     }
-    if (bumpLabels.includes(inputs.releaseLabels.minor)) {
+
+    if (_.intersection(bumpLabels, inputs.releaseLabels.minor).length > 0) {
       return 2;
     }
-    if (bumpLabels.includes(inputs.releaseLabels.patch)) {
+
+    if (_.intersection(bumpLabels, inputs.releaseLabels.patch).length > 0) {
       return 1;
     }
 
