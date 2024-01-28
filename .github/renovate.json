@@ -3,15 +3,21 @@
   "extends": ["config:recommended"],
   "labels": ["type: dependencies"],
   "reviewersFromCodeOwners": true,
-  "dependencyDashboardLabels": ["type: dependencies"],
+  "dependencyDashboardLabels": ["type: build"],
   "rebaseWhen": "conflicted",
   "semanticCommits": "enabled",
+  "semanticCommitType": "build",
   "enabledManagers": ["npm", "github-actions"],
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
       "automergeStrategy": "squash"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "semanticCommitType": "chore",
+      "addLabels": ["type: chore"]
     },
     {
       "packageNames": ["node"],
