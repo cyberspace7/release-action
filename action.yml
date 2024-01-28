@@ -1,12 +1,36 @@
 name: "Release"
 author: "Benjamin Guibert <contact@bguibert.com>"
-description: "Bump version, prepare release PR, release and publish."
+description: "PR-based Github Action for releasing Node.js projects"
 inputs:
   release-as:
     description: Force a specific version
     required: false
   pre-release:
     description: Name of the pre-release version
+    required: false
+  labels-ignore:
+    description: Labels for pull requests to be ignored for the release bump
+    required: false
+  labels-patch:
+    description: Labels for pull requests to bump a patch version.
+    required: false
+  labels-minor:
+    description: Labels for pull requests to bump a minor version
+    required: false
+  labels-major:
+    description: Labels for pull requests to bump a major version
+    required: false
+  label-ready:
+    description: Label automatically used by Release Action for release PRs
+    required: false
+  label-done:
+    description: Label automatically used by Release Action for release PRs that have been processed (current version released)
+    required: false
+  branch-production:
+    description: Branch used for production, the base for all PRs going to production
+    required: false
+  branch-release:
+    description: Branch used for release PRs
     required: false
 outputs:
   current-version:
@@ -17,8 +41,10 @@ outputs:
     description: Number of the opened release pull request
   is-released:
     description: Current version has been released
+  pre-release:
+    description: Pre-release part of the current version.
 runs:
-  using: "node16"
+  using: "node20"
   main: "dist/index.js"
 branding:
   icon: "package"
