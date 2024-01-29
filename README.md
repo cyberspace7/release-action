@@ -2,8 +2,8 @@
 
 PR-based Github Action for releasing Node.js projects.
 
-> :warning: **This project is still in experimental phase, it is subject to
-> breaking changes and therefore not suitable for production.**
+> [!CAUTION]
+> This project is still in experimental phase, it is subject to breaking changes and therefore not suitable for production.
 
 [Issues](https://github.com/cyberspace7/release-action/issues) can be tracked
 [here](https://github.com/orgs/cyberspace7/projects/2), don't hesitate to upvote
@@ -142,10 +142,12 @@ jobs:
       pre-release: ${{ inputs.pre-release != '' }}
 ```
 
-> :warning: Use a manual version (like in the example bellow) until a `v1` becomes available.
+> [!WARNING]
+> Use a manual version (like in the example bellow) until a `v1` becomes available.
 > Remember that this version **is not production ready**.
 
-> :bulb: **Tip:** Use the `is-released` output (see [outputs](#outputs)) to execute
+> [!TIP]
+> Use the `is-released` output (see [outputs](#outputs)) to execute
 > another job to deploy the fresh release (i.e. create a package, deploy a Docker container,
 > etc.), as well as `pre-release`.
 
@@ -180,7 +182,8 @@ Don't hesite also to share your experience.
 
 ### Permissions
 
-> :warning: Make sure to enable GitHub Actions to create pull requests in your repository settings.
+> [:INPORTANT]
+> Make sure to enable GitHub Actions to create pull requests in your repository settings.
 
 This action requires the following permissions in order to work:
 
@@ -209,8 +212,8 @@ permissions:
 
 ```yaml
 labels-patch: |-
-  patch
-  fix
+  "patch"
+  "fix"
 ```
 
 ### Outputs
