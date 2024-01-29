@@ -2,8 +2,8 @@
 
 PR-based Github Action for releasing Node.js projects.
 
-> :warning: **This project is still in experimental phase, it is subject to
-> breaking changes and therefore not suitable for production.**
+> [!CAUTION]
+> This project is still in experimental phase, it is subject to breaking changes and therefore not suitable for production.
 
 [Issues](https://github.com/cyberspace7/release-action/issues) can be tracked
 [here](https://github.com/orgs/cyberspace7/projects/2), don't hesitate to upvote
@@ -142,10 +142,10 @@ jobs:
       pre-release: ${{ inputs.pre-release != '' }}
 ```
 
-> :warning: Use a manual version (like in the example bellow) until a `v1` becomes available.
+> [!WARNING] Use a manual version (like in the example bellow) until a `v1` becomes available.
 > Remember that this version **is not production ready**.
 
-> :bulb: **Tip:** Use the `is-released` output (see [outputs](#outputs)) to execute
+> [:TIP] Use the `is-released` output (see [outputs](#outputs)) to execute
 > another job to deploy the fresh release (i.e. create a package, deploy a Docker container,
 > etc.), as well as `pre-release`.
 
@@ -180,7 +180,7 @@ Don't hesite also to share your experience.
 
 ### Permissions
 
-> :warning: Make sure to enable GitHub Actions to create pull requests in your repository settings.
+> [:INPORTANT] Make sure to enable GitHub Actions to create pull requests in your repository settings.
 
 This action requires the following permissions in order to work:
 
@@ -196,16 +196,16 @@ permissions:
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------- |
 | `release-as`        | Force a specific version.                                                                                                  |                     |
 | `pre-release`       | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                      |                     |
-| `labels-ignore`\*   | Labels for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage). | `ignore`            |
-| `labels-patch`\*    | Labels for pull requests to bump a patch version.                                                                          | `patch`, `fix`      |
-| `labels-minor`\*    | Labels for pull requests to bump a minor version.                                                                          | `minor`, `feature`  |
-| `labels-major`\*    | Labels for pull requests to bump a major version.                                                                          | `major`, `breaking` |
+| `labels-ignore`[^1] | Labels for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage). | `ignore`            |
+| `labels-patch`[^1]  | Labels for pull requests to bump a patch version.                                                                          | `patch`, `fix`      |
+| `labels-minor`[^1]  | Labels for pull requests to bump a minor version.                                                                          | `minor`, `feature`  |
+| `labels-major`[^1]  | Labels for pull requests to bump a major version.                                                                          | `major`, `breaking` |
 | `label-ready`       | Label automatically used by Release Action for release PRs.                                                                | `release: ready`    |
 | `label-done`        | Label automatically used by Release Action for release PRs that have been processed (current version released).            | `release: done`     |
 | `branch-production` | Branch used for production, the base for all PRs going to production.                                                      | `main`              |
 | `branch-release`    | Branch used for release PRs.                                                                                               | `releases/next`     |
 
-\*Multiple labels can be defined using a multiline block such as follow:
+[^1]: Multiple labels can be defined using a multiline block such as follow:
 
 ```yaml
 labels-patch: |-
