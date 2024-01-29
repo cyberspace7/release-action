@@ -26,9 +26,9 @@ changelog:
     - title: ":hammer_and_wrench: Build"
       labels:
         - "type: build"
-    - title: ":dependabot: Dependencies"
-      labels:
-        - "type: build"
       exclude:
         authors:
           - "dependabot[bot]"
+    - title: ":dependabot: Dependencies"
+      labels:
+        - "type: build"
