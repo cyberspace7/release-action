@@ -182,7 +182,7 @@ Don't hesite also to share your experience.
 
 ### Permissions
 
-> [!INPORTANT]
+> [!IMPORTANT]
 > Make sure to enable GitHub Actions to create pull requests in your repository settings.
 
 This action requires the following permissions in order to work:
