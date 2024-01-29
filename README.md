@@ -212,8 +212,8 @@ permissions:
 
 ```yaml
 labels-patch: |-
-  patch
-  fix
+  "patch"
+  "fix"
 ```
 
 ### Outputs
