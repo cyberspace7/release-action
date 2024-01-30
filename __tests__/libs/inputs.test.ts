@@ -116,7 +116,7 @@ describe("parseInputs()", () => {
       mockInputs({
         releaseLabels: {
           ignore: "\r\n",
-          patch: "patch-label-1 \r\npatch-label-2",
+          patch: '"patch-label: 1" \r\npatch-label-2',
           minor: "\r\nminor-label",
           major: "major-label\r\n",
           ready: "ready-label",
@@ -128,7 +128,7 @@ describe("parseInputs()", () => {
 
       expect(result.releaseLabels).toEqual({
         ignore: ["ignore"],
-        patch: ["patch-label-1", "patch-label-2"],
+        patch: ["patch-label: 1", "patch-label-2"],
         minor: ["minor-label"],
         major: ["major-label"],
         ready: "ready-label",
