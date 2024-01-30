@@ -32394,8 +32394,16 @@ function createNewNodePackageEncodedContent(version) {
         core.debug(`Creating new ${PACKAGE_FILE_NAME} encoded content...`);
         const packageFile = (0,external_fs_.readFileSync)(PACKAGE_FILE_NAME, "utf8");
         const content = JSON.parse(packageFile);
-        content["version"] = version.version;
-        const newContent = Buffer.from(JSON.stringify(content, null, 2) + "\n").toString("base64");
+        const orderedContent = {
+            name: content["name"],
+            version: version.version,
+        };
+        for (const [key, value] of Object.entries(content)) {
+            if (!["name", "version"].includes(key)) {
+                orderedContent[key] = value;
+            }
+        }
+        const newContent = Buffer.from(JSON.stringify(orderedContent, null, 2) + "\n").toString("base64");
         core.info(`${PACKAGE_FILE_NAME} updated.`);
         return newContent;
     }, `Error while creating new ${PACKAGE_FILE_NAME} encoded content.`);
