@@ -26,6 +26,10 @@
       "labels": ["type: build"]
     },
     {
+      "matchManagers": ["github-actions"],
+      "labels": ["type: ci"]
+    },
+    {
       "packageNames": ["node"],
       "enabled": false
     }
