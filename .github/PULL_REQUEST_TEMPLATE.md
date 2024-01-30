@@ -2,20 +2,27 @@
 
 Pull Request requirements:
 
-<!-- ✍️ Be sure to check all items from the following list and verify CI checks
-before marking this PR as ready. -->
-
-- [ ] PR: Add notes and link issue(s) _if needed_
+- [ ] PR: Fill content
 - [ ] PR: Add assignees
-- [ ] PR: Add labels (`type: fix`, `type: feature`, `breaking`, `changelog-ignore`) _if needed_
-- [ ] Code: Update tests _if needed_
-- [ ] Code: Update documentation (`README`, ...) _if needed_
+- [ ] PR: Add labels
+- [ ] Code: Update tests, _if needed_
+- [ ] Code: Update documentation (`README`, ...), _if needed_
+
+### Issue(s)
+
+<!-- List of linked issues using `- #`. -->
+
+_N/A_
 
 ### Notes
 
-<!-- Uncomment the line below and add the ID of the related issue: -->
-<!-- - Relate to # -->
-<!-- Uncomment the line below and add the ID of the issue to close: -->
-<!-- - Closes # -->
+<!-- Helpful details not already mentioned in the linked issues, screenshots, links... -->
 
-<!-- ✍️ Any helpful detail, screenshots, links... -->
+_N/A_
+
+### Reviewers Instructions
+
+<!-- Specific instructions for reviewers about how to review this PR effectively,
+like the scope to test, the part of code to focus on, the steps to test the result, etc. -->
+
+_N/A_
