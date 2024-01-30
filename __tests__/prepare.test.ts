@@ -688,6 +688,85 @@ describe("main()", () => {
       expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(0);
     });
 
+    it("should prepare when changes (same version, no initial version)", async () => {
+      fileSystem.readFileSync.mockReturnValue(
+        '{"name": "@owner/application", "dependencies": {}}',
+      );
+      mockPullRequestLists({
+        openRelease: [
+          pullRequests.openRelease[0],
+          {
+            ...pullRequests.openRelease[1],
+            title: "chore(main): release v0.1.0",
+          },
+        ],
+        changes: [
+          {
+            number: 7,
+            title: "title",
+            state: "closed",
+            labels: [{ name: "label" }, { name: "type: fix" }],
+          },
+          ...changes,
+        ],
+      });
+
+      await main();
+
+      expect(core.setFailed).toHaveBeenCalledTimes(0);
+      expect(core.error).toHaveBeenCalledTimes(0);
+      expect(core.warning).toHaveBeenCalledTimes(0);
+      expect(core.notice).toHaveBeenCalledTimes(2);
+      expect(core.notice).toHaveBeenNthCalledWith(1, "Next version is 0.1.0.", {
+        title: "Next Version",
+      });
+      expect(core.notice).toHaveBeenNthCalledWith(
+        2,
+        "The existing release PR #1 has been updated.",
+        { title: "PR Updated" },
+      );
+      expect(core.setOutput).toHaveBeenCalledTimes(5);
+      expect(core.setOutput).toHaveBeenNthCalledWith(
+        1,
+        "current-version",
+        null,
+      );
+      expect(core.setOutput).toHaveBeenNthCalledWith(2, "pre-release", null);
+      expect(core.setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+      expect(core.setOutput).toHaveBeenNthCalledWith(
+        4,
+        "next-version",
+        "0.1.0",
+      );
+      expect(core.setOutput).toHaveBeenNthCalledWith(5, "release-pr", 1);
+      expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.getBranch).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.merge).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        base: "releases/next",
+        head: "main",
+        commit_message: 'chore(main): merge "main"',
+      });
+      expect(fileSystem.readFileSync).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.getContent).toHaveBeenCalledTimes(0);
+      expect(
+        octokit.rest.repos.createOrUpdateFileContents,
+      ).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.pulls.create).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.pulls.update).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.pulls.update).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        title: "chore(main): release v0.1.0",
+        pull_number: 1,
+        body: "Release notes\n\n- title (#4)\n- title (#5)\n- title (#6)\n- title (#7)\n\nThe end.",
+      });
+      expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(0);
+    });
+
     it("should prepare when only change is pre-release", async () => {
       inputs.preRelease = "beta";
       mockPullRequestLists({
