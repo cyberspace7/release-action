@@ -27,6 +27,7 @@
     },
     {
       "matchManagers": ["github-actions"],
+      "semanticCommitType": "ci",
       "labels": ["type: ci"]
     },
     {
