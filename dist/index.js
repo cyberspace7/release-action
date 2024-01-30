@@ -32210,7 +32210,7 @@ const PRE_RELEASE_REGEX = /^[A-Za-z0-9-]+$/;
 function parseMultipleValues(value, defaultValues) {
     const values = value
         .split(/\r|\n/)
-        .map((value) => value.trim())
+        .map((value) => value.trim().replace(/^["']|["']$/g, ""))
         .filter((value) => {
         return value.length > 0;
     });
