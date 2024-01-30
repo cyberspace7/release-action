@@ -50,9 +50,17 @@ export function createNewNodePackageEncodedContent(version: SemVer) {
     core.debug(`Creating new ${PACKAGE_FILE_NAME} encoded content...`);
     const packageFile = readFileSync(PACKAGE_FILE_NAME, "utf8");
     const content = JSON.parse(packageFile) as Record<string, unknown>;
-    content["version"] = version.version;
+    const orderedContent: Record<string, unknown> = {
+      name: content["name"],
+      version: version.version,
+    };
+    for (const [key, value] of Object.entries(content)) {
+      if (!["name", "version"].includes(key)) {
+        orderedContent[key] = value;
+      }
+    }
     const newContent = Buffer.from(
-      JSON.stringify(content, null, 2) + "\n",
+      JSON.stringify(orderedContent, null, 2) + "\n",
     ).toString("base64");
     core.info(`${PACKAGE_FILE_NAME} updated.`);
 
