@@ -21,6 +21,11 @@
       "labels": ["type: chore"]
     },
     {
+      "matchDepTypes": ["dependencies", "peerDependencies"],
+      "semanticCommitType": "build",
+      "labels": ["type: build"]
+    },
+    {
       "packageNames": ["node"],
       "enabled": false
     }
