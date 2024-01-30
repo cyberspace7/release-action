@@ -10,7 +10,7 @@ export type Inputs = z.infer<typeof inputsSchema>;
 function parseMultipleValues(value: string, defaultValues: string[]) {
   const values = value
     .split(/\r|\n/)
-    .map((value) => value.trim())
+    .map((value) => value.trim().replace(/^["']|["']$/g, ""))
     .filter((value) => {
       return value.length > 0;
     });
