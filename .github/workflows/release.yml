@@ -38,12 +38,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Release
         id: action
-        uses: cyberspace7/release-action@v0.6.0
+        uses: cyberspace7/release-action@v0.4.0
         with:
-          labels-patch: |-
-            "type: fix"
-            "type: performance"
-          labels-minor: "type: feature"
-          labels-major: "breaking"
           release-as: ${{ inputs.release-as }}
           pre-release: ${{ inputs.pre-release }}
