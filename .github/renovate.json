@@ -8,6 +8,7 @@
   "semanticCommits": "enabled",
   "semanticCommitType": "build",
   "enabledManagers": ["npm", "github-actions"],
+  "rangeStrategy": "pin",
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
