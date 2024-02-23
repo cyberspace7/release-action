@@ -34,6 +34,7 @@ jobs:
       - name: Commit changes
         if: steps.diff.outputs.has-diff == 'true'
         run: |
+          git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git commit --all --message "build(main): update build"
           git push
