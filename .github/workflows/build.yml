@@ -28,7 +28,8 @@ jobs:
       - name: Check difference
         id: diff
         run: |
-          echo "has-diff=$(git diff --quiet dist/)" >> $GITHUB_OUTPUT
+          git diff --quiet dist/
+          echo "has-diff=$([ $? -eq 0 ] && echo true || echo false)" >> $GITHUB_OUTPUT
       - name: Commit changes
         if: steps.diff.outputs.has-diff == 'true'
         run: |
