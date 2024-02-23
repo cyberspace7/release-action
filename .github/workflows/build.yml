@@ -1,0 +1,35 @@
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - renovate/*
+      - dependabot/*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Setup project
+        uses: ./.github/actions/setup
+      - name: Run build
+        run: pnpm run build
+      - name: Check difference
+        id: diff
+        run: |
+          echo "has-diff=$(git diff --quiet dist/)" >> $GITHUB_OUTPUT
+      - name: Commit changes
+        if: steps.diff.outputs.has-diff == 'true'
+        run: |
+          git commit -am "build(main): update build"
+          git push
