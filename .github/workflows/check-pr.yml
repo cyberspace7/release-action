@@ -1,9 +1,8 @@
-name: PR Check
+name: Pull Request Check
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: main
     types: [opened, synchronize, edited]
 
 concurrency:
@@ -15,7 +14,7 @@ permissions:
 
 jobs:
   pr:
-    name: Check Pull Request
+    name: Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
