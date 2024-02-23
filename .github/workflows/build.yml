@@ -27,9 +27,8 @@ jobs:
         run: pnpm run build
       - name: Check difference
         id: diff
-        continue-on-error: true
         run: |
-          git diff --quiet dist/
+          git diff --quiet dist/ > /dev/null
           echo "has-diff=$([ $? -eq 0 ] && echo true || echo false)" >> $GITHUB_OUTPUT
       - name: Commit changes
         if: steps.diff.outputs.has-diff == 'true'
