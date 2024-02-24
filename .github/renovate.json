@@ -1,9 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", ":rebaseStalePrs"],
-  "labels": ["type: build"],
+  "labels": ["type: chore"],
   "reviewersFromCodeOwners": true,
-  "dependencyDashboardLabels": ["type: build", "ignore"],
+  "dependencyDashboardLabels": ["ignore"],
   "rebaseWhen": "conflicted",
   "semanticCommits": "enabled",
   "semanticCommitType": "build",
@@ -16,17 +16,11 @@
       "labels": ["type: build"]
     },
     {
-      "matchDepTypes": ["devDependencies"],
-      "semanticCommitType": "chore",
-      "labels": ["type: chore"]
-    },
-    {
       "matchManagers": ["github-actions"],
       "semanticCommitType": "ci",
       "labels": ["type: ci"]
     },
     {
-      "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
       "automergeStrategy": "squash"
