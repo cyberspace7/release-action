@@ -6,9 +6,8 @@
   "dependencyDashboardLabels": ["ignore"],
   "rebaseWhen": "conflicted",
   "semanticCommits": "enabled",
-  "semanticCommitType": "build",
+  "semanticCommitType": "chore",
   "enabledManagers": ["npm", "github-actions"],
-  "rangeStrategy": "pin",
   "packageRules": [
     {
       "matchDepTypes": ["dependencies", "peerDependencies"],
@@ -29,5 +28,6 @@
       "packageNames": ["node"],
       "enabled": false
     }
-  ]
+  ],
+  "rangeStrategy": "pin"
 }
