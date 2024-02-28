@@ -314,7 +314,9 @@ export function rebaseReleaseBranch() {
     core.debug(
       `Rebasing branch "${inputs.branches.release}" onto "${inputs.branches.production}"...`,
     );
-    execSync(`git checkout ${inputs.branches.release}`);
+    execSync(
+      `git checkout -B ${inputs.branches.release} origin/${inputs.branches.release}`,
+    );
     execSync(`git pull origin ${inputs.branches.production}`);
     execSync(
       `git rebase origin/${inputs.branches.production} ${inputs.branches.release}`,
