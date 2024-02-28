@@ -32194,7 +32194,7 @@ try {
 "use strict";
 __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(9291);
+/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3081);
 /* harmony import */ var _libs_inputs__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(2081);
 
 
@@ -32332,7 +32332,7 @@ const inputs = parseInputs();
 
 /***/ }),
 
-/***/ 9291:
+/***/ 3081:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
 "use strict";
@@ -32425,9 +32425,12 @@ function createNewNodePackageEncodedContent(version) {
     }, `Error while creating new ${PACKAGE_FILE_NAME} encoded content.`);
 }
 
+;// CONCATENATED MODULE: external "child_process"
+const external_child_process_namespaceObject = require("child_process");
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+github@6.0.0/node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5942);
 ;// CONCATENATED MODULE: ./src/libs/repository.ts
+
 
 
 
@@ -32651,19 +32654,15 @@ function addLabelToReleasePullRequest(number) {
         return updatedPullRequest.data;
     }, `Error while adding label "${inputs/* inputs.releaseLabels.ready */.FU.releaseLabels.ready}" to release pull request #${number}.`);
 }
-function mergeIntoReleaseBranch() {
-    return tryExecute(async () => {
-        core.debug(`Merging branch "${inputs/* inputs.branches.production */.FU.branches.production}" into "${inputs/* inputs.branches.release */.FU.branches.release}"...`);
-        const merge = await octokit.rest.repos.merge({
-            owner,
-            repo,
-            base: inputs/* inputs.branches.release */.FU.branches.release,
-            head: inputs/* inputs.branches.production */.FU.branches.production,
-            commit_message: `chore(main): merge "${inputs/* inputs.branches.production */.FU.branches.production}"`,
-        });
-        core.info(`Branch "${inputs/* inputs.branches.production */.FU.branches.production}" merged into "${inputs/* inputs.branches.release */.FU.branches.release}".`);
-        return merge.data;
-    }, `Error while merging branch "${inputs/* inputs.branches.production */.FU.branches.production}" into "${inputs/* inputs.branches.release */.FU.branches.release}".`);
+function rebaseReleaseBranch() {
+    return tryExecute(() => {
+        core.debug(`Rebasing branch "${inputs/* inputs.branches.release */.FU.branches.release}" onto "${inputs/* inputs.branches.production */.FU.branches.production}"...`);
+        (0,external_child_process_namespaceObject.execSync)(`git checkout ${inputs/* inputs.branches.release */.FU.branches.release}`);
+        (0,external_child_process_namespaceObject.execSync)(`git pull origin ${inputs/* inputs.branches.production */.FU.branches.production}`);
+        (0,external_child_process_namespaceObject.execSync)(`git rebase origin/${inputs/* inputs.branches.production */.FU.branches.production} ${inputs/* inputs.branches.release */.FU.branches.release}`);
+        (0,external_child_process_namespaceObject.execSync)(`git push --force origin ${inputs/* inputs.branches.release */.FU.branches.release}`);
+        core.info(`Branch "${inputs/* inputs.branches.release */.FU.branches.release}" rebased onto "${inputs/* inputs.branches.production */.FU.branches.production}".`);
+    }, `Error while rebasing branch "${inputs/* inputs.branches.release */.FU.branches.release}".`);
 }
 function updateReleasePullRequest(pullRequest, nextVersion, body) {
     return tryExecute(async () => {
@@ -32752,12 +32751,12 @@ async function createOrUpdateReleasePullRequest(nextVersion, releasePullRequest,
 }
 async function prepare(nextVersion, releaseNotes, releasePullRequest, isManualVersion) {
     core.info(`Preparing new release...`);
-    let skipMerge = false;
+    let skipRebase = false;
     if (!releasePullRequest) {
-        skipMerge = await getOrCreateReleaseBranch();
+        skipRebase = await getOrCreateReleaseBranch();
     }
-    if (!skipMerge) {
-        await mergeIntoReleaseBranch();
+    if (!skipRebase) {
+        rebaseReleaseBranch();
     }
     if (!releasePullRequest?.title.includes(nextVersion.version)) {
         await commitNodePackage(nextVersion);

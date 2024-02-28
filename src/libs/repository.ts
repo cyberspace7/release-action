@@ -1,3 +1,4 @@
+import { execSync } from "child_process";
 import * as core from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 import { RequestError } from "@octokit/request-error";
@@ -308,23 +309,21 @@ export function addLabelToReleasePullRequest(number: number) {
   }, `Error while adding label "${inputs.releaseLabels.ready}" to release pull request #${number}.`);
 }
 
-export function mergeIntoReleaseBranch() {
-  return tryExecute(async () => {
+export function rebaseReleaseBranch() {
+  return tryExecute(() => {
     core.debug(
-      `Merging branch "${inputs.branches.production}" into "${inputs.branches.release}"...`,
+      `Rebasing branch "${inputs.branches.release}" onto "${inputs.branches.production}"...`,
     );
-    const merge = await octokit.rest.repos.merge({
-      owner,
-      repo,
-      base: inputs.branches.release,
-      head: inputs.branches.production,
-      commit_message: `chore(main): merge "${inputs.branches.production}"`,
-    });
+    execSync(`git checkout ${inputs.branches.release}`);
+    execSync(`git pull origin ${inputs.branches.production}`);
+    execSync(
+      `git rebase origin/${inputs.branches.production} ${inputs.branches.release}`,
+    );
+    execSync(`git push --force origin ${inputs.branches.release}`);
     core.info(
-      `Branch "${inputs.branches.production}" merged into "${inputs.branches.release}".`,
+      `Branch "${inputs.branches.release}" rebased onto "${inputs.branches.production}".`,
     );
-    return merge.data;
-  }, `Error while merging branch "${inputs.branches.production}" into "${inputs.branches.release}".`);
+  }, `Error while rebasing branch "${inputs.branches.release}".`);
 }
 
 export function updateReleasePullRequest(

@@ -16,7 +16,7 @@ runs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version:  ${{ steps.nvm.outputs.node-version }}
+        node-version: ${{ steps.nvm.outputs.node-version }}
         cache: "pnpm"
     - name: Install dependencies
       shell: bash
