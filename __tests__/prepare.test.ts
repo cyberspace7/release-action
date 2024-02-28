@@ -385,7 +385,7 @@ describe("main()", () => {
       expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
       expect(childProcess.execSync).toHaveBeenCalledTimes(4);
       expect(childProcess.execSync.mock.calls).toEqual([
-        ["git checkout releases/next"],
+        ["git checkout -B releases/next origin/releases/next"],
         ["git pull origin main"],
         ["git rebase origin/main releases/next"],
         ["git push --force origin releases/next"],
@@ -585,7 +585,7 @@ describe("main()", () => {
       expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
       expect(childProcess.execSync).toHaveBeenCalledTimes(4);
       expect(childProcess.execSync.mock.calls).toEqual([
-        ["git checkout releases/next"],
+        ["git checkout -B releases/next origin/releases/next"],
         ["git pull origin main"],
         ["git rebase origin/main releases/next"],
         ["git push --force origin releases/next"],
@@ -658,7 +658,7 @@ describe("main()", () => {
       expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
       expect(childProcess.execSync).toHaveBeenCalledTimes(4);
       expect(childProcess.execSync.mock.calls).toEqual([
-        ["git checkout releases/next"],
+        ["git checkout -B releases/next origin/releases/next"],
         ["git pull origin main"],
         ["git rebase origin/main releases/next"],
         ["git push --force origin releases/next"],
@@ -734,7 +734,7 @@ describe("main()", () => {
       expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
       expect(childProcess.execSync).toHaveBeenCalledTimes(4);
       expect(childProcess.execSync.mock.calls).toEqual([
-        ["git checkout releases/next"],
+        ["git checkout -B releases/next origin/releases/next"],
         ["git pull origin main"],
         ["git rebase origin/main releases/next"],
         ["git push --force origin releases/next"],
@@ -800,7 +800,7 @@ describe("main()", () => {
       expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
       expect(childProcess.execSync).toHaveBeenCalledTimes(4);
       expect(childProcess.execSync.mock.calls).toEqual([
-        ["git checkout releases/next"],
+        ["git checkout -B releases/next origin/releases/next"],
         ["git pull origin main"],
         ["git rebase origin/main releases/next"],
         ["git push --force origin releases/next"],

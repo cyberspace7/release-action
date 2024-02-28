@@ -32657,7 +32657,7 @@ function addLabelToReleasePullRequest(number) {
 function rebaseReleaseBranch() {
     return tryExecute(() => {
         core.debug(`Rebasing branch "${inputs/* inputs.branches.release */.FU.branches.release}" onto "${inputs/* inputs.branches.production */.FU.branches.production}"...`);
-        (0,external_child_process_namespaceObject.execSync)(`git checkout ${inputs/* inputs.branches.release */.FU.branches.release}`);
+        (0,external_child_process_namespaceObject.execSync)(`git checkout -B ${inputs/* inputs.branches.release */.FU.branches.release} origin/${inputs/* inputs.branches.release */.FU.branches.release}`);
         (0,external_child_process_namespaceObject.execSync)(`git pull origin ${inputs/* inputs.branches.production */.FU.branches.production}`);
         (0,external_child_process_namespaceObject.execSync)(`git rebase origin/${inputs/* inputs.branches.production */.FU.branches.production} ${inputs/* inputs.branches.release */.FU.branches.release}`);
         (0,external_child_process_namespaceObject.execSync)(`git push --force origin ${inputs/* inputs.branches.release */.FU.branches.release}`);
