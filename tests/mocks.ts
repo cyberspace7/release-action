@@ -30,7 +30,6 @@ export const octokit = {
       generateReleaseNotes: jest.fn().mockResolvedValue(githubResponse),
       createOrUpdateFileContents: jest.fn().mockResolvedValue(githubResponse),
       createRelease: jest.fn().mockResolvedValue(githubResponse),
-      merge: jest.fn().mockResolvedValue(githubResponse),
     },
     pulls: {
       list: jest.fn().mockResolvedValue(githubResponseList),
@@ -54,6 +53,10 @@ export const context = {
 
 export const fileSystem = {
   readFileSync: jest.fn(),
+};
+
+export const childProcess = {
+  execSync: jest.fn(),
 };
 
 core.group.mockImplementation((_, fn: () => unknown) => {
@@ -105,4 +108,8 @@ jest.mock("@actions/github", () => {
 
 jest.mock("fs", () => {
   return fileSystem;
+});
+
+jest.mock("child_process", function () {
+  return childProcess;
 });

@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   pr:
-    name: Check
+    name: Check PR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
