@@ -11,7 +11,7 @@ import {
   generateManualVersionComment,
   getNodePackageSha,
   getReleaseBranch,
-  rebaseReleaseBranch,
+  mergeIntoReleaseBranch,
   updateReleasePullRequest,
   type PullRequest,
 } from "./libs/repository";
@@ -82,12 +82,12 @@ export async function prepare(
 ) {
   core.info(`Preparing new release...`);
 
-  let skipRebase = false;
+  let skipMerge = false;
   if (!releasePullRequest) {
-    skipRebase = await getOrCreateReleaseBranch();
+    skipMerge = await getOrCreateReleaseBranch();
   }
-  if (!skipRebase) {
-    rebaseReleaseBranch();
+  if (!skipMerge) {
+    await mergeIntoReleaseBranch();
   }
 
   if (!releasePullRequest?.title.includes(nextVersion.version)) {
