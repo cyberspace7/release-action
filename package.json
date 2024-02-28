@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "prepare": "husky",
-    "format": "prettier --write \"**/*.{cjs,mdj,js,jsx,ts,tsx,md}\"",
-    "format:check": "prettier --check \"**/*.{cjs,mdj,js,jsx,ts,tsx,md,astro}\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "eslint --max-warnings 0 .",
     "check": "tsc --noEmit",
     "test": "jest",
