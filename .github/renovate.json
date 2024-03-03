@@ -5,9 +5,11 @@
   "reviewersFromCodeOwners": true,
   "dependencyDashboardLabels": ["ignore"],
   "rebaseWhen": "conflicted",
+  "automergeStrategy": "squash",
   "semanticCommits": "enabled",
   "semanticCommitType": "chore",
   "enabledManagers": ["npm", "github-actions"],
+  "rangeStrategy": "pin",
   "packageRules": [
     {
       "matchDepTypes": ["dependencies", "peerDependencies"],
@@ -21,13 +23,11 @@
     },
     {
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true,
-      "automergeStrategy": "squash"
+      "automerge": true
     },
     {
       "packageNames": ["node"],
       "enabled": false
     }
-  ],
-  "rangeStrategy": "pin"
+  ]
 }
