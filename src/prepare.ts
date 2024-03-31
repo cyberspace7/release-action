@@ -44,6 +44,11 @@ async function createOrUpdateReleasePullRequest(
   isManualVersion: boolean,
 ) {
   if (!releasePullRequest) {
+    if (inputs.skipPullRequestCreation) {
+      core.info("Release PR creation skipped.");
+      return;
+    }
+
     const newPullRequest = await createReleasePullRequest(
       nextVersion,
       releaseNotes,
