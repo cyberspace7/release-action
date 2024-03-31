@@ -6,7 +6,7 @@ PR-based Github Action for releasing Node.js projects.
 > This project is still in experimental phase, it is subject to breaking changes and therefore not suitable for production.
 
 [Issues](https://github.com/cyberspace7/release-action/issues) roadmap can be tracked
-[here](https://github.com/cyberspace7/release-action/milestone), don't hesitate to upvote
+[here](https://github.com/cyberspace7/release-action/milestones), don't hesitate to upvote
 issues you want to be treated.
 If you have any question, remark, suggestion, ... They are most welcome in the
 [discussions](https://github.com/cyberspace7/release-action/discussions)!
