@@ -32722,16 +32722,6 @@ async function commitNodePackage(nextVersion) {
     const content = createNewNodePackageEncodedContent(nextVersion);
     await commitFileToReleaseBranch(sha, content, nextVersion);
 }
-async function getOrCreateReleaseBranch() {
-    if (await getReleaseBranch()) {
-        return false;
-    }
-    await createReleaseBranch();
-    core.notice(`Next release branch "${inputs/* inputs.branches.release */.FU.branches.release}" has been created.`, {
-        title: "Branch Created",
-    });
-    return true;
-}
 async function createOrUpdateReleasePullRequest(nextVersion, releasePullRequest, releaseNotes, isManualVersion) {
     if (!releasePullRequest) {
         if (inputs/* inputs.skipPullRequestCreation */.FU.skipPullRequestCreation) {
@@ -32759,16 +32749,28 @@ async function createOrUpdateReleasePullRequest(nextVersion, releasePullRequest,
     });
     return releasePullRequest.number;
 }
-async function prepare(nextVersion, releaseNotes, releasePullRequest, isManualVersion) {
-    core.info(`Preparing new release...`);
-    let skipMerge = false;
-    if (!releasePullRequest) {
-        skipMerge = await getOrCreateReleaseBranch();
-    }
-    if (!skipMerge) {
+async function mergeIntoOrTryCreateReleaseBranch() {
+    const releaseBranch = await getReleaseBranch();
+    if (releaseBranch) {
         await mergeIntoReleaseBranch();
     }
-    if (!releasePullRequest?.title.includes(nextVersion.version)) {
+    else if (!inputs/* inputs.skipPullRequestCreation */.FU.skipPullRequestCreation) {
+        await createReleaseBranch();
+        core.notice(`Next release branch "${inputs/* inputs.branches.release */.FU.branches.release}" has been created.`, {
+            title: "Branch Created",
+        });
+    }
+}
+async function prepare(nextVersion, releaseNotes, releasePullRequest, isManualVersion) {
+    core.info(`Preparing new release...`);
+    if (releasePullRequest) {
+        await mergeIntoReleaseBranch();
+    }
+    else {
+        await mergeIntoOrTryCreateReleaseBranch();
+    }
+    if (!releasePullRequest?.title.includes(nextVersion.version) &&
+        (releasePullRequest ?? !inputs/* inputs.skipPullRequestCreation */.FU.skipPullRequestCreation)) {
         await commitNodePackage(nextVersion);
     }
     const prNumber = await createOrUpdateReleasePullRequest(nextVersion, releasePullRequest, releaseNotes, isManualVersion);

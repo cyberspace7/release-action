@@ -17,6 +17,7 @@ export function mockInputs(inputs: {
     production?: string;
     release?: string;
   };
+  skipPullRequestCreation?: string;
 }) {
   core.getInput
     .mockReturnValueOnce(inputs.preRelease ?? "")
@@ -28,7 +29,9 @@ export function mockInputs(inputs: {
     .mockReturnValueOnce(inputs.releaseLabels?.ready ?? "")
     .mockReturnValueOnce(inputs.releaseLabels?.done ?? "")
     .mockReturnValueOnce(inputs.branches?.production ?? "")
-    .mockReturnValueOnce(inputs.branches?.release ?? "");
+    .mockReturnValueOnce(inputs.branches?.release ?? "")
+    .mockReturnValueOnce(inputs.skipPullRequestCreation ?? "")
+    .mockReturnValue("");
 }
 
 describe("parseInputs()", () => {
@@ -168,6 +171,23 @@ describe("parseInputs()", () => {
         production: "production",
         release: "release",
       });
+    });
+  });
+
+  describe("when `skipPullRequestCreation`", () => {
+    test.each([
+      [false, ""],
+      [false, "false"],
+      [false, "0"],
+      [true, "true"],
+      [true, "True"],
+      [true, "1"],
+    ])("should return`%p` when `%p`", (expected, input) => {
+      mockInputs({ skipPullRequestCreation: input });
+
+      const result = parseInputs();
+
+      expect(result.skipPullRequestCreation).toEqual(expected);
     });
   });
 });
