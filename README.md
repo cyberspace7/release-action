@@ -9,7 +9,25 @@ PR-based Github Action for releasing Node.js projects.
 [here](https://github.com/cyberspace7/release-action/milestones), don't hesitate to upvote
 issues you want to be treated.
 If you have any question, remark, suggestion, ... They are most welcome in the
-[discussions](https://github.com/cyberspace7/release-action/discussions)!
+[Discussions](https://github.com/cyberspace7/release-action/discussions)!
+
+## Table of Contents
+
+- [Release Action](#release-action)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+    - [When it should be used](#when-it-should-be-used)
+    - [When it should not be used](#when-it-should-not-be-used)
+  - [Usage](#usage)
+    - [Permissions](#permissions)
+    - [Inputs](#inputs)
+    - [Outputs](#outputs)
+    - [Secrets](#secrets)
+    - [Environment variables](#environment-variables)
+    - [Examples](#examples)
+  - [Contributing](#contributing)
+  - [Authors](#authors)
+  - [Licensing](#licensing)
 
 ## Description
 
@@ -142,6 +160,8 @@ jobs:
       pre-release: ${{ inputs.pre-release != '' }}
 ```
 
+See the [examples](#examples) for more use cases.
+
 > [!WARNING]
 > Use a manual version (like in the example bellow) until a `v1` becomes available.
 > Remember that this version **is not production ready**.
@@ -196,18 +216,19 @@ permissions:
 
 ### Inputs
 
-| Name                | Description                                                                                                                | Default Value       |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `release-as`        | Force a specific version.                                                                                                  |                     |
-| `pre-release`       | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                      |                     |
-| `labels-ignore`\*   | Labels for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage). | `ignore`            |
-| `labels-patch`\*    | Labels for pull requests to bump a patch version.                                                                          | `patch`, `fix`      |
-| `labels-minor`\*    | Labels for pull requests to bump a minor version.                                                                          | `minor`, `feature`  |
-| `labels-major`\*    | Labels for pull requests to bump a major version.                                                                          | `major`, `breaking` |
-| `label-ready`       | Label automatically used by Release Action for release PRs.                                                                | `release: ready`    |
-| `label-done`        | Label automatically used by Release Action for release PRs that have been processed (current version released).            | `release: done`     |
-| `branch-production` | Branch used for production, the base for all PRs going to production.                                                      | `main`              |
-| `branch-release`    | Branch used for release PRs.                                                                                               | `releases/next`     |
+| Name                | Description                                                                                                                                                                                 | Default Value       |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `release-as`        | Force a specific version.                                                                                                                                                                   |                     |
+| `pre-release`       | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                                                                                       |                     |
+| `labels-ignore`\*   | Labels for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage).                                                                  | `ignore`            |
+| `labels-patch`\*    | Labels for pull requests to bump a patch version.                                                                                                                                           | `patch`, `fix`      |
+| `labels-minor`\*    | Labels for pull requests to bump a minor version.                                                                                                                                           | `minor`, `feature`  |
+| `labels-major`\*    | Labels for pull requests to bump a major version.                                                                                                                                           | `major`, `breaking` |
+| `label-ready`       | Label automatically used by Release Action for release PRs.                                                                                                                                 | `release: ready`    |
+| `label-done`        | Label automatically used by Release Action for release PRs that have been processed (current version released).                                                                             | `release: done`     |
+| `branch-production` | Branch used for production, the base for all PRs going to production.                                                                                                                       | `main`              |
+| `branch-release`    | Branch used for release PRs.                                                                                                                                                                | `releases/next`     |
+| `skip-pr-creation`  | Skip release PR creation. When there are changes, if the PR exists, it will still be updated. if the PR doesn't exist but the release branch does, the later will still be updated as well. | `false`             |
 
 \*Multiple labels can be defined using a multiline block such as follow:
 
@@ -237,43 +258,65 @@ _None._
 | -------------- | ------------------------------------------- |
 | `GITHUB_TOKEN` | Authentification token used for GitHub API. |
 
-## Development
+### Examples
 
-See [`package.json`](package.json) for the list of available scripts.
+Execute another job when a release has been made:
 
-### Prerequisites
+```yaml
+name: Release
 
-This project require the following dependencies:
+on:
+  push:
+    branches:
+      - main
 
-- [Node.js](https://nodejs.org)
-- [pnpm](https://pnpm.io)
-
-### Setup
-
-Install the dependencies:
-
-```bash
-pnpm install
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    outputs:
+      is-released: ${{ steps.action.outputs.is-released }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Execute action
+        id: action
+        uses: cyberspace7/release-action@v0.6.0
+  publish:
+    name: Publish
+    needs: release
+    if: needs.release.outputs.is-released == 'true'
+    uses: ./.github/workflows/publish.yml
 ```
 
-### Build
+Only create release PRs when manually triggered:
 
-[Source files](src) are are compiled into a single file with all dependencies, into [`dist`](dist).
-The `dist` directory must be commited into the repository.
+```yaml
+name: Release
 
-```bash
-pnpm build
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Execute action
+        id: action
+        uses: cyberspace7/release-action@v0.6.0
+        with:
+          skip-pr-creation: ${{ github.event_name == 'workflow_dispatch' }}
 ```
-
-### Release
-
-Releases are automatic, following the merge of the release pull request (see [Release Action](https://github.com/cyberspace7/release-action#readme)).
-A release PR can be explicitely generated by running manually
-[this workflow](https://github.com/cyberspace7/release-action/actions/workflows/release.yml).
-
-## Authors
-
-- [**Benjamin Guibert**](https://github.com/benjamin-guibert) – main author and contributor.
 
 ## Contributing
 
@@ -283,7 +326,11 @@ in the [discussions](https://github.com/cyberspace7/release-action/discussions/c
 If you find a bug concerning this project, please fill a [bug report](https://github.com/cyberspace7/release-action/issues/new?assignees=&labels=bug-report&projects=&template=bug-report.yml).
 If it concerns a security vulnerability, please email us at `contact@a60.dev`.
 
-For contributing, please check the [guidelines](.github/CONTRIBUTING.md).
+For contributing, please check the [Contributing Guidelines](.github/CONTRIBUTING.md).
+
+## Authors
+
+- [**Benjamin Guibert**](https://github.com/benjamin-guibert) – main author and contributor.
 
 ## Licensing
 
