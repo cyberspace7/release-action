@@ -10,7 +10,7 @@ Pull Request requirements:
 
 ### Issue(s)
 
-<!-- List of linked issues using `- #`. -->
+<!-- List of linked issues using `- [Closes] #`. -->
 
 _N/A_
 

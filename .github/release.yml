@@ -23,12 +23,3 @@ changelog:
     - title: ":rocket: Performance Improvements"
       labels:
         - "type: performance"
-    - title: ":hammer_and_wrench: Build"
-      labels:
-        - "type: build"
-      exclude:
-        authors:
-          - "dependabot[bot]"
-    - title: ":dependabot: Dependencies"
-      labels:
-        - "type: build"
