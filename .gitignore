@@ -24,6 +24,10 @@ yarn-error.log*
 
 *.tsbuildinfo
 
+# IDE
+
+.vscode
+
 # Miscellanous
 
 .DS_Store

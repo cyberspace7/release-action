@@ -49,6 +49,7 @@ describe("main()", () => {
       ready: "release: ready",
       done: "release: done",
     };
+    inputs.skipPullRequestCreation = false;
     fileSystem.readFileSync.mockReturnValue(
       '{"name": "@owner/application", "version": "1.2.3-alpha.4", "dependencies": {}}',
     );
@@ -337,6 +338,58 @@ describe("main()", () => {
     });
   });
 
+  it("should not create branch when PR creation skipped", async () => {
+    mockPullRequestLists({ changes });
+    inputs.skipPullRequestCreation = true;
+
+    await main();
+
+    expect(core.setFailed).toHaveBeenCalledTimes(0);
+    expect(core.error).toHaveBeenCalledTimes(0);
+    expect(core.warning).toHaveBeenCalledTimes(0);
+    expect(core.notice).toHaveBeenCalledTimes(2);
+    expect(core.notice).toHaveBeenNthCalledWith(2, "Next version is 1.3.0.", {
+      title: "Next Version",
+    });
+    expect(core.setOutput).toHaveBeenCalledTimes(4);
+    expect(core.setOutput).toHaveBeenNthCalledWith(
+      1,
+      "current-version",
+      "1.2.3-alpha.4",
+    );
+    expect(core.setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+    expect(core.setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+    expect(core.setOutput).toHaveBeenNthCalledWith(4, "next-version", "1.3.0");
+    expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledTimes(1);
+    expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledWith({
+      owner: "owner",
+      repo: "repository",
+      tag_name: "v1.3.0",
+      target_commitish: "contextSha",
+    });
+    expect(octokit.rest.repos.getBranch).toHaveBeenCalledTimes(1);
+    expect(octokit.rest.repos.getBranch).toHaveBeenCalledWith({
+      owner: "owner",
+      repo: "repository",
+      branch: "releases/next",
+    });
+    expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
+    expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(0);
+    expect(fileSystem.readFileSync).toHaveBeenCalledTimes(1);
+    expect(fileSystem.readFileSync).toHaveBeenNthCalledWith(
+      1,
+      "package.json",
+      "utf8",
+    );
+    expect(octokit.rest.repos.getContent).toHaveBeenCalledTimes(0);
+    expect(octokit.rest.repos.createOrUpdateFileContents).toHaveBeenCalledTimes(
+      0,
+    );
+    expect(octokit.rest.pulls.create).toHaveBeenCalledTimes(0);
+    expect(octokit.rest.pulls.update).toHaveBeenCalledTimes(0);
+    expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(0);
+  });
+
   describe("when branch exists", () => {
     beforeEach(() => {
       octokit.rest.repos.getBranch.mockResolvedValueOnce({
@@ -397,6 +450,55 @@ describe("main()", () => {
         octokit.rest.repos.createOrUpdateFileContents,
       ).toHaveBeenCalledTimes(1);
       expect(octokit.rest.pulls.create).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.pulls.update).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(0);
+    });
+
+    it("should not create PR when PR creation skipped", async () => {
+      mockPullRequestLists({ changes });
+      inputs.skipPullRequestCreation = true;
+
+      await main();
+
+      expect(core.setFailed).toHaveBeenCalledTimes(0);
+      expect(core.error).toHaveBeenCalledTimes(0);
+      expect(core.warning).toHaveBeenCalledTimes(0);
+      expect(core.notice).toHaveBeenCalledTimes(2);
+      expect(core.setOutput).toHaveBeenCalledTimes(4);
+      expect(core.setOutput).toHaveBeenNthCalledWith(
+        1,
+        "current-version",
+        "1.2.3-alpha.4",
+      );
+      expect(core.setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+      expect(core.setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+      expect(core.setOutput).toHaveBeenNthCalledWith(
+        4,
+        "next-version",
+        "1.3.0",
+      );
+      expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.getBranch).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.getBranch).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        branch: "releases/next",
+      });
+      expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.merge).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        base: "releases/next",
+        head: "main",
+        commit_message: 'chore(main): merge "main"',
+      });
+      expect(fileSystem.readFileSync).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.getContent).toHaveBeenCalledTimes(0);
+      expect(
+        octokit.rest.repos.createOrUpdateFileContents,
+      ).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.pulls.create).toHaveBeenCalledTimes(0);
       expect(octokit.rest.pulls.update).toHaveBeenCalledTimes(0);
       expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(0);
     });
@@ -831,6 +933,86 @@ describe("main()", () => {
         issue_number: 1,
         body: "Version `1.3.0-beta.0` has been manually requested by @actor.",
       });
+    });
+
+    it("should prepare when PR creation skipped", async () => {
+      mockPullRequestLists({
+        openRelease: pullRequests.openRelease,
+        changes: [
+          {
+            number: 7,
+            title: "title",
+            state: "closed",
+            labels: [
+              { name: "label" },
+              { name: "type: feature" },
+              { name: "breaking" },
+            ],
+          },
+          ...changes,
+        ],
+      });
+      inputs.skipPullRequestCreation = true;
+
+      await main();
+
+      expect(core.setFailed).toHaveBeenCalledTimes(0);
+      expect(core.error).toHaveBeenCalledTimes(0);
+      expect(core.warning).toHaveBeenCalledTimes(0);
+      expect(core.notice).toHaveBeenCalledTimes(3);
+      expect(core.notice).toHaveBeenNthCalledWith(2, "Next version is 2.0.0.", {
+        title: "Next Version",
+      });
+      expect(core.notice).toHaveBeenNthCalledWith(
+        3,
+        "The existing release PR #1 has been updated.",
+        { title: "PR Updated" },
+      );
+      expect(core.setOutput).toHaveBeenCalledTimes(5);
+      expect(core.setOutput).toHaveBeenNthCalledWith(
+        1,
+        "current-version",
+        "1.2.3-alpha.4",
+      );
+      expect(core.setOutput).toHaveBeenNthCalledWith(2, "pre-release", "alpha");
+      expect(core.setOutput).toHaveBeenNthCalledWith(3, "is-released", false);
+      expect(core.setOutput).toHaveBeenNthCalledWith(
+        4,
+        "next-version",
+        "2.0.0",
+      );
+      expect(core.setOutput).toHaveBeenNthCalledWith(5, "release-pr", 1);
+      expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.getBranch).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.merge).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        base: "releases/next",
+        head: "main",
+        commit_message: 'chore(main): merge "main"',
+      });
+      expect(fileSystem.readFileSync).toHaveBeenCalledTimes(2);
+      expect(fileSystem.readFileSync).toHaveBeenNthCalledWith(
+        2,
+        "package.json",
+        "utf8",
+      );
+      expect(octokit.rest.repos.getContent).toHaveBeenCalledTimes(1);
+      expect(
+        octokit.rest.repos.createOrUpdateFileContents,
+      ).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.pulls.create).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.pulls.update).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.pulls.update).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        title: "chore(main): release v2.0.0",
+        pull_number: 1,
+        body: "Release notes\n\n- title (#4)\n- title (#5)\n- title (#6)\n- title (#7)\n\nThe end.",
+      });
+      expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(0);
     });
   });
 });

@@ -32,6 +32,9 @@ inputs:
   branch-release:
     description: Branch used for release PRs
     required: false
+  skip-pr-creation:
+    description: Skip the creation of the release PR
+    required: false
 outputs:
   current-version:
     description: Version of the current code

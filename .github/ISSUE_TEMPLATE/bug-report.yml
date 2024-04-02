@@ -6,6 +6,8 @@ body:
     attributes:
       value: |
         Thank you for taking the time to fill out this bug report, your help is much appreciated!
+
+        If you're not sure that this is a bug, please ask us in the [Discussions](https://github.com/cyberspace7/release-action/discussions/categories/q-a) first.
   - type: textarea
     id: description
     attributes:

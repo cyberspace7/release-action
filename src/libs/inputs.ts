@@ -102,13 +102,18 @@ const inputsSchema = z.object({
         return value.length > 0 ? value : "releases/next";
       }),
   }),
+  skipPullRequestCreation: z.boolean().default(false),
 });
 
-export const parseEnvironment = () => {
+export function parseEnvironment() {
   return environmentSchema.parse(process.env);
-};
+}
 
-export const parseInputs = () => {
+function getBooleanInput(name: string) {
+  return ["true", "1"].includes(getInput(name).toLowerCase());
+}
+
+export function parseInputs() {
   return inputsSchema.parse({
     preRelease: getInput("pre-release"),
     releaseAs: getInput("release-as"),
@@ -124,8 +129,9 @@ export const parseInputs = () => {
       production: getInput("branch-production"),
       release: getInput("branch-release"),
     },
+    skipPullRequestCreation: getBooleanInput("skip-pr-creation"),
   });
-};
+}
 
 export const environment = parseEnvironment();
 

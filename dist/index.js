@@ -32304,11 +32304,15 @@ const inputsSchema = zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
             return value.length > 0 ? value : "releases/next";
         }),
     }),
+    skipPullRequestCreation: zod__WEBPACK_IMPORTED_MODULE_2__.z.boolean().default(false),
 });
-const parseEnvironment = () => {
+function parseEnvironment() {
     return environmentSchema.parse(process.env);
-};
-const parseInputs = () => {
+}
+function getBooleanInput(name) {
+    return ["true", "1"].includes((0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)(name).toLowerCase());
+}
+function parseInputs() {
     return inputsSchema.parse({
         preRelease: (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("pre-release"),
         releaseAs: (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("release-as"),
@@ -32324,8 +32328,9 @@ const parseInputs = () => {
             production: (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("branch-production"),
             release: (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("branch-release"),
         },
+        skipPullRequestCreation: getBooleanInput("skip-pr-creation"),
     });
-};
+}
 const environment = parseEnvironment();
 const inputs = parseInputs();
 
@@ -32717,18 +32722,12 @@ async function commitNodePackage(nextVersion) {
     const content = createNewNodePackageEncodedContent(nextVersion);
     await commitFileToReleaseBranch(sha, content, nextVersion);
 }
-async function getOrCreateReleaseBranch() {
-    if (await getReleaseBranch()) {
-        return false;
-    }
-    await createReleaseBranch();
-    core.notice(`Next release branch "${inputs/* inputs.branches.release */.FU.branches.release}" has been created.`, {
-        title: "Branch Created",
-    });
-    return true;
-}
 async function createOrUpdateReleasePullRequest(nextVersion, releasePullRequest, releaseNotes, isManualVersion) {
     if (!releasePullRequest) {
+        if (inputs/* inputs.skipPullRequestCreation */.FU.skipPullRequestCreation) {
+            core.info("Release PR creation skipped.");
+            return;
+        }
         const newPullRequest = await createReleasePullRequest(nextVersion, releaseNotes);
         await addLabelToReleasePullRequest(newPullRequest.number);
         core.notice(`Release PR #${newPullRequest.number} has been opened.`, {
@@ -32750,16 +32749,28 @@ async function createOrUpdateReleasePullRequest(nextVersion, releasePullRequest,
     });
     return releasePullRequest.number;
 }
-async function prepare(nextVersion, releaseNotes, releasePullRequest, isManualVersion) {
-    core.info(`Preparing new release...`);
-    let skipMerge = false;
-    if (!releasePullRequest) {
-        skipMerge = await getOrCreateReleaseBranch();
-    }
-    if (!skipMerge) {
+async function mergeIntoOrTryCreateReleaseBranch() {
+    const releaseBranch = await getReleaseBranch();
+    if (releaseBranch) {
         await mergeIntoReleaseBranch();
     }
-    if (!releasePullRequest?.title.includes(nextVersion.version)) {
+    else if (!inputs/* inputs.skipPullRequestCreation */.FU.skipPullRequestCreation) {
+        await createReleaseBranch();
+        core.notice(`Next release branch "${inputs/* inputs.branches.release */.FU.branches.release}" has been created.`, {
+            title: "Branch Created",
+        });
+    }
+}
+async function prepare(nextVersion, releaseNotes, releasePullRequest, isManualVersion) {
+    core.info(`Preparing new release...`);
+    if (releasePullRequest) {
+        await mergeIntoReleaseBranch();
+    }
+    else {
+        await mergeIntoOrTryCreateReleaseBranch();
+    }
+    if (!releasePullRequest?.title.includes(nextVersion.version) &&
+        (releasePullRequest ?? !inputs/* inputs.skipPullRequestCreation */.FU.skipPullRequestCreation)) {
         await commitNodePackage(nextVersion);
     }
     const prNumber = await createOrUpdateReleasePullRequest(nextVersion, releasePullRequest, releaseNotes, isManualVersion);
@@ -34592,7 +34603,9 @@ async function tryPrepare(nextVersion, releasePullRequest, releaseNotes, isManua
         return;
     }
     const prNumber = await core.group("Prepare", () => prepare(nextVersion, releaseNotes ?? "", releasePullRequest, isManualVersion));
-    core.setOutput("release-pr", prNumber);
+    if (prNumber) {
+        core.setOutput("release-pr", prNumber);
+    }
 }
 async function main() {
     try {

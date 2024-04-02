@@ -76,7 +76,9 @@ async function tryPrepare(
       isManualVersion,
     ),
   );
-  core.setOutput("release-pr", prNumber);
+  if (prNumber) {
+    core.setOutput("release-pr", prNumber);
+  }
 }
 
 export async function main() {

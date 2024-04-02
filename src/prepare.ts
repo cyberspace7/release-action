@@ -22,21 +22,6 @@ async function commitNodePackage(nextVersion: SemVer) {
   await commitFileToReleaseBranch(sha, content, nextVersion);
 }
 
-async function getOrCreateReleaseBranch() {
-  if (await getReleaseBranch()) {
-    return false;
-  }
-
-  await createReleaseBranch();
-  core.notice(
-    `Next release branch "${inputs.branches.release}" has been created.`,
-    {
-      title: "Branch Created",
-    },
-  );
-  return true;
-}
-
 async function createOrUpdateReleasePullRequest(
   nextVersion: SemVer,
   releasePullRequest: PullRequest | null,
@@ -44,6 +29,11 @@ async function createOrUpdateReleasePullRequest(
   isManualVersion: boolean,
 ) {
   if (!releasePullRequest) {
+    if (inputs.skipPullRequestCreation) {
+      core.info("Release PR creation skipped.");
+      return;
+    }
+
     const newPullRequest = await createReleasePullRequest(
       nextVersion,
       releaseNotes,
@@ -74,6 +64,21 @@ async function createOrUpdateReleasePullRequest(
   return releasePullRequest.number;
 }
 
+async function mergeIntoOrTryCreateReleaseBranch() {
+  const releaseBranch = await getReleaseBranch();
+  if (releaseBranch) {
+    await mergeIntoReleaseBranch();
+  } else if (!inputs.skipPullRequestCreation) {
+    await createReleaseBranch();
+    core.notice(
+      `Next release branch "${inputs.branches.release}" has been created.`,
+      {
+        title: "Branch Created",
+      },
+    );
+  }
+}
+
 export async function prepare(
   nextVersion: SemVer,
   releaseNotes: string,
@@ -81,16 +86,16 @@ export async function prepare(
   isManualVersion: boolean,
 ) {
   core.info(`Preparing new release...`);
-
-  let skipMerge = false;
-  if (!releasePullRequest) {
-    skipMerge = await getOrCreateReleaseBranch();
-  }
-  if (!skipMerge) {
+  if (releasePullRequest) {
     await mergeIntoReleaseBranch();
+  } else {
+    await mergeIntoOrTryCreateReleaseBranch();
   }
 
-  if (!releasePullRequest?.title.includes(nextVersion.version)) {
+  if (
+    !releasePullRequest?.title.includes(nextVersion.version) &&
+    (releasePullRequest ?? !inputs.skipPullRequestCreation)
+  ) {
     await commitNodePackage(nextVersion);
   }
   const prNumber = await createOrUpdateReleasePullRequest(
