@@ -46,7 +46,7 @@ jobs:
           persist-credentials: false
       - name: Release
         id: action
-        uses: cyberspace7/release-action@v0.6.1
+        uses: cyberspace7/release-action@v0.7.0
         env:
           GITHUB_TOKEN: ${{ steps.a60-token.outputs.token }}
         with:
