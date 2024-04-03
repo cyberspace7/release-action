@@ -147,7 +147,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Execute action
         id: action
-        uses: cyberspace7/release-action@v0.6.0
+        uses: cyberspace7/release-action@v0.7.0
         with:
           release-as: ${{ inputs.release-as }}
           pre-release: ${{ inputs.pre-release }}
@@ -283,7 +283,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Execute action
         id: action
-        uses: cyberspace7/release-action@v0.6.0
+        uses: cyberspace7/release-action@v0.7.0
   publish:
     name: Publish
     needs: release
@@ -313,7 +313,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Execute action
         id: action
-        uses: cyberspace7/release-action@v0.6.0
+        uses: cyberspace7/release-action@v0.7.0
         with:
           skip-pr-creation: ${{ github.event_name == 'workflow_dispatch' }}
 ```
