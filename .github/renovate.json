@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":rebaseStalePrs"],
+  "extends": ["config:best-practices", ":rebaseStalePrs"],
   "labels": ["type: chore"],
   "reviewersFromCodeOwners": true,
   "dependencyDashboardLabels": ["ignore"],
@@ -10,6 +10,8 @@
   "semanticCommitType": "chore",
   "enabledManagers": ["npm", "github-actions"],
   "rangeStrategy": "pin",
+  "schedule": ["before 6am"],
+  "automergeSchedule": ["before 6am"],
   "packageRules": [
     {
       "matchDepTypes": ["dependencies", "peerDependencies"],
