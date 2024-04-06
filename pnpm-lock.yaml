@@ -12,11 +12,11 @@ dependencies:
     specifier: 6.0.0
     version: 6.0.0
   '@octokit/request-error':
-    specifier: 6.0.3
-    version: 6.0.3
+    specifier: 6.1.0
+    version: 6.1.0
   '@octokit/rest':
-    specifier: 20.0.2
-    version: 20.0.2
+    specifier: 20.1.0
+    version: 20.1.0
   lodash-es:
     specifier: 4.17.21
     version: 4.17.21
@@ -1396,8 +1396,8 @@ packages:
       once: 1.4.0
     dev: false
 
-  /@octokit/request-error@6.0.3:
-    resolution: {integrity: sha512-qs234vM5iSQ6ahMtdwQv4F4qPCJxz18Jfbe70+fCA96Mj18MMC27WgBkt07p2iW4fbJdHsje5Fhr6ancjeyXOg==}
+  /@octokit/request-error@6.1.0:
+    resolution: {integrity: sha512-xcLJv4IgfWIOEEVZwfhUN3yHNWJL0AMw1J1Ba8BofM9RdDTbapg6MO4zNxlPS4XXX9aAIsbDRa47K57EhgeVAw==}
     engines: {node: '>= 18'}
     dependencies:
       '@octokit/types': 13.0.0
@@ -1413,8 +1413,8 @@ packages:
       universal-user-agent: 6.0.1
     dev: false
 
-  /@octokit/rest@20.0.2:
-    resolution: {integrity: sha512-Ux8NDgEraQ/DMAU1PlAohyfBBXDwhnX2j33Z1nJNziqAfHi70PuxkFYIcIt8aIAxtRE7KVuKp8lSR8pA0J5iOQ==}
+  /@octokit/rest@20.1.0:
+    resolution: {integrity: sha512-STVO3itHQLrp80lvcYB2UIKoeil5Ctsgd2s1AM+du3HqZIR35ZH7WE9HLwUOLXH0myA0y3AGNPo8gZtcgIbw0g==}
     engines: {node: '>= 18'}
     dependencies:
       '@octokit/core': 5.1.0
