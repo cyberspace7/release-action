@@ -28,7 +28,7 @@
       "automerge": true
     },
     {
-      "packageNames": ["node"],
+      "matchPackageNames": ["node"],
       "enabled": false
     }
   ]
