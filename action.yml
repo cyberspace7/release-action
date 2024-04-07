@@ -33,7 +33,10 @@ inputs:
     description: Branch used for release PRs
     required: false
   skip-pr-creation:
-    description: Skip the creation of the release PR
+    description: Skip release PR creation. When there are changes, if the PR exists, it will still be updated. if the PR doesn't exist but the release branch does, the later will still be updated as well.
+    required: false
+  keep-branch-updated:
+    description: Keep the release branch merged from main when the PR exists.
     required: false
 outputs:
   current-version:
