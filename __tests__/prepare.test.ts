@@ -686,14 +686,7 @@ describe("main()", () => {
       expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(octokit.rest.repos.getBranch).toHaveBeenCalledTimes(0);
       expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
-      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(1);
-      expect(octokit.rest.repos.merge).toHaveBeenCalledWith({
-        owner: "owner",
-        repo: "repository",
-        base: "releases/next",
-        head: "main",
-        commit_message: 'chore(main): merge "main"',
-      });
+      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(0);
       expect(fileSystem.readFileSync).toHaveBeenCalledTimes(1);
       expect(octokit.rest.repos.getContent).toHaveBeenCalledTimes(0);
       expect(
@@ -760,14 +753,7 @@ describe("main()", () => {
       expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(octokit.rest.repos.getBranch).toHaveBeenCalledTimes(0);
       expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
-      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(1);
-      expect(octokit.rest.repos.merge).toHaveBeenCalledWith({
-        owner: "owner",
-        repo: "repository",
-        base: "releases/next",
-        head: "main",
-        commit_message: 'chore(main): merge "main"',
-      });
+      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(0);
       expect(fileSystem.readFileSync).toHaveBeenCalledTimes(2);
       expect(fileSystem.readFileSync).toHaveBeenNthCalledWith(
         2,
@@ -844,14 +830,7 @@ describe("main()", () => {
       expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(octokit.rest.repos.getBranch).toHaveBeenCalledTimes(0);
       expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
-      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(1);
-      expect(octokit.rest.repos.merge).toHaveBeenCalledWith({
-        owner: "owner",
-        repo: "repository",
-        base: "releases/next",
-        head: "main",
-        commit_message: 'chore(main): merge "main"',
-      });
+      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(0);
       expect(fileSystem.readFileSync).toHaveBeenCalledTimes(1);
       expect(octokit.rest.repos.getContent).toHaveBeenCalledTimes(0);
       expect(
@@ -911,14 +890,7 @@ describe("main()", () => {
       expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(octokit.rest.repos.getBranch).toHaveBeenCalledTimes(0);
       expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
-      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(1);
-      expect(octokit.rest.repos.merge).toHaveBeenCalledWith({
-        owner: "owner",
-        repo: "repository",
-        base: "releases/next",
-        head: "main",
-        commit_message: 'chore(main): merge "main"',
-      });
+      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(0);
       expect(fileSystem.readFileSync).toHaveBeenCalledTimes(2);
       expect(octokit.rest.repos.getContent).toHaveBeenCalledTimes(1);
       expect(
@@ -985,14 +957,7 @@ describe("main()", () => {
       expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledTimes(1);
       expect(octokit.rest.repos.getBranch).toHaveBeenCalledTimes(0);
       expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
-      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(1);
-      expect(octokit.rest.repos.merge).toHaveBeenCalledWith({
-        owner: "owner",
-        repo: "repository",
-        base: "releases/next",
-        head: "main",
-        commit_message: 'chore(main): merge "main"',
-      });
+      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(0);
       expect(fileSystem.readFileSync).toHaveBeenCalledTimes(2);
       expect(fileSystem.readFileSync).toHaveBeenNthCalledWith(
         2,
@@ -1012,6 +977,53 @@ describe("main()", () => {
         pull_number: 1,
         body: "Release notes\n\n- title (#4)\n- title (#5)\n- title (#6)\n- title (#7)\n\nThe end.",
       });
+      expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(0);
+    });
+
+    it("should prepare when branch update requested", async () => {
+      mockPullRequestLists({
+        openRelease: pullRequests.openRelease,
+        changes: [
+          {
+            number: 7,
+            title: "title",
+            state: "closed",
+            labels: [
+              { name: "label" },
+              { name: "type: feature" },
+              { name: "breaking" },
+            ],
+          },
+          ...changes,
+        ],
+      });
+      inputs.keepReleaseBranchUpdated = true;
+
+      await main();
+
+      expect(core.setFailed).toHaveBeenCalledTimes(0);
+      expect(core.error).toHaveBeenCalledTimes(0);
+      expect(core.warning).toHaveBeenCalledTimes(0);
+      expect(core.notice).toHaveBeenCalledTimes(3);
+      expect(core.setOutput).toHaveBeenCalledTimes(5);
+      expect(octokit.rest.repos.generateReleaseNotes).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.getBranch).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.git.createRef).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.repos.merge).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.repos.merge).toHaveBeenCalledWith({
+        owner: "owner",
+        repo: "repository",
+        base: "releases/next",
+        head: "main",
+        commit_message: 'chore(main): merge "main"',
+      });
+      expect(fileSystem.readFileSync).toHaveBeenCalledTimes(2);
+      expect(octokit.rest.repos.getContent).toHaveBeenCalledTimes(1);
+      expect(
+        octokit.rest.repos.createOrUpdateFileContents,
+      ).toHaveBeenCalledTimes(1);
+      expect(octokit.rest.pulls.create).toHaveBeenCalledTimes(0);
+      expect(octokit.rest.pulls.update).toHaveBeenCalledTimes(1);
       expect(octokit.rest.issues.createComment).toHaveBeenCalledTimes(0);
     });
   });

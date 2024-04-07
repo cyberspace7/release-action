@@ -103,6 +103,7 @@ const inputsSchema = z.object({
       }),
   }),
   skipPullRequestCreation: z.boolean().default(false),
+  keepReleaseBranchUpdated: z.boolean().default(false),
 });
 
 export function parseEnvironment() {
@@ -130,6 +131,7 @@ export function parseInputs() {
       release: getInput("branch-release"),
     },
     skipPullRequestCreation: getBooleanInput("skip-pr-creation"),
+    keepReleaseBranchUpdated: getBooleanInput("keep-branch-updated"),
   });
 }
 

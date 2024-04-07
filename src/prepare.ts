@@ -86,9 +86,9 @@ export async function prepare(
   isManualVersion: boolean,
 ) {
   core.info(`Preparing new release...`);
-  if (releasePullRequest) {
+  if (releasePullRequest && inputs.keepReleaseBranchUpdated) {
     await mergeIntoReleaseBranch();
-  } else {
+  } else if (!releasePullRequest) {
     await mergeIntoOrTryCreateReleaseBranch();
   }
 
