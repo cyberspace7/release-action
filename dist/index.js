@@ -32305,6 +32305,7 @@ const inputsSchema = zod__WEBPACK_IMPORTED_MODULE_2__.z.object({
         }),
     }),
     skipPullRequestCreation: zod__WEBPACK_IMPORTED_MODULE_2__.z.boolean().default(false),
+    keepReleaseBranchUpdated: zod__WEBPACK_IMPORTED_MODULE_2__.z.boolean().default(false),
 });
 function parseEnvironment() {
     return environmentSchema.parse(process.env);
@@ -32329,6 +32330,7 @@ function parseInputs() {
             release: (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("branch-release"),
         },
         skipPullRequestCreation: getBooleanInput("skip-pr-creation"),
+        keepReleaseBranchUpdated: getBooleanInput("keep-branch-updated"),
     });
 }
 const environment = parseEnvironment();
@@ -32763,10 +32765,10 @@ async function mergeIntoOrTryCreateReleaseBranch() {
 }
 async function prepare(nextVersion, releaseNotes, releasePullRequest, isManualVersion) {
     core.info(`Preparing new release...`);
-    if (releasePullRequest) {
+    if (releasePullRequest && inputs/* inputs.keepReleaseBranchUpdated */.FU.keepReleaseBranchUpdated) {
         await mergeIntoReleaseBranch();
     }
-    else {
+    else if (!releasePullRequest) {
         await mergeIntoOrTryCreateReleaseBranch();
     }
     if (!releasePullRequest?.title.includes(nextVersion.version) &&
