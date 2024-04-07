@@ -35,18 +35,18 @@ jobs:
     steps:
       - name: Create Alpha 60 token
         id: a60-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@7bfa3a4717ef143a604ee0a99d859b8886a96d00 # v1
         with:
           app-id: ${{ secrets.A60_APP_ID }}
           private-key: ${{ secrets.A60_PRIVATE_KEY }}
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           token: ${{ steps.a60-token.outputs.token }}
           persist-credentials: false
       - name: Release
         id: action
-        uses: cyberspace7/release-action@v0.7.0
+        uses: cyberspace7/release-action@bbdb98d31b7b999170324d2d8b948fcea894ac32 # v0.7.0
         env:
           GITHUB_TOKEN: ${{ steps.a60-token.outputs.token }}
         with:
