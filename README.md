@@ -216,19 +216,20 @@ permissions:
 
 ### Inputs
 
-| Name                | Description                                                                                                                                                                                 | Default Value       |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `release-as`        | Force a specific version.                                                                                                                                                                   |                     |
-| `pre-release`       | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                                                                                       |                     |
-| `labels-ignore`\*   | Labels for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage).                                                                  | `ignore`            |
-| `labels-patch`\*    | Labels for pull requests to bump a patch version.                                                                                                                                           | `patch`, `fix`      |
-| `labels-minor`\*    | Labels for pull requests to bump a minor version.                                                                                                                                           | `minor`, `feature`  |
-| `labels-major`\*    | Labels for pull requests to bump a major version.                                                                                                                                           | `major`, `breaking` |
-| `label-ready`       | Label automatically used by Release Action for release PRs.                                                                                                                                 | `release: ready`    |
-| `label-done`        | Label automatically used by Release Action for release PRs that have been processed (current version released).                                                                             | `release: done`     |
-| `branch-production` | Branch used for production, the base for all PRs going to production.                                                                                                                       | `main`              |
-| `branch-release`    | Branch used for release PRs.                                                                                                                                                                | `releases/next`     |
-| `skip-pr-creation`  | Skip release PR creation. When there are changes, if the PR exists, it will still be updated. if the PR doesn't exist but the release branch does, the later will still be updated as well. | `false`             |
+| Name                  | Description                                                                                                                                                                                 | Default Value       |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `release-as`          | Force a specific version.                                                                                                                                                                   |                     |
+| `pre-release`         | Name of the pre-release version (`alpha`, `beta`, `rc`...). If not empty, will trigger a pre-release.                                                                                       |                     |
+| `labels-ignore`\*     | Labels for pull requests to be ignored for the release bump. It should be added to changelog excluded labels (see #usage).                                                                  | `ignore`            |
+| `labels-patch`\*      | Labels for pull requests to bump a patch version.                                                                                                                                           | `patch`, `fix`      |
+| `labels-minor`\*      | Labels for pull requests to bump a minor version.                                                                                                                                           | `minor`, `feature`  |
+| `labels-major`\*      | Labels for pull requests to bump a major version.                                                                                                                                           | `major`, `breaking` |
+| `label-ready`         | Label automatically used by Release Action for release PRs.                                                                                                                                 | `release: ready`    |
+| `label-done`          | Label automatically used by Release Action for release PRs that have been processed (current version released).                                                                             | `release: done`     |
+| `branch-production`   | Branch used for production, the base for all PRs going to production.                                                                                                                       | `main`              |
+| `branch-release`      | Branch used for release PRs.                                                                                                                                                                | `releases/next`     |
+| `skip-pr-creation`    | Skip release PR creation. When there are changes, if the PR exists, it will still be updated. if the PR doesn't exist but the release branch does, the later will still be updated as well. | `false`             |
+| `keep-branch-updated` | Keep the release branch merged from main when the PR exists.                                                                                                                                | `false`             |
 
 \*Multiple labels can be defined using a multiline block such as follow:
 
@@ -291,7 +292,7 @@ jobs:
     uses: ./.github/workflows/publish.yml
 ```
 
-Only create release PRs when manually triggered:
+Only create release PRs and merge `main` into existing release PR when manually triggered:
 
 ```yaml
 name: Release
@@ -316,6 +317,7 @@ jobs:
         uses: cyberspace7/release-action@v0.7.0
         with:
           skip-pr-creation: ${{ github.event_name == 'workflow_dispatch' }}
+          keep-branch-updated: ${{ github.event_name == 'workflow_dispatch' }}
 ```
 
 ## Contributing
@@ -327,6 +329,8 @@ If you find a bug concerning this project, please fill a [bug report](https://gi
 If it concerns a security vulnerability, please email us at `contact@a60.dev`.
 
 For contributing, please check the [Contributing Guidelines](.github/CONTRIBUTING.md).
+
+---
 
 ## Authors
 
