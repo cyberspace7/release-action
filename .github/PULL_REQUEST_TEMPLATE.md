@@ -6,6 +6,7 @@ Pull Request requirements:
 - [ ] PR: Add assignees
 - [ ] PR: Add labels
 - [ ] Code: Update tests, _if needed_
+- [ ] Code: Update action configuration, _if needed_
 - [ ] Code: Update documentation (`README`, ...), _if needed_
 
 ### Issue(s)
