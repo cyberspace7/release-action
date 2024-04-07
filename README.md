@@ -316,7 +316,7 @@ jobs:
         id: action
         uses: cyberspace7/release-action@v0.7.0
         with:
-          skip-pr-creation: ${{ github.event_name == 'workflow_dispatch' }}
+          skip-pr-creation: ${{ github.event_name != 'workflow_dispatch' }}
           keep-branch-updated: ${{ github.event_name == 'workflow_dispatch' }}
 ```
 

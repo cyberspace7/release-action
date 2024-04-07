@@ -55,6 +55,6 @@ jobs:
             "type: performance"
           labels-minor: "type: feature"
           labels-major: "breaking"
-          skip-pr-creation: ${{ github.event_name == 'workflow_dispatch' }}
+          skip-pr-creation: ${{ github.event_name != 'workflow_dispatch' }}
           release-as: ${{ inputs.release-as }}
           pre-release: ${{ inputs.pre-release }}
