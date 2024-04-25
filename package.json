@@ -18,7 +18,7 @@
     "@octokit/rest": "20.1.0",
     "lodash-es": "4.17.21",
     "semver": "7.6.0",
-    "zod": "3.22.4"
+    "zod": "3.22.5"
   },
   "devDependencies": {
     "@commitlint/cli": "19.3.0",
