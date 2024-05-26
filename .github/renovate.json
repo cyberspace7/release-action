@@ -28,6 +28,11 @@
       "automerge": true
     },
     {
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["digest"],
+      "automerge": true
+    },
+    {
       "matchPackageNames": ["node"],
       "enabled": false
     }
