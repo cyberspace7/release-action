@@ -7,7 +7,11 @@ runs:
     - name: Setup pnpm
       uses: pnpm/action-setup@v3
       with:
-        version: 8
+        version: 9
+    - name: Use pnpm version
+      shell: bash
+      run: |
+        corepack use pnpm@`pnpm -v`
     - name: Get Node version
       id: nvm
       shell: bash
