@@ -15,8 +15,8 @@ importers:
         specifier: 6.0.0
         version: 6.0.0
       '@octokit/request-error':
-        specifier: 6.1.1
-        version: 6.1.1
+        specifier: 6.1.2
+        version: 6.1.2
       '@octokit/rest':
         specifier: 21.0.0
         version: 21.0.0
@@ -686,9 +686,6 @@ packages:
   '@octokit/openapi-types@19.1.0':
     resolution: {integrity: sha512-6G+ywGClliGQwRsjvqVYpklIfa7oRPA0vyhPQG/1Feh+B+wU0vGH1JiJ5T25d3g1JZYBHzR2qefLi9x8Gt+cpw==}
 
-  '@octokit/openapi-types@21.1.0':
-    resolution: {integrity: sha512-wWfyybx64JhezyPHkHXm3kP33U1ceJ+1y8q5sCKGdqzQA7cGBZjo1PCYlNnVV/c1RR6rDGAn1DxJ5LwrJC4z7Q==}
-
   '@octokit/openapi-types@22.2.0':
     resolution: {integrity: sha512-QBhVjcUa9W7Wwhm6DBFu6ZZ+1/t/oYxqc2tp81Pi41YNuJinbFRx8B133qVOrAaBbF7D/m0Et6f9/pZt9Rc+tg==}
 
@@ -726,8 +723,8 @@ packages:
     resolution: {integrity: sha512-X7pnyTMV7MgtGmiXBwmO6M5kIPrntOXdyKZLigNfQWSEQzVxR4a4vo49vJjTWX70mPndj8KhfT4Dx+2Ng3vnBQ==}
     engines: {node: '>= 18'}
 
-  '@octokit/request-error@6.1.1':
-    resolution: {integrity: sha512-1mw1gqT3fR/WFvnoVpY/zUM2o/XkMs/2AszUUG9I69xn0JFLv6PGkPhNk5lbfvROs79wiS0bqiJNxfCZcRJJdg==}
+  '@octokit/request-error@6.1.2':
+    resolution: {integrity: sha512-sA0oF7aL5wXbNfl+7zgLYJiFZctei9GaIMJlTraJrlQyFaoIYr4MCqPSakzxxGCfm8fET4vn0cQdRFmD7avlDg==}
     engines: {node: '>= 18'}
 
   '@octokit/request@8.1.6':
@@ -744,9 +741,6 @@ packages:
 
   '@octokit/types@12.4.0':
     resolution: {integrity: sha512-FLWs/AvZllw/AGVs+nJ+ELCDZZJk+kY0zMen118xhL2zD0s1etIUHm1odgjP7epxYU1ln7SZxEUWYop5bhsdgQ==}
-
-  '@octokit/types@13.0.0':
-    resolution: {integrity: sha512-jSOgEoFZvjg78txlb7cuRTAEvyyQkIEB4Nujg5ZN7E1xaICsr8A0X045Nwb1wUWNrBUHBHZNtcsDIhk8d8ipCw==}
 
   '@octokit/types@13.5.0':
     resolution: {integrity: sha512-HdqWTf5Z3qwDVlzCrP8UJquMwunpDiMPt5er+QjGzL4hqr/vBVY/MauQgS1xWxCDT1oMx1EULyqxncdCY/NVSQ==}
@@ -3042,7 +3036,7 @@ snapshots:
       '@octokit/auth-token': 5.1.1
       '@octokit/graphql': 8.1.1
       '@octokit/request': 9.1.1
-      '@octokit/request-error': 6.1.1
+      '@octokit/request-error': 6.1.2
       '@octokit/types': 13.5.0
       before-after-hook: 3.0.2
       universal-user-agent: 7.0.2
@@ -3070,8 +3064,6 @@ snapshots:
       universal-user-agent: 7.0.2
 
   '@octokit/openapi-types@19.1.0': {}
-
-  '@octokit/openapi-types@21.1.0': {}
 
   '@octokit/openapi-types@22.2.0': {}
 
@@ -3105,9 +3097,9 @@ snapshots:
       deprecation: 2.3.1
       once: 1.4.0
 
-  '@octokit/request-error@6.1.1':
+  '@octokit/request-error@6.1.2':
     dependencies:
-      '@octokit/types': 13.0.0
+      '@octokit/types': 13.5.0
 
   '@octokit/request@8.1.6':
     dependencies:
@@ -3119,7 +3111,7 @@ snapshots:
   '@octokit/request@9.1.1':
     dependencies:
       '@octokit/endpoint': 10.1.1
-      '@octokit/request-error': 6.1.1
+      '@octokit/request-error': 6.1.2
       '@octokit/types': 13.5.0
       universal-user-agent: 7.0.2
 
@@ -3133,10 +3125,6 @@ snapshots:
   '@octokit/types@12.4.0':
     dependencies:
       '@octokit/openapi-types': 19.1.0
-
-  '@octokit/types@13.0.0':
-    dependencies:
-      '@octokit/openapi-types': 21.1.0
 
   '@octokit/types@13.5.0':
     dependencies:
