@@ -17,7 +17,7 @@
     "@octokit/request-error": "6.1.4",
     "@octokit/rest": "21.0.1",
     "lodash-es": "4.17.21",
-    "semver": "7.6.2",
+    "semver": "7.6.3",
     "zod": "3.23.8"
   },
   "devDependencies": {
@@ -44,7 +44,7 @@
     "tsx": "4.16.2",
     "typescript": "5.5.3"
   },
-  "packageManager": "pnpm@9.5.0",
+  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903",
   "engines": {
     "node": "^18.18"
   },
