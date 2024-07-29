@@ -29,7 +29,7 @@
     "@types/eslint": "8.56.11",
     "@types/jest": "29.5.12",
     "@types/lodash-es": "4.17.12",
-    "@types/node": "20.14.12",
+    "@types/node": "20.14.13",
     "@types/semver": "7.5.8",
     "@typescript-eslint/eslint-plugin": "7.17.0",
     "@vercel/ncc": "0.38.1",
