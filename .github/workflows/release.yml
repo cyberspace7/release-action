@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: Create Alpha 60 token
         id: a60-token
-        uses: actions/create-github-app-token@31c86eb3b33c9b601a1f60f98dcbfd1d70f379b4 # v1
+        uses: actions/create-github-app-token@3378cda945da322a8db4b193e19d46352ebe2de5 # v1
         with:
           app-id: ${{ secrets.A60_APP_ID }}
           private-key: ${{ secrets.A60_PRIVATE_KEY }}
